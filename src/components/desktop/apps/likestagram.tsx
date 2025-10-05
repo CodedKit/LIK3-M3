@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -14,15 +14,15 @@ const LIKES_STORAGE_KEY = 'virtual-temptations-likes';
 
 type LikesData = {
   [profileId: string]: {
-    [postId: string]: number;
+    [postId: string]: number; // Store the number of likes
   };
 };
 
 export default function Likestagram() {
   const { activeProfile } = useUserProfile();
   const [likes, setLikes] = useState(0);
-  const [isLiked, setIsLiked] = useState(false);
 
+  // Load likes from localStorage when the component mounts or the user changes
   useEffect(() => {
     if (!activeProfile) return;
 
@@ -31,22 +31,18 @@ export default function Likestagram() {
       const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
       const profileLikes = likesData[activeProfile.id] || {};
       const postLikes = profileLikes[POST_ID] || 0;
-      
       setLikes(postLikes);
-      setIsLiked(postLikes > 0);
     } catch (error) {
       console.error('Failed to load likes from localStorage', error);
+      setLikes(0); // Reset to 0 on error
     }
   }, [activeProfile]);
 
-  const handleLike = () => {
+  const handleLike = useCallback(() => {
     if (!activeProfile) return;
 
     const newLikes = likes + 1;
     setLikes(newLikes);
-    if (!isLiked) {
-      setIsLiked(true);
-    }
 
     try {
       const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
@@ -61,10 +57,12 @@ export default function Likestagram() {
       window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
     } catch (error) {
       console.error('Failed to save likes to localStorage', error);
+      // Optional: handle save error, e.g., show a toast
     }
-  };
+  }, [activeProfile, likes]);
   
   const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+  const isLiked = likes > 0;
 
   return (
     <div className="h-full w-full bg-background p-4 flex justify-center items-start">
