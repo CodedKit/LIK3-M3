@@ -35,7 +35,7 @@ interface AddProfileCardProps {
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
     <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[200px]">
-        <div className="p-2">
+        <div className="flex h-[88px] w-full items-center justify-center p-2">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
             </div>
@@ -48,9 +48,9 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                 name="username"
                 render={({ field }) => (
                     <FormItem>
-                    <div className="flex items-start justify-center gap-2">
+                    <div className="flex w-full items-start justify-center gap-2">
                         <FormControl>
-                        <Input placeholder="Username" {...field} className="h-8 text-xs w-[128px]" />
+                        <Input placeholder="Username" {...field} className="h-8 text-xs w-full" />
                         </FormControl>
                         <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
                         <Check />
@@ -119,6 +119,9 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     }
   };
 
+  const showAddProfileCard = profiles.length < 5;
+  const showZeroState = profiles.length === 0 && !isCreating;
+
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
@@ -134,7 +137,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             <Button
               variant="ghost"
               size="icon"
-              className="h-auto py-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute bottom-2 right-2 h-auto py-1 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={(e) => handleDelete(e, profile.id)}
             >
               <Trash2 className="h-4 w-4 text-destructive" />
@@ -142,13 +145,22 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           </ProfileCard>
         ))}
         
-        {profiles.length < 5 && (
+        {showAddProfileCard && !showZeroState && (
           <AddProfileCard 
             isCreating={isCreating}
             openCreator={openCreator}
             form={form}
             onSubmit={onSubmit}
           />
+        )}
+
+        {showZeroState && (
+            <AddProfileCard 
+              isCreating={isCreating}
+              openCreator={openCreator}
+              form={form}
+              onSubmit={onSubmit}
+            />
         )}
       </div>
     </div>
