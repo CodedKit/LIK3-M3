@@ -100,7 +100,7 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
               <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50 cursor-pointer" onClick={openDialog}>
                   <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
               </Avatar>
-              <Button size="sm" variant="outline" onClick={openDialog}>+ New Profile</Button>
+              <Button size="xs" variant="outline" onClick={openDialog}>+ New Profile</Button>
             </div>
           </>
         ) : (
