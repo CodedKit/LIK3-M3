@@ -1,0 +1,65 @@
+'use client';
+
+import { useState } from 'react';
+import type { UserProfile } from '@/hooks/use-user-profile';
+import Taskbar from '@/components/desktop/taskbar';
+import AppIcon from '@/components/desktop/app-icon';
+import Likestagram from '@/components/desktop/apps/likestagram';
+import TerminalApp from '@/components/desktop/apps/terminal';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Heart, Terminal as TerminalIcon } from 'lucide-react';
+
+interface DesktopProps {
+  userProfile: UserProfile;
+  onLogout: () => void;
+}
+
+const apps = [
+  { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
+  { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+];
+
+export default function Desktop({ userProfile, onLogout }: DesktopProps) {
+  const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
+
+  const openApp = (appId: string) => {
+    const app = apps.find(a => a.id === appId);
+    if(app) {
+        setActiveApp(app);
+    }
+  };
+
+  const closeApp = () => {
+    setActiveApp(null);
+  };
+
+  return (
+    <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
+      <div className="flex-grow p-8">
+        <div className="grid grid-cols-6 gap-y-8">
+          {apps.map((app) => (
+            <AppIcon
+              key={app.id}
+              name={app.name}
+              icon={app.icon}
+              onClick={() => openApp(app.id)}
+            />
+          ))}
+        </div>
+      </div>
+
+      <Taskbar userProfile={userProfile} onLogout={onLogout} />
+
+      <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
+        <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
+          <DialogHeader className="p-4 border-b bg-card rounded-t-lg">
+            <DialogTitle className='font-headline'>{activeApp?.name}</DialogTitle>
+          </DialogHeader>
+          <div className="flex-grow overflow-y-auto">
+            {activeApp?.component}
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
+}
