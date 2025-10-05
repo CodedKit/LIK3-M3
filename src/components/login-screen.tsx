@@ -35,7 +35,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn("w-[200px]")}>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn(isCreating ? "w-[200px]" : "w-[160px]")}>
         <div className="flex h-[88px] w-full items-center justify-center p-2">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -127,7 +127,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
         {profiles.map((profile) => (
-          <ProfileCard key={profile.id} onClick={() => onLogin(profile)} className="w-[200px]">
+          <ProfileCard key={profile.id} onClick={() => onLogin(profile)} className="w-[160px]">
             <div className="p-2">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={profile.avatarUrl} alt={profile.username} />
