@@ -95,9 +95,9 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
   const AddProfileCard = () => (
     <ProfileCard onClick={openDialog}>
       <div className="p-2">
-        <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
             <UserPlus className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
-        </Avatar>
+        </div>
       </div>
       <Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>
     </ProfileCard>
@@ -105,7 +105,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      <div className="flex flex-row items-start gap-8 p-8">
+      <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
         {profiles.map((profile) => (
           <ProfileCard
             key={profile.id}
