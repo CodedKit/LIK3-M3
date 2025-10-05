@@ -14,6 +14,7 @@ import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import ProfileCard from './profile-card';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -27,38 +28,40 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[160px]">
-      <div className="flex h-[88px] w-full items-center justify-center">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-          <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
-        </div>
-      </div>
-      {isCreating ? (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2 relative">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <Input placeholder="Username" {...field} className="h-8 text-xs" />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-            <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
-              <Check className="h-4 w-4" />
-            </Button>
-          </form>
-        </Form>
-      ) : (
-        <Button size="xs" variant="outline" className="mt-2">
-          + New Profile
-        </Button>
-      )}
-    </ProfileCard>
+    <div className={cn("relative group w-[120px]")}>
+        <ProfileCard onClick={!isCreating ? openCreator : undefined}>
+            <div className="flex h-[88px] w-full items-center justify-center">
+                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
+                    <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
+                </div>
+            </div>
+            {isCreating ? (
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2">
+                        <FormField
+                            control={form.control}
+                            name="username"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormControl>
+                                        <Input placeholder="Username" {...field} className="h-8 text-xs text-left" />
+                                    </FormControl>
+                                    <FormMessage className="text-xs" />
+                                </FormItem>
+                            )}
+                        />
+                         <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
+                            <Check className="h-4 w-4" />
+                        </Button>
+                    </form>
+                </Form>
+            ) : (
+                <Button size="xs" variant="outline" className="mt-2">
+                    + New Profile
+                </Button>
+            )}
+        </ProfileCard>
+    </div>
 );
 
 interface LoginScreenProps {
@@ -128,9 +131,9 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           <ProfileCard
             key={profile.id}
             onClick={() => onLogin(profile)}
-            className="w-[160px]"
+            className="w-[120px]"
           >
-            <div>
+            <div className="p-0">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                 <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
