@@ -28,7 +28,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <div className={cn("relative group w-[120px]")}>
+    <div className={cn("relative group w-[144px]")}>
         <ProfileCard onClick={!isCreating ? openCreator : undefined}>
             <div className="flex h-[88px] w-full items-center justify-center">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
@@ -44,7 +44,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder="Username" {...field} className="h-8 text-xs text-left" />
+                                        <Input placeholder="username..." {...field} className="h-8 text-xs text-left" />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -131,7 +131,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           <ProfileCard
             key={profile.id}
             onClick={() => onLogin(profile)}
-            className="w-[120px]"
+            className="w-[144px]"
           >
             <div className="p-0">
               <Avatar className="h-20 w-20">
