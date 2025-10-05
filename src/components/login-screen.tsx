@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserCircle, UserPlus, Trash2 } from 'lucide-react';
+import { UserPlus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -95,44 +95,31 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row items-start gap-8 p-8">
-        {profiles.length > 0 ? (
-          <>
-            {profiles.map((profile) => (
-              <ProfileCard
-                key={profile.id}
-                onClick={() => onLogin(profile)}
-              >
-                  <div className="p-2">
-                    <Avatar className="h-20 w-20">
-                        <AvatarImage src={profile.avatarUrl} alt={profile.username} />
-                        <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                  </div>
-                  <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
-                  <Button variant="ghost" size="icon" className="h-auto py-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => handleDelete(e, profile.id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-              </ProfileCard>
-            ))}
-             <ProfileCard onClick={openDialog}>
-                <div className="p-2">
-                    <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
-                        <UserPlus className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
-                    </Avatar>
-                </div>
-                <Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>
-            </ProfileCard>
-          </>
-        ) : (
-            <ProfileCard onClick={openDialog}>
-                <div className="p-2">
-                    <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
-                        <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
-                    </Avatar>
-                </div>
-                <p className="mt-2 text-muted-foreground">Click to create a profile</p>
-            </ProfileCard>
-        )}
+        {profiles.map((profile) => (
+          <ProfileCard
+            key={profile.id}
+            onClick={() => onLogin(profile)}
+          >
+              <div className="p-2">
+                <Avatar className="h-20 w-20">
+                    <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+                    <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
+                </Avatar>
+              </div>
+              <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
+              <Button variant="ghost" size="icon" className="h-auto py-1 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => handleDelete(e, profile.id)}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+          </ProfileCard>
+        ))}
+        <ProfileCard onClick={openDialog}>
+            <div className="p-2">
+                <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
+                    <UserPlus className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
+                </Avatar>
+            </div>
+            <Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>
+        </ProfileCard>
       </div>
 
       <Dialog open={isOpen} onOpenChange={onDialogStateChange}>
