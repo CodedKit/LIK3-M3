@@ -14,14 +14,6 @@ import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import ProfileCard from './profile-card';
-import { cn } from '@/lib/utils';
-
-interface LoginScreenProps {
-  profiles: UserProfile[];
-  onAccountCreate: (profile: Omit<UserProfile, 'id'>) => void;
-  onLogin: (profile: UserProfile) => void;
-  onProfileDelete: (profileId: string) => void;
-}
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -35,7 +27,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn(isCreating ? "w-[200px]" : "w-auto")}>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={isCreating ? "w-[200px]" : "w-[160px]"}>
         <div className="flex h-[88px] w-full items-center justify-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -51,7 +43,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                     <FormItem>
                     <div className="flex w-full items-start justify-center gap-2">
                         <FormControl>
-                        <Input placeholder="Username" {...field} className="h-8 text-xs w-full" />
+                        <Input placeholder="Username" {...field} className="h-8 text-xs" />
                         </FormControl>
                         <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
                         <Check />
@@ -91,7 +83,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     });
   }
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
+  function onSubmit(values: z.infer<typeof formSchema>) {
     const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
     if (!avatar) {
         toast({
@@ -112,7 +104,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     });
     setIsCreating(false);
     form.reset();
-  };
+  }
   
   const openCreator = () => {
     if (profiles.length < 5) {
@@ -142,7 +134,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             <Button
               variant="outline"
               size="icon"
-              className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-6 w-6"
+              className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={(e) => handleDelete(e, profile.id)}
             >
               <Trash2 className="text-destructive h-4 w-4" />
