@@ -32,6 +32,10 @@ export function useUserProfile() {
   }, []);
 
   const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id'>) => {
+    if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
+        throw new Error('A profile with this username already exists.');
+    }
+      
     const newProfile: UserProfile = {
       ...newProfileData,
       id: `profile_${Date.now()}_${Math.random()}`
@@ -44,6 +48,7 @@ export function useUserProfile() {
       setActiveProfile(newProfile); // Automatically log in with the new profile
     } catch (error) {
       console.error("Failed to save user profile to localStorage", error);
+      throw new Error('Failed to save profile.');
     }
   }, [profiles]);
   

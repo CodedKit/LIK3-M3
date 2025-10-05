@@ -7,14 +7,13 @@ import * as z from 'zod';
 import { UserCircle, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, useFormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import ProfileCard from './profile-card';
 import { cn } from '@/lib/utils';
-import { useFormField } from './ui/form';
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -116,16 +115,24 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
         return;
     }
     
-    onAccountCreate({
-      username: values.username,
-      avatarUrl: avatar.imageUrl
-    });
-    toast({
-        title: "Profile Created",
-        description: `Welcome, ${values.username}!`,
-    });
-    setIsCreating(false);
-    form.reset();
+    try {
+      onAccountCreate({
+        username: values.username,
+        avatarUrl: avatar.imageUrl
+      });
+      toast({
+          title: "Profile Created",
+          description: `Welcome, ${values.username}!`,
+      });
+      setIsCreating(false);
+      form.reset();
+    } catch (error: any) {
+        toast({
+            title: "Error Creating Profile",
+            description: error.message || "An unexpected error occurred.",
+            variant: "destructive"
+        });
+    }
   }
 
   const onInvalid: Parameters<typeof form.handleSubmit>[1] = (errors) => {
@@ -135,12 +142,19 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
         description: errors.username.message,
         variant: "destructive",
       });
+      form.setError("username", { type: "manual", message: errors.username.message });
     }
   };
   
   const openCreator = () => {
     if (profiles.length < 5) {
       setIsCreating(true);
+    } else {
+        toast({
+            title: "Profile Limit Reached",
+            description: "You can only have a maximum of 5 profiles.",
+            variant: "destructive"
+        })
     }
   };
 
