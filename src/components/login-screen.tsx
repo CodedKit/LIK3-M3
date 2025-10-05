@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserCircle } from 'lucide-react';
+import { UserCircle, UserPlus } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -29,6 +29,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import { Separator } from './ui/separator';
 
 interface LoginScreenProps {
   onAccountCreate: (profile: UserProfile) => void;
@@ -72,12 +73,22 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
         description: `Welcome, ${values.username}!`,
     });
     setIsOpen(false);
+    form.reset();
   };
+  
+  const openDialog = () => setIsOpen(true);
+  const onDialogStateChange = (open: boolean) => {
+    setIsOpen(open);
+    if (!open) {
+      form.reset();
+    }
+  }
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      {hasProfile && profile ? (
-         <div className="text-center">
+      <div className="flex flex-col items-center gap-8">
+        {hasProfile && profile ? (
+          <div className="text-center">
             <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
                 <Avatar className="h-48 w-48">
                     <AvatarImage src={profile.avatarUrl} alt={profile.username} />
@@ -85,48 +96,62 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
                 </Avatar>
             </Button>
             <p className="mt-4 text-2xl font-headline text-primary-foreground">{profile.username}</p>
-            <p className="mt-1 text-muted-foreground">Click to login</p>
+            <p className="mt-1 text-muted-foreground">Click avatar to login</p>
           </div>
-      ) : (
-        <Dialog open={isOpen} onOpenChange={setIsOpen}>
-            <DialogTrigger asChild>
-            <div className="text-center">
-                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={() => setIsOpen(true)}>
-                <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
+        ) : (
+          <div className="text-center">
+            <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
+              <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
+            </Button>
+            <p className="mt-4 text-muted-foreground">Click to create a profile</p>
+          </div>
+        )}
+
+        {(hasProfile && profile) && (
+            <>
+                <div className='flex items-center gap-4 w-full max-w-xs'>
+                    <Separator className='flex-1' />
+                    <span className='text-muted-foreground text-xs'>OR</span>
+                    <Separator className='flex-1' />
+                </div>
+                 <Button variant="outline" onClick={openDialog}>
+                    <UserPlus className="mr-2 h-4 w-4" />
+                    Create New Profile
                 </Button>
-                <p className="mt-4 text-muted-foreground">Click to create a profile</p>
-            </div>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-            <DialogHeader>
-                <DialogTitle className='font-headline'>Create Your Profile</DialogTitle>
-                <DialogDescription>
-                Choose a username to begin your journey in Virtual Temptations.
-                </DialogDescription>
-            </DialogHeader>
-            <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                <FormField
-                    control={form.control}
-                    name="username"
-                    render={({ field }) => (
-                    <FormItem>
-                        <FormLabel>Username</FormLabel>
-                        <FormControl>
-                        <Input placeholder="Enter your username" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                    </FormItem>
-                    )}
-                />
-                <DialogFooter>
-                    <Button type="submit">Create Account</Button>
-                </DialogFooter>
-                </form>
-            </Form>
-            </DialogContent>
-        </Dialog>
-      )}
+            </>
+        )}
+      </div>
+
+      <Dialog open={isOpen} onOpenChange={onDialogStateChange}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className='font-headline'>Create Your Profile</DialogTitle>
+            <DialogDescription>
+              Choose a username to begin your journey in Virtual Temptations.
+            </DialogDescription>
+          </DialogHeader>
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Username</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter your username" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <DialogFooter>
+                <Button type="submit">Create Account</Button>
+              </DialogFooter>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
