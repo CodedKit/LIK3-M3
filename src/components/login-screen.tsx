@@ -14,7 +14,6 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -86,18 +85,26 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      <div className="flex flex-col items-center gap-8">
+      <div className="flex flex-row items-start gap-8">
         {hasProfile && profile ? (
-          <div className="text-center">
-            <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
-                <Avatar className="h-48 w-48">
-                    <AvatarImage src={profile.avatarUrl} alt={profile.username} />
-                    <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
-                </Avatar>
-            </Button>
-            <p className="mt-4 text-2xl font-headline text-primary-foreground">{profile.username}</p>
-            <p className="mt-1 text-muted-foreground">Click avatar to login</p>
-          </div>
+          <>
+            <div className="text-center">
+              <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
+                  <Avatar className="h-48 w-48">
+                      <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+                      <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
+                  </Avatar>
+              </Button>
+              <p className="mt-4 text-2xl font-headline text-primary-foreground">{profile.username}</p>
+              <p className="mt-1 text-muted-foreground">Click avatar to login</p>
+            </div>
+            <div className="text-center">
+              <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
+                <UserPlus className="h-32 w-32 text-muted-foreground/50" strokeWidth={0.5}/>
+              </Button>
+              <p className="mt-4 text-2xl font-headline text-primary-foreground">+ New Profile</p>
+            </div>
+          </>
         ) : (
           <div className="text-center">
             <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
@@ -105,20 +112,6 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
             </Button>
             <p className="mt-4 text-muted-foreground">Click to create a profile</p>
           </div>
-        )}
-
-        {(hasProfile && profile) && (
-            <>
-                <div className='flex items-center gap-4 w-full max-w-xs'>
-                    <Separator className='flex-1' />
-                    <span className='text-muted-foreground text-xs'>OR</span>
-                    <Separator className='flex-1' />
-                </div>
-                 <Button variant="outline" onClick={openDialog}>
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    Create New Profile
-                </Button>
-            </>
         )}
       </div>
 
