@@ -96,12 +96,12 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
               <p className="mt-1 text-xs text-muted-foreground">Click to login</p>
             </Button>
             
-            <Button variant="ghost" className="h-auto w-auto p-0 flex flex-col gap-2 text-center" onClick={openDialog}>
-                <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                    <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
-                </Avatar>
-                <p className="mt-2 text-lg font-headline text-primary-foreground">+ New Profile</p>
-            </Button>
+            <div className="flex flex-col gap-4 items-center">
+              <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50 cursor-pointer" onClick={openDialog}>
+                  <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
+              </Avatar>
+              <Button size="sm" variant="outline" onClick={openDialog}>+ New Profile</Button>
+            </div>
           </>
         ) : (
           <div className="text-center">
