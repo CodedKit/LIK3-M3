@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserCircle, Trash2, Check } from 'lucide-react';
+import { UserCircle, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
@@ -29,9 +29,15 @@ interface AddProfileCardProps {
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
     <div className={cn("relative group w-[144px]")}>
-        <ProfileCard onClick={!isCreating ? openCreator : undefined}>
-            <div className="w-full">
-                <div className="aspect-square flex items-center justify-center rounded-lg bg-muted/50">
+        <div
+            onClick={!isCreating ? openCreator : undefined}
+            className={cn(
+                "relative group flex h-auto flex-col items-center gap-1 rounded-lg text-center transition-all duration-200 overflow-visible p-2",
+                !isCreating && "cursor-pointer hover:ring-1 hover:ring-border"
+            )}
+        >
+            <div className='w-full'>
+                <div className="aspect-square flex items-center justify-center rounded-lg bg-muted/50 w-full">
                     <UserCircle className="h-12 w-auto text-muted-foreground/50" strokeWidth={1} />
                 </div>
             </div>
@@ -60,7 +66,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                     + New Profile
                 </Button>
             )}
-        </ProfileCard>
+        </div>
     </div>
 );
 
@@ -130,25 +136,10 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
         {profiles.map((profile) => (
           <ProfileCard
             key={profile.id}
-            onClick={() => onLogin(profile)}
-            className="w-[144px]"
-          >
-            <div className="p-0">
-              <Avatar className="h-auto w-full rounded-lg">
-                <AvatarImage src={profile.avatarUrl} alt={profile.username} />
-                <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
-              </Avatar>
-            </div>
-            <p className="mt-4 text-lg font-headline text-primary-foreground">{profile.username}</p>
-            <Button
-              variant="outline"
-              size="icon"
-              className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8 opacity-0 group-hover:opacity-100 transition-opacity"
-              onClick={(e) => handleDelete(e, profile.id)}
-            >
-              <Trash2 className="text-destructive h-4 w-4" />
-            </Button>
-          </ProfileCard>
+            profile={profile}
+            onClick={onLogin}
+            onDelete={handleDelete}
+          />
         ))}
         
         {showAddProfileCard && (!showZeroState || (showZeroState && isCreating)) && (
