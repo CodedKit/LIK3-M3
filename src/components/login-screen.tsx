@@ -139,7 +139,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
                 <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
-            <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
+            <p className="mt-4 text-lg font-headline text-primary-foreground">{profile.username}</p>
             <Button
               variant="outline"
               size="icon"
