@@ -28,18 +28,20 @@ import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 
 interface LoginScreenProps {
   onAccountCreate: (profile: UserProfile) => void;
   onLogin: () => void;
   hasProfile: boolean;
+  profile: UserProfile | null;
 }
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
 });
 
-export default function LoginScreen({ onAccountCreate, onLogin, hasProfile }: LoginScreenProps) {
+export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, profile }: LoginScreenProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   
@@ -74,12 +76,16 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile }: Lo
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      {hasProfile ? (
+      {hasProfile && profile ? (
          <div className="text-center">
-            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
-               <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
+            <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
+                <Avatar className="h-48 w-48">
+                    <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+                    <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
+                </Avatar>
             </Button>
-            <p className="mt-4 text-muted-foreground">Click to login</p>
+            <p className="mt-4 text-2xl font-headline text-primary-foreground">{profile.username}</p>
+            <p className="mt-1 text-muted-foreground">Click to login</p>
           </div>
       ) : (
         <Dialog open={isOpen} onOpenChange={setIsOpen}>

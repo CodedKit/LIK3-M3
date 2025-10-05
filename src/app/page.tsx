@@ -15,16 +15,13 @@ export default function Home() {
   useEffect(() => {
     const bootTimer = setTimeout(() => {
       if (!isLoading) {
-        if (profile) {
-          setAppState('desktop');
-        } else {
-          setAppState('login');
-        }
+        // Always go to login screen after booting, the login screen will handle what to show
+        setAppState('login');
       }
     }, 3000);
 
     return () => clearTimeout(bootTimer);
-  }, [isLoading, profile]);
+  }, [isLoading]);
 
   const handleAccountCreate = (newProfile: UserProfile) => {
     saveProfile(newProfile);
@@ -32,7 +29,9 @@ export default function Home() {
   };
   
   const handleLogin = () => {
-    setAppState('desktop');
+    if (profile) {
+      setAppState('desktop');
+    }
   };
   
   const handleLogout = () => {
@@ -41,10 +40,15 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen overflow-hidden bg-background">
-      {(appState === 'booting' || (appState === 'desktop' && isLoading)) && <BootScreen />}
+      {appState === 'booting' && <BootScreen />}
       
       {appState === 'login' && !isLoading && (
-        <LoginScreen onAccountCreate={handleAccountCreate} onLogin={handleLogin} hasProfile={!!profile} />
+        <LoginScreen 
+          onAccountCreate={handleAccountCreate} 
+          onLogin={handleLogin} 
+          hasProfile={!!profile}
+          profile={profile}
+        />
       )}
       
       {appState === 'desktop' && !isLoading && profile && (
