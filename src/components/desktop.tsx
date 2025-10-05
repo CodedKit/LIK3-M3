@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import type { UserProfile } from '@/hooks/use-user-profile';
+import { useUserProfile, type UserProfile } from '@/hooks/use-user-profile';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
