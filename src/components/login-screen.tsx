@@ -1,20 +1,20 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm, type UseFormReturn } from 'react-hook-form';
+import { useForm, type UseFormReturn, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { UserCircle, Check } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import ProfileCard from './profile-card';
 import { cn } from '@/lib/utils';
+import { useFormField } from './ui/form';
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -25,9 +25,10 @@ interface AddProfileCardProps {
     openCreator: () => void;
     form: UseFormReturn<z.infer<typeof formSchema>>;
     onSubmit: (values: z.infer<typeof formSchema>) => void;
+    onInvalid: (errors: FieldErrors<z.infer<typeof formSchema>>) => void;
 }
 
-const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
+const AddProfileCard = ({ isCreating, openCreator, form, onSubmit, onInvalid }: AddProfileCardProps) => (
     <div className={cn("relative group w-[144px]")}>
         <div
             onClick={!isCreating ? openCreator : undefined}
@@ -43,18 +44,24 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
             </div>
             {isCreating ? (
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full">
+                    <form onSubmit={form.handleSubmit(onSubmit, onInvalid)} className="mt-2 w-full">
                         <FormField
                             control={form.control}
                             name="username"
-                            render={({ field }) => (
-                                <FormItem>
-                                    <FormControl>
-                                        <Input placeholder="username..." {...field} className="h-8 text-left w-full" />
-                                    </FormControl>
-                                    <FormMessage className="text-xs" />
-                                </FormItem>
-                            )}
+                            render={({ field }) => {
+                                const { error } = useFormField();
+                                return (
+                                    <FormItem>
+                                        <FormControl>
+                                            <Input 
+                                                placeholder="username..." 
+                                                {...field} 
+                                                className={cn("h-8 text-left w-full", error && "border-destructive focus-visible:ring-destructive")}
+                                            />
+                                        </FormControl>
+                                    </FormItem>
+                                );
+                            }}
                         />
                          <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
                             <Check className="h-4 w-4" />
@@ -120,6 +127,16 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     setIsCreating(false);
     form.reset();
   }
+
+  const onInvalid: Parameters<typeof form.handleSubmit>[1] = (errors) => {
+    if (errors.username?.message) {
+      toast({
+        title: "Invalid Username",
+        description: errors.username.message,
+        variant: "destructive",
+      });
+    }
+  };
   
   const openCreator = () => {
     if (profiles.length < 5) {
@@ -148,6 +165,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             openCreator={openCreator}
             form={form}
             onSubmit={onSubmit}
+            onInvalid={onInvalid}
           />
         )}
 
@@ -157,6 +175,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
               openCreator={openCreator}
               form={form}
               onSubmit={onSubmit}
+              onInvalid={onInvalid}
             />
         )}
       </div>
