@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { useForm, type UseFormReturn } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { UserCircle, Trash2, Check } from 'lucide-react';
@@ -25,6 +25,50 @@ interface LoginScreenProps {
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
 });
+
+interface AddProfileCardProps {
+    isCreating: boolean;
+    openCreator: () => void;
+    form: UseFormReturn<z.infer<typeof formSchema>>;
+    onSubmit: (values: z.infer<typeof formSchema>) => void;
+}
+
+const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={isCreating ? "w-[200px]" : "w-36"}>
+        <div className="p-2">
+            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
+                <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
+            </div>
+        </div>
+        {isCreating ? (
+            <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full">
+                <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                    <FormItem>
+                    <div className="flex items-start justify-center gap-2">
+                        <FormControl>
+                        <Input placeholder="Username" {...field} className="h-8 text-xs w-[128px]" />
+                        </FormControl>
+                        <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
+                        <Check />
+                        </Button>
+                    </div>
+                    <FormMessage className="text-xs" />
+                    </FormItem>
+                )}
+                />
+            </form>
+            </Form>
+        ) : (
+            <Button size="xs" variant="outline" className="mt-2">
+            + New Profile
+            </Button>
+        )}
+    </ProfileCard>
+);
 
 export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete }: LoginScreenProps) {
   const [isCreating, setIsCreating] = useState(false);
@@ -75,43 +119,6 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     }
   };
 
-  const AddProfileCard = () => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={isCreating ? "w-[200px]" : "w-36"}>
-      <div className="p-2">
-        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-          <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
-        </div>
-      </div>
-      {isCreating ? (
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full">
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem>
-                  <div className="flex items-start justify-center gap-2">
-                    <FormControl>
-                      <Input placeholder="Username" {...field} className="h-8 text-xs w-[128px]" />
-                    </FormControl>
-                    <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
-                      <Check />
-                    </Button>
-                  </div>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </form>
-        </Form>
-      ) : (
-        <Button size="xs" variant="outline" className="mt-2">
-          + New Profile
-        </Button>
-      )}
-    </ProfileCard>
-  );
-
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
@@ -134,8 +141,15 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             </Button>
           </ProfileCard>
         ))}
-        {(profiles.length === 0 || (profiles.length < 5 && !isCreating)) && <AddProfileCard />}
-        {profiles.length > 0 && isCreating && <AddProfileCard />}
+        
+        {(profiles.length < 5 || isCreating) && (
+          <AddProfileCard 
+            isCreating={isCreating}
+            openCreator={openCreator}
+            form={form}
+            onSubmit={onSubmit}
+          />
+        )}
       </div>
     </div>
   );
