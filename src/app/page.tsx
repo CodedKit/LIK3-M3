@@ -10,31 +10,34 @@ type AppState = 'booting' | 'login' | 'desktop';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
-  const { profile, saveProfile, isLoading } = useUserProfile();
+  const { profiles, activeProfile, addProfile, setActive, isLoading } = useUserProfile();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => {
       if (!isLoading) {
-        // Always go to login screen after booting, the login screen will handle what to show
-        setAppState('login');
+        if (activeProfile) {
+          setAppState('desktop');
+        } else {
+          setAppState('login');
+        }
       }
     }, 3000);
 
     return () => clearTimeout(bootTimer);
-  }, [isLoading]);
+  }, [isLoading, activeProfile]);
 
-  const handleAccountCreate = (newProfile: UserProfile) => {
-    saveProfile(newProfile);
+  const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id'>) => {
+    addProfile(newProfileData);
     setAppState('desktop');
   };
   
-  const handleLogin = () => {
-    if (profile) {
-      setAppState('desktop');
-    }
+  const handleLogin = (profile: UserProfile) => {
+    setActive(profile);
+    setAppState('desktop');
   };
   
   const handleLogout = () => {
+    setActive(null);
     setAppState('login');
   }
 
@@ -44,15 +47,14 @@ export default function Home() {
       
       {appState === 'login' && !isLoading && (
         <LoginScreen 
+          profiles={profiles}
           onAccountCreate={handleAccountCreate} 
           onLogin={handleLogin} 
-          hasProfile={!!profile}
-          profile={profile}
         />
       )}
       
-      {appState === 'desktop' && !isLoading && profile && (
-        <Desktop userProfile={profile} onLogout={handleLogout} />
+      {appState === 'desktop' && !isLoading && activeProfile && (
+        <Desktop userProfile={activeProfile} onLogout={handleLogout} />
       )}
     </main>
   );

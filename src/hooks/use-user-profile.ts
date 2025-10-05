@@ -1,48 +1,65 @@
-"use client";
+'use client';
 
 import { useState, useEffect, useCallback } from 'react';
 
 export type UserProfile = {
+  id: string;
   username: string;
   avatarUrl: string;
 };
 
-const USER_PROFILE_KEY = 'virtual-temptations-user-profile';
+const USER_PROFILES_KEY = 'virtual-temptations-user-profiles';
 
 export function useUserProfile() {
-  const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [profiles, setProfiles] = useState<UserProfile[]>([]);
+  const [activeProfile, setActiveProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     try {
-      const item = window.localStorage.getItem(USER_PROFILE_KEY);
+      const item = window.localStorage.getItem(USER_PROFILES_KEY);
       if (item) {
-        setProfile(JSON.parse(item));
+        const savedProfiles = JSON.parse(item);
+        if (Array.isArray(savedProfiles)) {
+          setProfiles(savedProfiles);
+        }
       }
     } catch (error) {
-      console.error("Failed to load user profile from localStorage", error);
+      console.error("Failed to load user profiles from localStorage", error);
     } finally {
       setIsLoading(false);
     }
   }, []);
 
-  const saveProfile = useCallback((newProfile: UserProfile) => {
+  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id'>) => {
+    const newProfile: UserProfile = {
+      ...newProfileData,
+      id: `profile_${Date.now()}_${Math.random()}`
+    };
+    
     try {
-      window.localStorage.setItem(USER_PROFILE_KEY, JSON.stringify(newProfile));
-      setProfile(newProfile);
+      const updatedProfiles = [...profiles, newProfile];
+      window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
+      setProfiles(updatedProfiles);
+      setActiveProfile(newProfile); // Automatically log in with the new profile
     } catch (error) {
       console.error("Failed to save user profile to localStorage", error);
     }
+  }, [profiles]);
+  
+  const setActive = useCallback((profile: UserProfile | null) => {
+    setActiveProfile(profile);
   }, []);
 
-  const clearProfile = useCallback(() => {
+  const clearAllProfiles = useCallback(() => {
     try {
-      window.localStorage.removeItem(USER_PROFILE_KEY);
-      setProfile(null);
+      window.localStorage.removeItem(USER_PROFILES_KEY);
+      setProfiles([]);
+      setActiveProfile(null);
     } catch (error) {
-      console.error("Failed to clear user profile from localStorage", error);
+      console.error("Failed to clear user profiles from localStorage", error);
     }
   }, []);
 
-  return { profile, saveProfile, clearProfile, isLoading };
+  return { profiles, activeProfile, addProfile, setActive, clearAllProfiles, isLoading };
 }

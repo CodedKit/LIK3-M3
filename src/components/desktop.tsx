@@ -21,7 +21,7 @@ const apps = [
 
 export default function Desktop({ userProfile, onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
-  const { clearProfile } = useUserProfile();
+  const { clearAllProfiles } = useUserProfile();
 
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
@@ -35,7 +35,7 @@ export default function Desktop({ userProfile, onLogout }: DesktopProps) {
   };
   
   const handleReset = () => {
-    clearProfile();
+    clearAllProfiles();
     onLogout();
   }
 

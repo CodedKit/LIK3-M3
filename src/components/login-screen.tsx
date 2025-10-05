@@ -31,17 +31,16 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import ProfileCard from './profile-card';
 
 interface LoginScreenProps {
-  onAccountCreate: (profile: UserProfile) => void;
-  onLogin: () => void;
-  hasProfile: boolean;
-  profile: UserProfile | null;
+  profiles: UserProfile[];
+  onAccountCreate: (profile: Omit<UserProfile, 'id'>) => void;
+  onLogin: (profile: UserProfile) => void;
 }
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
 });
 
-export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, profile }: LoginScreenProps) {
+export default function LoginScreen({ profiles, onAccountCreate, onLogin }: LoginScreenProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   
@@ -86,9 +85,11 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row items-start gap-8">
-        {hasProfile && profile ? (
+        {profiles.length > 0 ? (
           <>
-            <ProfileCard
+            {profiles.map((profile) => (
+              <ProfileCard
+                key={profile.id}
                 icon={
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={profile.avatarUrl} alt={profile.username} />
@@ -96,12 +97,13 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
                     </Avatar>
                 }
                 label={<p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>}
-                onClick={onLogin}
-            />
-            <ProfileCard
+                onClick={() => onLogin(profile)}
+              />
+            ))}
+             <ProfileCard
                 icon={
-                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                        <UserPlus className="h-8 w-8 text-muted-foreground/50" strokeWidth={1}/>
+                    <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
+                        <UserPlus className="h-10 w-auto text-muted-foreground/50" strokeWidth={1}/>
                     </Avatar>
                 }
                 label={<Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>}
@@ -111,7 +113,7 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
         ) : (
             <ProfileCard
                 icon={
-                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                    <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
                         <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
                     </Avatar>
                 }
