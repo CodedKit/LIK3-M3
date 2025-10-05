@@ -88,30 +88,32 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
         {hasProfile && profile ? (
           <>
             <div className="text-center">
-              <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
-                  <Avatar className="h-48 w-48">
+              <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
+                  <Avatar className="h-20 w-20">
                       <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                       <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
                   </Avatar>
               </Button>
-              <p className="mt-4 text-2xl font-headline text-primary-foreground">{profile.username}</p>
-              <p className="mt-1 text-muted-foreground">Click avatar to login</p>
+              <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
+              <p className="mt-1 text-xs text-muted-foreground">Click to login</p>
             </div>
             <div className="text-center">
-                <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
-                    <Avatar className="h-48 w-48 flex items-center justify-center bg-muted/50">
-                        <UserPlus className="h-24 w-24 text-muted-foreground/50" strokeWidth={1}/>
+                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
+                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                        <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
                     </Avatar>
                 </Button>
-                <p className="mt-4 text-2xl font-headline text-primary-foreground">+ New Profile</p>
+                <p className="mt-2 text-lg font-headline text-primary-foreground">+ New Profile</p>
             </div>
           </>
         ) : (
           <div className="text-center">
-            <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
-              <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
+            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
+              <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                <UserCircle className="h-20 w-20 text-muted-foreground/50" strokeWidth={0.5}/>
+              </Avatar>
             </Button>
-            <p className="mt-4 text-muted-foreground">Click to create a profile</p>
+            <p className="mt-2 text-muted-foreground">Click to create a profile</p>
           </div>
         )}
       </div>
