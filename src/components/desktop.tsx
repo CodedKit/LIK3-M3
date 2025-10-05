@@ -21,6 +21,7 @@ const apps = [
 
 export default function Desktop({ userProfile, onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
+  const { clearProfile } = useUserProfile();
 
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
@@ -32,6 +33,11 @@ export default function Desktop({ userProfile, onLogout }: DesktopProps) {
   const closeApp = () => {
     setActiveApp(null);
   };
+  
+  const handleReset = () => {
+    clearProfile();
+    onLogout();
+  }
 
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
@@ -48,7 +54,7 @@ export default function Desktop({ userProfile, onLogout }: DesktopProps) {
         </div>
       </div>
 
-      <Taskbar userProfile={userProfile} onLogout={onLogout} />
+      <Taskbar userProfile={userProfile} onLogout={onLogout} onReset={handleReset} />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">

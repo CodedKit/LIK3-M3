@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Power, Settings, User, Wifi, BatteryFull, Volume2 } from 'lucide-react';
+import { Power, Settings, User, Wifi, BatteryFull, Volume2, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -20,9 +20,10 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 interface TaskbarProps {
   userProfile: UserProfile;
   onLogout: () => void;
+  onReset: () => void;
 }
 
-export default function Taskbar({ userProfile, onLogout }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onReset }: TaskbarProps) {
   const [currentTime, setCurrentTime] = useState('');
 
   useEffect(() => {
@@ -69,6 +70,10 @@ export default function Taskbar({ userProfile, onLogout }: TaskbarProps) {
             <DropdownMenuItem onClick={onLogout}>
               <Power className="mr-2 h-4 w-4" />
               <span>Logout</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem onClick={onReset} className="text-destructive focus:bg-destructive/20 focus:text-destructive">
+                <Trash2 className="mr-2 h-4 w-4" />
+                <span>Reset Profile</span>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

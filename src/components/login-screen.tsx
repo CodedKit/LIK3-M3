@@ -31,13 +31,15 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface LoginScreenProps {
   onAccountCreate: (profile: UserProfile) => void;
+  onLogin: () => void;
+  hasProfile: boolean;
 }
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
 });
 
-export default function LoginScreen({ onAccountCreate }: LoginScreenProps) {
+export default function LoginScreen({ onAccountCreate, onLogin, hasProfile }: LoginScreenProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   
@@ -72,44 +74,53 @@ export default function LoginScreen({ onAccountCreate }: LoginScreenProps) {
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <div className="text-center">
-            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300">
+      {hasProfile ? (
+         <div className="text-center">
+            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
                <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
             </Button>
-            <p className="mt-4 text-muted-foreground">Click to create a profile</p>
+            <p className="mt-4 text-muted-foreground">Click to login</p>
           </div>
-        </DialogTrigger>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle className='font-headline'>Create Your Profile</DialogTitle>
-            <DialogDescription>
-              Choose a username to begin your journey in Virtual Temptations.
-            </DialogDescription>
-          </DialogHeader>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Enter your username" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <DialogFooter>
-                <Button type="submit">Create Account</Button>
-              </DialogFooter>
-            </form>
-          </Form>
-        </DialogContent>
-      </Dialog>
+      ) : (
+        <Dialog open={isOpen} onOpenChange={setIsOpen}>
+            <DialogTrigger asChild>
+            <div className="text-center">
+                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300">
+                <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
+                </Button>
+                <p className="mt-4 text-muted-foreground">Click to create a profile</p>
+            </div>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+            <DialogHeader>
+                <DialogTitle className='font-headline'>Create Your Profile</DialogTitle>
+                <DialogDescription>
+                Choose a username to begin your journey in Virtual Temptations.
+                </DialogDescription>
+            </DialogHeader>
+            <Form {...form}>
+                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                <FormField
+                    control={form.control}
+                    name="username"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Username</FormLabel>
+                        <FormControl>
+                        <Input placeholder="Enter your username" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <DialogFooter>
+                    <Button type="submit">Create Account</Button>
+                </DialogFooter>
+                </form>
+            </Form>
+            </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
