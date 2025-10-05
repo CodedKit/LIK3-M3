@@ -30,21 +30,21 @@ interface AddProfileCardProps {
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
     <div className={cn("relative group w-[144px]")}>
         <ProfileCard onClick={!isCreating ? openCreator : undefined}>
-            <div className="flex h-[88px] w-full items-center justify-center">
+            <div className="flex h-auto w-full items-center justify-center">
                 <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                     <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
                 </div>
             </div>
             {isCreating ? (
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full">
                         <FormField
                             control={form.control}
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
                                     <FormControl>
-                                        <Input placeholder="username..." {...field} className="h-8 text-xs text-left" />
+                                        <Input placeholder="username..." {...field} className="h-8 text-left w-full" />
                                     </FormControl>
                                     <FormMessage className="text-xs" />
                                 </FormItem>
@@ -56,7 +56,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                     </form>
                 </Form>
             ) : (
-                <Button size="xs" variant="outline" className="mt-2">
+                <Button size="xs" variant="outline" className="mt-2 w-full">
                     + New Profile
                 </Button>
             )}
@@ -134,7 +134,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             className="w-[144px]"
           >
             <div className="p-0">
-              <Avatar className="h-20 w-20">
+              <Avatar className="h-auto w-full rounded-none">
                 <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                 <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
               </Avatar>
