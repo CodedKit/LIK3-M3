@@ -93,7 +93,6 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
                     <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
                 </Avatar>
               <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
-              <p className="mt-1 text-xs text-muted-foreground">Click to login</p>
             </Button>
             
             <div className="flex flex-col gap-4 items-center">
