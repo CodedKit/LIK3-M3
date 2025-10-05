@@ -12,7 +12,7 @@ export default function ProfileCard({ children, onClick, className }: ProfileCar
       onClick={onClick}
       className={cn(
         "relative group flex h-auto flex-col items-center gap-1 rounded-lg text-center transition-all duration-200 overflow-visible p-2",
-        onClick && "cursor-pointer hover:ring-2 hover:ring-border",
+        onClick && "cursor-pointer hover:ring-1 hover:ring-border",
         className
       )}
     >
