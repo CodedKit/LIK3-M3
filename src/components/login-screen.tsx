@@ -28,6 +28,7 @@ import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
+import ProfileCard from './profile-card';
 
 interface LoginScreenProps {
   onAccountCreate: (profile: UserProfile) => void;
@@ -87,32 +88,36 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
       <div className="flex flex-row items-start gap-8">
         {hasProfile && profile ? (
           <>
-            <Button variant="ghost" className="h-auto w-auto p-2 flex flex-col gap-2 text-center" onClick={onLogin}>
-                <Avatar className="h-20 w-20">
-                    <AvatarImage src={profile.avatarUrl} alt={profile.username} />
-                    <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
-                </Avatar>
-              <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
-            </Button>
-            
-            <div className="flex flex-col gap-4 items-center text-center">
-              <Button variant="ghost" className="h-auto w-auto p-2 flex flex-col gap-2" onClick={openDialog}>
-                <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                    <UserPlus className="h-8 w-8 text-muted-foreground/50" strokeWidth={1}/>
-                </Avatar>
-              </Button>
-              <Button size="xs" variant="outline" onClick={openDialog}>+ New Profile</Button>
-            </div>
+            <ProfileCard
+                icon={
+                    <Avatar className="h-20 w-20">
+                        <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+                        <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                }
+                label={<p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>}
+                onClick={onLogin}
+            />
+            <ProfileCard
+                icon={
+                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                        <UserPlus className="h-8 w-8 text-muted-foreground/50" strokeWidth={1}/>
+                    </Avatar>
+                }
+                label={<Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>}
+                onClick={openDialog}
+            />
           </>
         ) : (
-          <div className="text-center">
-            <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
-              <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
-              </Avatar>
-            </Button>
-            <p className="mt-2 text-muted-foreground">Click to create a profile</p>
-          </div>
+            <ProfileCard
+                icon={
+                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                        <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
+                    </Avatar>
+                }
+                label={<p className="mt-2 text-muted-foreground">Click to create a profile</p>}
+                onClick={openDialog}
+            />
         )}
       </div>
 
