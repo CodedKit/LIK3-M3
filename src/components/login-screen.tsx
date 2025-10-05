@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserCircle, UserPlus } from 'lucide-react';
+import { UserCircle, UserPlus, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -34,13 +34,14 @@ interface LoginScreenProps {
   profiles: UserProfile[];
   onAccountCreate: (profile: Omit<UserProfile, 'id'>) => void;
   onLogin: (profile: UserProfile) => void;
+  onProfileDelete: (profileId: string) => void;
 }
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
 });
 
-export default function LoginScreen({ profiles, onAccountCreate, onLogin }: LoginScreenProps) {
+export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete }: LoginScreenProps) {
   const [isOpen, setIsOpen] = useState(false);
   const { toast } = useToast();
   
@@ -50,6 +51,15 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin }: Logi
       username: '',
     },
   });
+
+  const handleDelete = (e: React.MouseEvent, profileId: string) => {
+    e.stopPropagation();
+    onProfileDelete(profileId);
+    toast({
+      title: "Profile Deleted",
+      description: "The user profile has been removed.",
+    });
+  }
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     const avatar = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
@@ -84,7 +94,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin }: Logi
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
-      <div className="flex flex-row items-start gap-8">
+      <div className="flex flex-row items-start gap-8 p-8">
         {profiles.length > 0 ? (
           <>
             {profiles.map((profile) => (
@@ -92,6 +102,9 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin }: Logi
                 key={profile.id}
                 onClick={() => onLogin(profile)}
               >
+                  <Button variant="ghost" size="icon" className="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity" onClick={(e) => handleDelete(e, profile.id)}>
+                    <Trash2 className="h-4 w-4 text-destructive" />
+                  </Button>
                   <div className="p-2">
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={profile.avatarUrl} alt={profile.username} />

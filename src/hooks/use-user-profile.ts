@@ -51,6 +51,19 @@ export function useUserProfile() {
     setActiveProfile(profile);
   }, []);
 
+  const deleteProfile = useCallback((profileId: string) => {
+    try {
+      const updatedProfiles = profiles.filter(p => p.id !== profileId);
+      window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
+      setProfiles(updatedProfiles);
+      if (activeProfile?.id === profileId) {
+        setActiveProfile(null);
+      }
+    } catch (error) {
+      console.error("Failed to delete user profile from localStorage", error);
+    }
+  }, [profiles, activeProfile]);
+
   const clearAllProfiles = useCallback(() => {
     try {
       window.localStorage.removeItem(USER_PROFILES_KEY);
@@ -61,5 +74,5 @@ export function useUserProfile() {
     }
   }, []);
 
-  return { profiles, activeProfile, addProfile, setActive, clearAllProfiles, isLoading };
+  return { profiles, activeProfile, addProfile, setActive, deleteProfile, clearAllProfiles, isLoading };
 }

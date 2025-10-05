@@ -10,7 +10,7 @@ type AppState = 'booting' | 'login' | 'desktop';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
-  const { profiles, activeProfile, addProfile, setActive, isLoading } = useUserProfile();
+  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfile();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => {
@@ -50,6 +50,7 @@ export default function Home() {
           profiles={profiles}
           onAccountCreate={handleAccountCreate} 
           onLogin={handleLogin} 
+          onProfileDelete={deleteProfile}
         />
       )}
       
