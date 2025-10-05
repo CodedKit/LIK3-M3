@@ -35,7 +35,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn("p-2", !isCreating ? 'w-auto' : 'w-[200px]')}>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn('p-2', isCreating ? "w-[200px]" : "w-auto")}>
         <div className="flex h-[88px] w-full items-center justify-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -43,7 +43,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
         </div>
         {isCreating ? (
             <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2">
                 <FormField
                 control={form.control}
                 name="username"
@@ -130,7 +130,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           <ProfileCard
             key={profile.id}
             onClick={() => onLogin(profile)}
-            className="w-auto p-2"
+            className="w-[160px]"
           >
             <div>
               <Avatar className="h-20 w-20">
@@ -140,12 +140,12 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             </div>
             <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
             <Button
-              variant="ghost"
-              size="icon"
-              className="absolute bottom-2 right-2 h-auto py-1 opacity-0 group-hover:opacity-100 transition-opacity"
+              variant="outline"
+              size="xs"
+              className="absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
               onClick={(e) => handleDelete(e, profile.id)}
             >
-              <Trash2 className="h-4 w-4 text-destructive" />
+              <Trash2 className="text-destructive" />
             </Button>
           </ProfileCard>
         ))}
