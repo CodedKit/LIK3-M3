@@ -30,9 +30,9 @@ interface AddProfileCardProps {
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
     <div className={cn("relative group w-[144px]")}>
         <ProfileCard onClick={!isCreating ? openCreator : undefined}>
-            <div className="flex h-auto w-full items-center justify-center">
-                <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-                    <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
+            <div className="w-full">
+                <div className="aspect-square flex items-center justify-center rounded-lg bg-muted/50">
+                    <UserCircle className="h-12 w-auto text-muted-foreground/50" strokeWidth={1} />
                 </div>
             </div>
             {isCreating ? (
