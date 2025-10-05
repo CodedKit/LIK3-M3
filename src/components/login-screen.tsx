@@ -87,24 +87,21 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
       <div className="flex flex-row items-start gap-8">
         {hasProfile && profile ? (
           <>
-            <div className="text-center">
-              <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={onLogin}>
-                  <Avatar className="h-20 w-20">
-                      <AvatarImage src={profile.avatarUrl} alt={profile.username} />
-                      <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
-                  </Avatar>
-              </Button>
+            <Button variant="ghost" className="h-auto w-auto p-0 flex flex-col gap-2 text-center" onClick={onLogin}>
+                <Avatar className="h-20 w-20">
+                    <AvatarImage src={profile.avatarUrl} alt={profile.username} />
+                    <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
+                </Avatar>
               <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
               <p className="mt-1 text-xs text-muted-foreground">Click to login</p>
-            </div>
-            <div className="text-center">
-                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
-                    <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                        <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
-                    </Avatar>
-                </Button>
+            </Button>
+            
+            <Button variant="ghost" className="h-auto w-auto p-0 flex flex-col gap-2 text-center" onClick={openDialog}>
+                <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                    <UserPlus className="h-10 w-10 text-muted-foreground/50" strokeWidth={1}/>
+                </Avatar>
                 <p className="mt-2 text-lg font-headline text-primary-foreground">+ New Profile</p>
-            </div>
+            </Button>
           </>
         ) : (
           <div className="text-center">
