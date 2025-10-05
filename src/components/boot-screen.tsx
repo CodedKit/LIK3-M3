@@ -23,10 +23,10 @@ export default function BootScreen() {
   return (
     <div className="flex h-full w-full flex-col items-center justify-center bg-background animate-in fade-in duration-500">
       <div className="w-full max-w-md p-8 text-center">
-        <h1 className="font-headline text-5xl font-bold text-primary-foreground mb-4">
-          Virtual Temptations
+        <h1 className="font-headline text-2xl font-bold text-primary-foreground mb-4">
+          LIK3 M3
         </h1>
-        <Progress value={progress} className="h-2 w-full" />
+        <Progress value={progress} className="h-1 w-full" />
         <p className="mt-2 text-sm text-muted-foreground">{progress}%</p>
       </div>
     </div>
