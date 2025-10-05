@@ -106,7 +106,7 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
           <div className="text-center">
             <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
               <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
-                <UserCircle className="h-20 w-20 text-muted-foreground/50" strokeWidth={0.5}/>
+                <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
               </Avatar>
             </Button>
             <p className="mt-2 text-muted-foreground">Click to create a profile</p>
