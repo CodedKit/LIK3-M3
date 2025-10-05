@@ -1,12 +1,97 @@
+'use client';
+
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { Heart } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useUserProfile } from '@/hooks/use-user-profile';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
+import { Card, CardContent } from '@/components/ui/card';
+
+const POST_ID = 'post-1';
+const LIKES_STORAGE_KEY = 'virtual-temptations-likes';
+
+type LikesData = {
+  [profileId: string]: {
+    [postId: string]: number;
+  };
+};
+
 export default function Likestagram() {
+  const { activeProfile } = useUserProfile();
+  const [likes, setLikes] = useState(0);
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (!activeProfile) return;
+
+    try {
+      const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
+      const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
+      const profileLikes = likesData[activeProfile.id] || {};
+      const postLikes = profileLikes[POST_ID] || 0;
+      
+      setLikes(postLikes);
+      setIsLiked(postLikes > 0); // For this simple case, if likes > 0, the user has liked it.
+    } catch (error) {
+      console.error('Failed to load likes from localStorage', error);
+    }
+  }, [activeProfile]);
+
+  const handleLike = () => {
+    if (!activeProfile) return;
+
+    const newLikes = isLiked ? likes - 1 : likes + 1;
+    setLikes(newLikes);
+    setIsLiked(!isLiked);
+
+    try {
+      const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
+      const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
+      
+      if (!likesData[activeProfile.id]) {
+        likesData[activeProfile.id] = {};
+      }
+      
+      likesData[activeProfile.id][POST_ID] = newLikes;
+
+      window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
+    } catch (error) {
+      console.error('Failed to save likes to localStorage', error);
+      // Revert state on error
+      setLikes(likes);
+      setIsLiked(isLiked);
+    }
+  };
+  
+  const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
+
   return (
-    <div className="h-full w-full bg-background p-4">
-      <h2 className="font-headline text-2xl text-primary-foreground">
-        Welcome to Likestagram
-      </h2>
-      <p className="text-muted-foreground mt-2">
-        This is a placeholder for the Likestagram application.
-      </p>
+    <div className="h-full w-full bg-background p-4 flex justify-center items-start">
+        <Card className="w-full max-w-sm">
+            <CardContent className="p-4">
+                {postImage && (
+                    <div className="aspect-square relative mb-4">
+                        <Image
+                            src={postImage.imageUrl}
+                            alt="Post"
+                            layout="fill"
+                            objectFit="cover"
+                            className="rounded-lg"
+                        />
+                    </div>
+                )}
+                <div className="flex items-center gap-4">
+                    <Button variant="ghost" size="icon" onClick={handleLike}>
+                        <Heart className={cn("h-6 w-6", isLiked ? "text-red-500 fill-red-500" : "text-primary-foreground")} />
+                    </Button>
+                    <p className="text-sm font-medium text-primary-foreground">
+                        {likes} {likes === 1 ? 'like' : 'likes'}
+                    </p>
+                </div>
+            </CardContent>
+        </Card>
     </div>
   );
 }
