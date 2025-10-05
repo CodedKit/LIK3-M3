@@ -14,6 +14,7 @@ import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import ProfileCard from './profile-card';
+import { cn } from '@/lib/utils';
 
 interface LoginScreenProps {
   profiles: UserProfile[];
@@ -34,7 +35,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[200px]">
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn("w-[200px]")}>
         <div className="flex h-[88px] w-full items-center justify-center p-2">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -119,8 +120,8 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     }
   };
 
-  const showAddProfileCard = profiles.length < 5;
-  const showZeroState = profiles.length === 0 && !isCreating;
+  const showAddProfileCard = profiles.length < 5 || isCreating;
+  const showZeroState = profiles.length === 0;
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
@@ -145,7 +146,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           </ProfileCard>
         ))}
         
-        {showAddProfileCard && !showZeroState && (
+        {showAddProfileCard && (!showZeroState || (showZeroState && isCreating)) && (
           <AddProfileCard 
             isCreating={isCreating}
             openCreator={openCreator}
@@ -154,7 +155,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           />
         )}
 
-        {showZeroState && (
+        {showZeroState && !isCreating && (
             <AddProfileCard 
               isCreating={isCreating}
               openCreator={openCreator}
