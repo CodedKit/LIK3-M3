@@ -91,7 +91,7 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
             <DialogTrigger asChild>
             <div className="text-center">
-                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300">
+                <Button variant="ghost" className="h-auto w-auto p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={() => setIsOpen(true)}>
                 <UserCircle className="h-48 w-48 text-muted-foreground/50" strokeWidth={0.5}/>
                 </Button>
                 <p className="mt-4 text-muted-foreground">Click to create a profile</p>
