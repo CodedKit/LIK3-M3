@@ -2,7 +2,7 @@ import { cn } from '@/lib/utils';
 
 interface ProfileCardProps {
   children: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   className?: string;
 }
 
@@ -11,7 +11,8 @@ export default function ProfileCard({ children, onClick, className }: ProfileCar
     <div
       onClick={onClick}
       className={cn(
-        "relative group flex h-auto w-36 flex-col items-center gap-1 rounded-lg p-2 text-center cursor-pointer transition-colors hover:bg-white/10",
+        "relative group flex h-auto w-36 flex-col items-center gap-1 rounded-lg p-4 text-center transition-colors",
+        onClick && "cursor-pointer hover:bg-white/10",
         className
       )}
     >
