@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserPlus, Trash2 } from 'lucide-react';
+import { UserCircle, Trash2 } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -96,7 +96,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     <ProfileCard onClick={openDialog}>
       <div className="p-2">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-            <UserPlus className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
+            <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
         </div>
       </div>
       <Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>
@@ -123,7 +123,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
               </Button>
           </ProfileCard>
         ))}
-        <AddProfileCard />
+        {profiles.length < 5 && <AddProfileCard />}
       </div>
 
       <Dialog open={isOpen} onOpenChange={onDialogStateChange}>
