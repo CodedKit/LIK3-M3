@@ -134,7 +134,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             className="w-[144px]"
           >
             <div className="p-0">
-              <Avatar className="h-auto w-full rounded-none">
+              <Avatar className="h-auto w-full rounded-lg">
                 <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                 <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
               </Avatar>
