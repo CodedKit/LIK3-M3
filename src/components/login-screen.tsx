@@ -76,7 +76,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
   };
 
   const AddProfileCard = () => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-60">
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[200px]">
       <div className="p-2">
         <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
           <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -92,7 +92,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
                 <FormItem>
                   <div className="flex items-start gap-2">
                     <FormControl>
-                      <Input placeholder="Username" {...field} className="h-8 text-xs" />
+                      <Input placeholder="Username" {...field} className="h-8 text-xs w-[160px]" />
                     </FormControl>
                     <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
                       <Check />
@@ -116,7 +116,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
         {profiles.map((profile) => (
-          <ProfileCard key={profile.id} onClick={() => onLogin(profile)} className="w-60">
+          <ProfileCard key={profile.id} onClick={() => onLogin(profile)} className="w-[200px]">
             <div className="p-2">
               <Avatar className="h-20 w-20">
                 <AvatarImage src={profile.avatarUrl} alt={profile.username} />
