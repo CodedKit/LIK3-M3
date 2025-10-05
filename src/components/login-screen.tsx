@@ -63,6 +63,14 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
     </ProfileCard>
 );
 
+interface LoginScreenProps {
+    profiles: UserProfile[];
+    onAccountCreate: (newProfileData: Omit<UserProfile, 'id'>) => void;
+    onLogin: (profile: UserProfile) => void;
+    onProfileDelete: (profileId: string) => void;
+}
+
+
 export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete }: LoginScreenProps) {
   const [isCreating, setIsCreating] = useState(false);
   const { toast } = useToast();
