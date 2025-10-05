@@ -35,7 +35,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn('p-2', isCreating ? "w-[200px]" : "w-auto")}>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={cn(isCreating ? "w-[200px]" : "w-auto")}>
         <div className="flex h-[88px] w-full items-center justify-center">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -141,11 +141,11 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
             <Button
               variant="outline"
-              size="xs"
-              className="absolute -bottom-7 left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 transition-opacity"
+              size="icon"
+              className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-6 w-6"
               onClick={(e) => handleDelete(e, profile.id)}
             >
-              <Trash2 className="text-destructive" />
+              <Trash2 className="text-destructive h-4 w-4" />
             </Button>
           </ProfileCard>
         ))}
