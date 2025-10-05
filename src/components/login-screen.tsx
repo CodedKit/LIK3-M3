@@ -27,37 +27,37 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={isCreating ? "w-[200px]" : "w-[160px]"}>
-        <div className="flex h-[88px] w-full items-center justify-center">
-            <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
-                <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
-            </div>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[160px]">
+      <div className="flex h-[88px] w-full items-center justify-center">
+        <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
+          <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
         </div>
-        {isCreating ? (
-            <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2">
-                <FormField
-                control={form.control}
-                name="username"
-                render={({ field }) => (
-                    <FormItem>
-                    <FormControl>
-                        <Input placeholder="Username" {...field} className="h-8 text-xs text-center" />
-                    </FormControl>
-                    <FormMessage className="text-xs" />
-                    </FormItem>
-                )}
-                />
-                <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
-                    <Check className="h-4 w-4" />
-                </Button>
-            </form>
-            </Form>
-        ) : (
-            <Button size="xs" variant="outline" className="mt-2">
-            + New Profile
+      </div>
+      {isCreating ? (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-2 w-full px-2 relative">
+            <FormField
+              control={form.control}
+              name="username"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <Input placeholder="Username" {...field} className="h-8 text-xs" />
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+            <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
+              <Check className="h-4 w-4" />
             </Button>
-        )}
+          </form>
+        </Form>
+      ) : (
+        <Button size="xs" variant="outline" className="mt-2">
+          + New Profile
+        </Button>
+      )}
     </ProfileCard>
 );
 
