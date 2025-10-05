@@ -33,7 +33,7 @@ export default function Likestagram() {
       const postLikes = profileLikes[POST_ID] || 0;
       
       setLikes(postLikes);
-      setIsLiked(postLikes > 0); // For this simple case, if likes > 0, the user has liked it.
+      setIsLiked(postLikes > 0);
     } catch (error) {
       console.error('Failed to load likes from localStorage', error);
     }
@@ -42,9 +42,11 @@ export default function Likestagram() {
   const handleLike = () => {
     if (!activeProfile) return;
 
-    const newLikes = isLiked ? likes - 1 : likes + 1;
+    const newLikes = likes + 1;
     setLikes(newLikes);
-    setIsLiked(!isLiked);
+    if (!isLiked) {
+      setIsLiked(true);
+    }
 
     try {
       const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
@@ -61,7 +63,6 @@ export default function Likestagram() {
       console.error('Failed to save likes to localStorage', error);
       // Revert state on error
       setLikes(likes);
-      setIsLiked(isLiked);
     }
   };
   
