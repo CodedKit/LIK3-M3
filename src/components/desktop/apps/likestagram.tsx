@@ -75,7 +75,7 @@ export default function Likestagram() {
                         <Image
                             src={postImage.imageUrl}
                             alt="Post"
-                            layout="fill"
+                            fill
                             objectFit="cover"
                             className="rounded-lg"
                         />
