@@ -14,7 +14,7 @@ const LIKES_STORAGE_KEY = 'virtual-temptations-likes';
 
 type LikesData = {
   [profileId: string]: {
-    [postId: string]: number; // Store the number of likes
+    [postId: string]: number;
   };
 };
 
@@ -22,7 +22,6 @@ export default function Likestagram() {
   const { activeProfile } = useUserProfile();
   const [likes, setLikes] = useState(0);
 
-  // Load likes from localStorage when the component mounts or the user changes
   useEffect(() => {
     if (!activeProfile) return;
 
@@ -34,32 +33,34 @@ export default function Likestagram() {
       setLikes(postLikes);
     } catch (error) {
       console.error('Failed to load likes from localStorage', error);
-      setLikes(0); // Reset to 0 on error
+      setLikes(0);
     }
   }, [activeProfile]);
 
   const handleLike = useCallback(() => {
     if (!activeProfile) return;
 
-    const newLikes = likes + 1;
-    setLikes(newLikes);
+    setLikes(prevLikes => {
+      const newLikes = prevLikes + 1;
 
-    try {
-      const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
-      const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
-      
-      if (!likesData[activeProfile.id]) {
-        likesData[activeProfile.id] = {};
+      try {
+        const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
+        const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
+        
+        if (!likesData[activeProfile.id]) {
+          likesData[activeProfile.id] = {};
+        }
+        
+        likesData[activeProfile.id][POST_ID] = newLikes;
+
+        window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
+      } catch (error) {
+        console.error('Failed to save likes to localStorage', error);
       }
       
-      likesData[activeProfile.id][POST_ID] = newLikes;
-
-      window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
-    } catch (error) {
-      console.error('Failed to save likes to localStorage', error);
-      // Optional: handle save error, e.g., show a toast
-    }
-  }, [activeProfile, likes]);
+      return newLikes;
+    });
+  }, [activeProfile]);
   
   const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
   const isLiked = likes > 0;
