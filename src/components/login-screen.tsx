@@ -90,36 +90,35 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin }: Logi
             {profiles.map((profile) => (
               <ProfileCard
                 key={profile.id}
-                icon={
+                onClick={() => onLogin(profile)}
+              >
+                  <div className="p-2">
                     <Avatar className="h-20 w-20">
                         <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                         <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
                     </Avatar>
-                }
-                label={<p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>}
-                onClick={() => onLogin(profile)}
-              />
+                  </div>
+                  <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
+              </ProfileCard>
             ))}
-             <ProfileCard
-                icon={
+             <ProfileCard onClick={openDialog}>
+                <div className="p-2">
                     <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
-                        <UserPlus className="h-10 w-auto text-muted-foreground/50" strokeWidth={1}/>
+                        <UserPlus className="h-8 w-auto text-muted-foreground/50" strokeWidth={1}/>
                     </Avatar>
-                }
-                label={<Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>}
-                onClick={openDialog}
-            />
+                </div>
+                <Button size="xs" variant="outline" className='mt-2'>+ New Profile</Button>
+            </ProfileCard>
           </>
         ) : (
-            <ProfileCard
-                icon={
+            <ProfileCard onClick={openDialog}>
+                <div className="p-2">
                     <Avatar className="flex h-20 w-20 items-center justify-center bg-muted/50">
                         <UserCircle className="h-10 w-10 text-muted-foreground/50" strokeWidth={0.5}/>
                     </Avatar>
-                }
-                label={<p className="mt-2 text-muted-foreground">Click to create a profile</p>}
-                onClick={openDialog}
-            />
+                </div>
+                <p className="mt-2 text-muted-foreground">Click to create a profile</p>
+            </ProfileCard>
         )}
       </div>
 
