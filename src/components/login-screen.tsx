@@ -34,7 +34,7 @@ interface AddProfileCardProps {
 }
 
 const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileCardProps) => (
-    <ProfileCard onClick={!isCreating ? openCreator : undefined} className={isCreating ? "w-[200px]" : "w-36"}>
+    <ProfileCard onClick={!isCreating ? openCreator : undefined} className="w-[200px]">
         <div className="p-2">
             <div className="flex h-20 w-20 items-center justify-center rounded-full bg-muted/50">
                 <UserCircle className="h-8 w-auto text-muted-foreground/50" strokeWidth={1} />
@@ -142,7 +142,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           </ProfileCard>
         ))}
         
-        {(profiles.length < 5 || isCreating) && (
+        {profiles.length < 5 && (
           <AddProfileCard 
             isCreating={isCreating}
             openCreator={openCreator}
