@@ -28,7 +28,6 @@ import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
-import { Separator } from './ui/separator';
 
 interface LoginScreenProps {
   onAccountCreate: (profile: UserProfile) => void;
@@ -99,10 +98,12 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
               <p className="mt-1 text-muted-foreground">Click avatar to login</p>
             </div>
             <div className="text-center">
-              <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
-                <UserPlus className="h-32 w-32 text-muted-foreground/50" strokeWidth={0.5}/>
-              </Button>
-              <p className="mt-4 text-2xl font-headline text-primary-foreground">+ New Profile</p>
+                <Button variant="ghost" className="h-48 w-48 p-0 rounded-full hover:bg-accent/20 transition-colors duration-300" onClick={openDialog}>
+                    <Avatar className="h-48 w-48 flex items-center justify-center bg-muted/50">
+                        <UserPlus className="h-24 w-24 text-muted-foreground/50" strokeWidth={1}/>
+                    </Avatar>
+                </Button>
+                <p className="mt-4 text-2xl font-headline text-primary-foreground">+ New Profile</p>
             </div>
           </>
         ) : (
