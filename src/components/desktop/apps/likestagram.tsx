@@ -63,6 +63,7 @@ export default function Likestagram() {
       console.error('Failed to save likes to localStorage', error);
       // Revert state on error
       setLikes(likes);
+      if(likes === 0) setIsLiked(false);
     }
   };
   
