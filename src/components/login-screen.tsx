@@ -41,18 +41,16 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit }: AddProfileC
                 name="username"
                 render={({ field }) => (
                     <FormItem>
-                    <div className="flex w-full items-start justify-center gap-2">
-                        <FormControl>
-                        <Input placeholder="Username" {...field} className="h-8 text-xs" />
-                        </FormControl>
-                        <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
-                        <Check />
-                        </Button>
-                    </div>
+                    <FormControl>
+                        <Input placeholder="Username" {...field} className="h-8 text-xs text-center" />
+                    </FormControl>
                     <FormMessage className="text-xs" />
                     </FormItem>
                 )}
                 />
+                <Button type="submit" variant="outline" size="icon" className="absolute -bottom-11 left-1/2 -translate-x-1/2 h-8 w-8">
+                    <Check className="h-4 w-4" />
+                </Button>
             </form>
             </Form>
         ) : (
