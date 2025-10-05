@@ -11,7 +11,7 @@ export default function ProfileCard({ children, onClick, className }: ProfileCar
     <div
       onClick={onClick}
       className={cn(
-        "relative group h-auto w-auto flex flex-col gap-1 text-center p-2 rounded-lg cursor-pointer transition-colors hover:bg-white/10",
+        "relative group flex h-auto w-36 flex-col items-center gap-1 rounded-lg p-2 text-center cursor-pointer transition-colors hover:bg-white/10",
         className
       )}
     >
