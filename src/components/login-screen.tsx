@@ -87,7 +87,7 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
       <div className="flex flex-row items-start gap-8">
         {hasProfile && profile ? (
           <>
-            <Button variant="ghost" className="h-auto w-auto p-1 flex flex-col gap-2 text-center" onClick={onLogin}>
+            <Button variant="ghost" className="h-auto w-auto p-2 flex flex-col gap-2 text-center" onClick={onLogin}>
                 <Avatar className="h-20 w-20">
                     <AvatarImage src={profile.avatarUrl} alt={profile.username} />
                     <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
@@ -95,10 +95,12 @@ export default function LoginScreen({ onAccountCreate, onLogin, hasProfile, prof
               <p className="mt-2 text-lg font-headline text-primary-foreground">{profile.username}</p>
             </Button>
             
-            <div className="flex flex-col gap-4 items-center">
-              <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50 cursor-pointer" onClick={openDialog}>
-                  <UserPlus className="h-8 w-8 text-muted-foreground/50" strokeWidth={1}/>
-              </Avatar>
+            <div className="flex flex-col gap-4 items-center text-center">
+              <Button variant="ghost" className="h-auto w-auto p-2 flex flex-col gap-2" onClick={openDialog}>
+                <Avatar className="h-20 w-20 flex items-center justify-center bg-muted/50">
+                    <UserPlus className="h-8 w-8 text-muted-foreground/50" strokeWidth={1}/>
+                </Avatar>
+              </Button>
               <Button size="xs" variant="outline" onClick={openDialog}>+ New Profile</Button>
             </div>
           </>
