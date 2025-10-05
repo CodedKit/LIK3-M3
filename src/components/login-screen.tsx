@@ -90,9 +90,9 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
               name="username"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex items-start gap-2">
+                  <div className="flex items-start justify-center gap-2">
                     <FormControl>
-                      <Input placeholder="Username" {...field} className="h-8 text-xs w-[160px]" />
+                      <Input placeholder="Username" {...field} className="h-8 text-xs w-[128px]" />
                     </FormControl>
                     <Button type="submit" size="icon" className="h-8 w-8 flex-shrink-0">
                       <Check />
