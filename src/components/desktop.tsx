@@ -6,8 +6,9 @@ import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
+import MusicApp from '@/components/desktop/apps/music';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music } from 'lucide-react';
 import MediaPlayer from './desktop/media-player';
 
 interface DesktopProps {
@@ -17,6 +18,7 @@ interface DesktopProps {
 const apps = [
   { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
   { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+  { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp /> },
 ];
 
 export default function Desktop({ onLogout }: DesktopProps) {
