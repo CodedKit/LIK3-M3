@@ -7,29 +7,40 @@ import { Button } from '@/components/ui/button';
 import { Playlist } from '@/lib/music';
 import { Card } from '@/components/ui/card';
 
-export default function MediaPlayer() {
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
-  const [isPlaying, setIsPlaying] = useState(false);
+interface MediaPlayerProps {
+    currentTrackIndex: number;
+    setCurrentTrackIndex: (index: number) => void;
+    onClose: () => void;
+}
+
+export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
+  const [isPlaying, setIsPlaying] = useState(true);
 
   const currentTrack = Playlist[currentTrackIndex];
 
   const handleNext = () => {
-    setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % Playlist.length);
+    setCurrentTrackIndex((currentTrackIndex + 1) % Playlist.length);
   };
 
   const handlePrevious = () => {
-    setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + Playlist.length) % Playlist.length);
+    setCurrentTrackIndex((currentTrackIndex - 1 + Playlist.length) % Playlist.length);
   };
 
   const handlePlayPause = () => {
     setIsPlaying(!isPlaying);
   };
 
+  if (!currentTrack) {
+    return null;
+  }
+
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
         <Card className="flex items-center gap-3 p-2 bg-card/80 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
-                <Circle className="h-4 w-4 text-red-500 fill-current" />
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
+                    <Circle className="h-4 w-4 text-red-500 fill-current" />
+                </Button>
                 <GripVertical className="h-6 w-6" />
             </div>
 

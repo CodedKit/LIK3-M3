@@ -5,11 +5,15 @@ import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Playlist } from '@/lib/music';
 
-export default function MusicApp() {
+interface MusicAppProps {
+  onPlayTrack: (trackIndex: number) => void;
+}
+
+export default function MusicApp({ onPlayTrack }: MusicAppProps) {
   return (
     <div className="h-full w-full bg-background p-4">
       <div className="flex flex-col gap-2">
-        {Playlist.map((song) => (
+        {Playlist.map((song, index) => (
           <div
             key={song.id}
             className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-white/10"
@@ -30,7 +34,7 @@ export default function MusicApp() {
               </p>
               <p className="text-sm text-muted-foreground">{song.artist}</p>
             </div>
-            <Button variant="ghost" size="icon">
+            <Button variant="ghost" size="icon" onClick={() => onPlayTrack(index)}>
               <Play className="h-5 w-5 fill-current" />
             </Button>
           </div>

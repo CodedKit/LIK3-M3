@@ -15,15 +15,26 @@ interface DesktopProps {
   onLogout: () => void;
 }
 
-const apps = [
-  { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
-  { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
-  { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp /> },
-];
-
 export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile, clearAllProfiles } = useUserProfileContext();
+  const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+
+  const handlePlayTrack = (trackIndex: number) => {
+    setCurrentTrackIndex(trackIndex);
+    setIsMediaPlayerVisible(true);
+  };
+  
+  const handleCloseMediaPlayer = () => {
+    setIsMediaPlayerVisible(false);
+  };
+
+  const apps = [
+    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
+    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+    { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
+  ];
 
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
@@ -60,7 +71,13 @@ export default function Desktop({ onLogout }: DesktopProps) {
         </div>
       </div>
 
-      <MediaPlayer />
+      {isMediaPlayerVisible && (
+        <MediaPlayer 
+          currentTrackIndex={currentTrackIndex}
+          setCurrentTrackIndex={setCurrentTrackIndex}
+          onClose={handleCloseMediaPlayer}
+        />
+      )}
 
       <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} />
 
