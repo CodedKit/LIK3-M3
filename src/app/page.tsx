@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { useUserProfile, type UserProfile } from '@/hooks/use-user-profile';
+import { useUserProfileContext, type UserProfile } from '@/context/user-profile-context';
 import BootScreen from '@/components/boot-screen';
 import LoginScreen from '@/components/login-screen';
 import Desktop from '@/components/desktop';
@@ -10,7 +10,7 @@ type AppState = 'booting' | 'login' | 'desktop';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
-  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfile();
+  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
 
   useEffect(() => {
     const bootTimer = setTimeout(() => {
@@ -55,7 +55,7 @@ export default function Home() {
       )}
       
       {appState === 'desktop' && !isLoading && activeProfile && (
-        <Desktop userProfile={activeProfile} onLogout={handleLogout} />
+        <Desktop onLogout={handleLogout} />
       )}
     </main>
   );

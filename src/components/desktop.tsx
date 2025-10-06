@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { useUserProfile, type UserProfile } from '@/hooks/use-user-profile';
+import { useUserProfileContext } from '@/context/user-profile-context';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
@@ -10,7 +10,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Heart, Terminal as TerminalIcon } from 'lucide-react';
 
 interface DesktopProps {
-  userProfile: UserProfile;
   onLogout: () => void;
 }
 
@@ -19,9 +18,9 @@ const apps = [
   { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
 ];
 
-export default function Desktop({ userProfile, onLogout }: DesktopProps) {
+export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
-  const { clearAllProfiles } = useUserProfile();
+  const { activeProfile, clearAllProfiles } = useUserProfileContext();
 
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
@@ -39,10 +38,14 @@ export default function Desktop({ userProfile, onLogout }: DesktopProps) {
     onLogout();
   }
 
+  if (!activeProfile) {
+    return null;
+  }
+
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
-      <div className="flex-grow p-8">
-        <div className="grid grid-cols-6 gap-y-8">
+      <div className="flex-grow p-4 md:p-8">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-y-8">
           {apps.map((app) => (
             <AppIcon
               key={app.id}
@@ -54,7 +57,7 @@ export default function Desktop({ userProfile, onLogout }: DesktopProps) {
         </div>
       </div>
 
-      <Taskbar userProfile={userProfile} onLogout={onLogout} onReset={handleReset} />
+      <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">

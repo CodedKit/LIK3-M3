@@ -9,6 +9,7 @@ export type UserProfile = {
 };
 
 const USER_PROFILES_KEY = 'virtual-temptations-user-profiles';
+const ACTIVE_PROFILE_ID_KEY = 'virtual-temptations-active-profile-id';
 
 export function useUserProfile() {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -16,18 +17,45 @@ export function useUserProfile() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    console.log("Attempting to load profiles from localStorage...");
     try {
-      const item = window.localStorage.getItem(USER_PROFILES_KEY);
-      if (item) {
-        const savedProfiles = JSON.parse(item);
-        if (Array.isArray(savedProfiles)) {
+      const profilesItem = window.localStorage.getItem(USER_PROFILES_KEY);
+      let savedProfiles: UserProfile[] = [];
+      if (profilesItem) {
+        const parsedProfiles = JSON.parse(profilesItem);
+        if (Array.isArray(parsedProfiles)) {
+          savedProfiles = parsedProfiles;
           setProfiles(savedProfiles);
+          console.log("Loaded profiles:", savedProfiles);
+        }
+      }
+
+      const activeProfileIdItem = window.localStorage.getItem(ACTIVE_PROFILE_ID_KEY);
+      if (activeProfileIdItem && savedProfiles.length > 0) {
+        const profile = savedProfiles.find(p => p.id === activeProfileIdItem);
+        if (profile) {
+          setActiveProfile(profile);
+          console.log("Active profile found and set:", profile);
         }
       }
     } catch (error) {
-      console.error("Failed to load user profiles from localStorage", error);
+      console.error("Failed to load data from localStorage", error);
     } finally {
       setIsLoading(false);
+    }
+  }, []);
+
+  const setActive = useCallback((profile: UserProfile | null) => {
+    setActiveProfile(profile);
+    console.log("Setting active profile:", profile);
+    try {
+      if (profile) {
+        window.localStorage.setItem(ACTIVE_PROFILE_ID_KEY, profile.id);
+      } else {
+        window.localStorage.removeItem(ACTIVE_PROFILE_ID_KEY);
+      }
+    } catch (error) {
+        console.error("Failed to save active profile ID to localStorage", error);
     }
   }, []);
 
@@ -41,37 +69,36 @@ export function useUserProfile() {
       id: `profile_${Date.now()}_${Math.random()}`
     };
     
+    console.log("Creating new profile:", newProfile);
     try {
       const updatedProfiles = [...profiles, newProfile];
       window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
       setProfiles(updatedProfiles);
-      setActiveProfile(newProfile); // Automatically log in with the new profile
+      setActive(newProfile);
     } catch (error) {
       console.error("Failed to save user profile to localStorage", error);
       throw new Error('Failed to save profile.');
     }
-  }, [profiles]);
+  }, [profiles, setActive]);
   
-  const setActive = useCallback((profile: UserProfile | null) => {
-    setActiveProfile(profile);
-  }, []);
-
   const deleteProfile = useCallback((profileId: string) => {
+    console.log("Deleting profile:", profileId);
     try {
       const updatedProfiles = profiles.filter(p => p.id !== profileId);
       window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
       setProfiles(updatedProfiles);
       if (activeProfile?.id === profileId) {
-        setActiveProfile(null);
+        setActive(null);
       }
     } catch (error) {
       console.error("Failed to delete user profile from localStorage", error);
     }
-  }, [profiles, activeProfile]);
+  }, [profiles, activeProfile, setActive]);
 
   const clearAllProfiles = useCallback(() => {
     try {
       window.localStorage.removeItem(USER_PROFILES_KEY);
+      window.localStorage.removeItem(ACTIVE_PROFILE_ID_KEY);
       setProfiles([]);
       setActiveProfile(null);
     } catch (error) {
