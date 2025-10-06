@@ -8,6 +8,7 @@ import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Heart, Terminal as TerminalIcon } from 'lucide-react';
+import MediaPlayer from './desktop/media-player';
 
 interface DesktopProps {
   onLogout: () => void;
@@ -56,6 +57,8 @@ export default function Desktop({ onLogout }: DesktopProps) {
           ))}
         </div>
       </div>
+
+      <MediaPlayer />
 
       <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} />
 
