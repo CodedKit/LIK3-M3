@@ -16,7 +16,7 @@ export default function AppIcon({ name, icon, onClick }: AppIconProps) {
       <div className="flex h-16 w-16 items-center justify-center">
         {icon}
       </div>
-      <p className="w-full truncate text-center text-xs md:text-sm text-primary-foreground">
+      <p className="w-full truncate text-center text-xs text-primary-foreground">
         {name}
       </p>
     </Button>
