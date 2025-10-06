@@ -1,13 +1,29 @@
 'use client';
 
+import { useState } from 'react';
 import Image from 'next/image';
-import { Circle, GripVertical, Play, SkipForward } from 'lucide-react';
+import { Circle, GripVertical, Play, SkipBack, SkipForward } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Playlist } from '@/lib/music';
 import { Card } from '@/components/ui/card';
 
 export default function MediaPlayer() {
-  const albumArt = PlaceHolderImages.find(img => img.id === 'album-art-1');
+  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+
+  const currentTrack = Playlist[currentTrackIndex];
+
+  const handleNext = () => {
+    setCurrentTrackIndex((prevIndex) => (prevIndex + 1) % Playlist.length);
+  };
+
+  const handlePrevious = () => {
+    setCurrentTrackIndex((prevIndex) => (prevIndex - 1 + Playlist.length) % Playlist.length);
+  };
+
+  const handlePlayPause = () => {
+    setIsPlaying(!isPlaying);
+  };
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
@@ -17,28 +33,31 @@ export default function MediaPlayer() {
                 <GripVertical className="h-6 w-6" />
             </div>
 
-            {albumArt && (
+            {currentTrack.albumArt && (
                 <Image
-                src={albumArt.imageUrl}
-                alt={albumArt.description}
-                width={48}
-                height={48}
-                className="rounded-sm"
-                data-ai-hint={albumArt.imageHint}
+                    src={currentTrack.albumArt.imageUrl}
+                    alt={currentTrack.albumArt.description}
+                    width={48}
+                    height={48}
+                    className="rounded-sm"
+                    data-ai-hint={currentTrack.albumArt.imageHint}
                 />
             )}
 
             <div className="flex-grow">
-                <p className="font-semibold text-sm text-primary-foreground">Moonracer</p>
-                <p className="text-xs text-muted-foreground">Tommi Waring</p>
+                <p className="font-semibold text-sm text-primary-foreground">{currentTrack.title}</p>
+                <p className="text-xs text-muted-foreground">{currentTrack.artist}</p>
             </div>
 
             <div className="flex items-center gap-1 text-primary-foreground">
-                <Button variant="ghost" size="icon">
-                <Play className="h-6 w-6 fill-current" />
+                <Button variant="ghost" size="icon" onClick={handlePrevious}>
+                    <SkipBack className="h-5 w-5 fill-current" />
                 </Button>
-                <Button variant="ghost" size="icon">
-                <SkipForward className="h-5 w-5 fill-current" />
+                <Button variant="ghost" size="icon" onClick={handlePlayPause}>
+                    <Play className="h-6 w-6 fill-current" />
+                </Button>
+                <Button variant="ghost" size="icon" onClick={handleNext}>
+                    <SkipForward className="h-5 w-5 fill-current" />
                 </Button>
             </div>
         </Card>
