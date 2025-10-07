@@ -4,6 +4,7 @@
 import * as React from "react"
 import * as DialogPrimitive from "@radix-ui/react-dialog"
 import { WindowCloseButton } from "./window-close-button"
+import { WindowNavButtons } from "./window-nav-buttons"
 
 import { cn } from "@/lib/utils"
 
@@ -50,17 +51,40 @@ const DialogContent = React.forwardRef<
 ))
 DialogContent.displayName = DialogPrimitive.Content.displayName
 
+interface DialogHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  showNav?: boolean;
+  onBack?: () => void;
+  onForward?: () => void;
+  canGoBack?: boolean;
+  canGoForward?: boolean;
+}
+
 const DialogHeader = ({
   className,
+  showNav,
+  onBack,
+  onForward,
+  canGoBack,
+  canGoForward,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: DialogHeaderProps) => (
   <div
     className={cn(
       "relative flex flex-col space-y-1.5 text-center sm:text-left p-4 border-b bg-card rounded-t-lg h-10 justify-center",
       className
     )}
     {...props}
-  />
+  >
+    {props.children}
+    {showNav && (
+      <WindowNavButtons
+        onBack={onBack}
+        onForward={onForward}
+        canGoBack={canGoBack}
+        canGoForward={canGoForward}
+      />
+    )}
+  </div>
 )
 DialogHeader.displayName = "DialogHeader"
 

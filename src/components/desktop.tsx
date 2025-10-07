@@ -16,6 +16,7 @@ import ProfileApp from '@/components/desktop/apps/profile';
 import EhmazonApp from '@/components/desktop/apps/ehmazon';
 import { type LikestagramUser } from '@/lib/likestagram';
 import LikestagramProfileApp from '@/components/desktop/apps/likestagram/profile';
+import { WindowNavButtons } from '@/components/ui/window-nav-buttons';
 
 
 interface DesktopProps {
@@ -24,11 +25,19 @@ interface DesktopProps {
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
+type AppInstance = {
+  id: string;
+  name: string;
+  component: React.ReactNode;
+  hasNav?: boolean;
+};
+
 export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopProps) {
-  const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
+  const [openApps, setOpenApps] = useState<AppInstance[]>([]);
   const { activeProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
-  const [viewingProfile, setViewingProfile] = useState<LikestagramUser | null>(null);
+  
+  const activeApp = openApps[openApps.length - 1];
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
@@ -39,38 +48,73 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   };
 
   const closeApp = () => {
-    setActiveApp(null);
-    setViewingProfile(null);
+    setOpenApps([]);
   };
 
-  const apps = [
-    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram onViewProfile={setViewingProfile} /> },
-    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp setShowDebug={setShowDebug} /> },
-    { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
-    { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" />, component: <EhmazonApp /> },
-    { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
-    { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} onLogout={onLogout} />, desktop: false },
-    { id: 'likestagramProfile', name: 'Likestagram Profile', component: <LikestagramProfileApp user={viewingProfile} />, desktop: false },
+  const apps: Omit<AppInstance, 'component'>[] = [
+    { id: 'likestagram', name: 'Likestagram', hasNav: true },
+    { id: 'terminal', name: 'Terminal' },
+    { id: 'music', name: 'Music' },
+    { id: 'ehmazon', name: 'Ehmazon', hasNav: true },
+    { id: 'settings', name: 'Settings' },
+    { id: 'profile', name: 'Profile' },
   ];
+
+  const desktopApps = [
+    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" /> },
+    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" /> },
+    { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" /> },
+    { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" /> },
+  ];
+
+  const getAppComponent = (app: AppInstance, props: any = {}): React.ReactNode => {
+    switch (app.id) {
+      case 'likestagram':
+        return <Likestagram onViewProfile={(user) => handleViewProfile(user)} />;
+      case 'likestagramProfile':
+        return <LikestagramProfileApp user={props.user} />;
+      case 'terminal':
+        return <TerminalApp setShowDebug={setShowDebug} />;
+      case 'music':
+        return <MusicApp onPlayTrack={handlePlayTrack} />;
+      case 'ehmazon':
+        return <EhmazonApp />;
+      case 'settings':
+        return <SettingsApp />;
+      case 'profile':
+        return <ProfileApp onClose={closeApp} onLogout={onLogout} />;
+      default:
+        return null;
+    }
+  };
   
-  const openApp = (appId: string) => {
-    const app = apps.find(a => a.id === appId);
-    if(app) {
-      setActiveApp(app);
+  const openApp = (appId: string, props: any = {}) => {
+    const appDef = apps.find(a => a.id === appId) || { id: appId, name: props.name || appId };
+    const newAppInstance: AppInstance = {
+      ...appDef,
+      component: getAppComponent({ ...appDef, component: null }, props),
+    };
+
+    if (newAppInstance.hasNav) {
+      setOpenApps(prev => [...prev, newAppInstance]);
+    } else {
+      setOpenApps([newAppInstance]);
     }
   };
 
-  useEffect(() => {
-    if (viewingProfile) {
-      openApp('likestagramProfile');
-    }
-  }, [viewingProfile]);
+  const handleViewProfile = (user: LikestagramUser) => {
+    openApp('likestagramProfile', { user, name: user.username });
+  };
+
+  const back = () => {
+    setOpenApps(prev => prev.slice(0, -1));
+  };
   
   if (!activeProfile) {
     return null;
   }
 
-  const desktopApps = apps.filter(app => app.desktop !== false);
+  const canGoBack = openApps.length > 1;
 
   return (
     <div className="flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
@@ -104,9 +148,9 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
-          <DialogHeader className="h-12">
+          <DialogHeader className="h-12" showNav={activeApp?.hasNav} onBack={back} canGoBack={canGoBack}>
             <WindowCloseButton />
-            <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight pt-1'>{activeApp?.id === 'likestagramProfile' ? viewingProfile?.username : activeApp?.name}</DialogTitle>
+            <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight pt-1'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto">
