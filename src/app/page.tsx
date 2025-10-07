@@ -5,12 +5,14 @@ import { useUserProfileContext, type UserProfile } from '@/context/user-profile-
 import BootScreen from '@/components/boot-screen';
 import LoginScreen from '@/components/login-screen';
 import Desktop from '@/components/desktop';
+import DebugOverlay from '@/components/debug-overlay';
 
 type AppState = 'booting' | 'login' | 'desktop';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
   const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
+  const [showDebug, setShowDebug] = useState(false);
 
   const handleBootComplete = useCallback(() => {
     setAppState('login');
@@ -55,12 +57,16 @@ export default function Home() {
           onAccountCreate={handleAccountCreate} 
           onLogin={handleLogin} 
           onProfileDelete={deleteProfile}
+          showDebug={showDebug}
+          setShowDebug={setShowDebug}
         />
       )}
       
       {appState === 'desktop' && !isLoading && activeProfile && (
-        <Desktop onLogout={handleLogout} />
+        <Desktop onLogout={handleLogout} setShowDebug={setShowDebug} />
       )}
+
+      {showDebug && <DebugOverlay />}
     </main>
   );
 }

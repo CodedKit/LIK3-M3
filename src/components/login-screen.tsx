@@ -82,12 +82,13 @@ interface LoginScreenProps {
     onAccountCreate: (newProfileData: Omit<UserProfile, 'id'>) => void;
     onLogin: (profile: UserProfile) => void;
     onProfileDelete: (profileId: string) => void;
+    showDebug: boolean;
+    setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
 
-export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete }: LoginScreenProps) {
+export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete, showDebug, setShowDebug }: LoginScreenProps) {
   const [isCreating, setIsCreating] = useState(false);
-  const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -165,7 +166,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
       <div className="absolute top-4 right-4">
-        <Button variant="ghost" size="icon" onClick={() => setShowDebug(!showDebug)}>
+        <Button variant="ghost" size="icon" onClick={() => setShowDebug(s => !s)}>
           <Bug className="h-5 w-5" />
         </Button>
       </div>
@@ -191,7 +192,6 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
         )}
       </div>
       
-      {showDebug && <DebugOverlay />}
     </div>
   );
 }

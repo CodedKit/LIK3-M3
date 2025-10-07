@@ -16,9 +16,10 @@ import ProfileApp from '@/components/desktop/apps/profile';
 
 interface DesktopProps {
   onLogout: () => void;
+  setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
-export default function Desktop({ onLogout }: DesktopProps) {
+export default function Desktop({ onLogout, setShowDebug }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
@@ -37,7 +38,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
 
   const apps = [
     { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
-    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp setShowDebug={setShowDebug} /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
     { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
     { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} onLogout={onLogout} />, desktop: false },
@@ -88,7 +89,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
-          <DialogHeader className="p-4 border-b bg-card rounded-t-lg h-10 justify-center">
+          <DialogHeader>
             <WindowCloseButton />
             <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>

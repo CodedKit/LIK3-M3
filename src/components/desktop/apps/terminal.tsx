@@ -13,7 +13,11 @@ type Command = {
 
 const TERMINAL_HISTORY_KEY = 'virtual-temptations-terminal-history';
 
-export default function TerminalApp() {
+interface TerminalAppProps {
+  setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
+}
+
+export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
   const { activeProfile } = useUserProfileContext();
   const [history, setHistory] = useState<Command[]>([]);
   const [input, setInput] = useState('');
@@ -78,7 +82,7 @@ export default function TerminalApp() {
     const commandToExecute = commands[commandName.toLowerCase()];
     
     if (commandToExecute) {
-      output = commandToExecute.execute({ args, commands, user });
+      output = commandToExecute.execute({ args, commands, user, setShowDebug });
     }
 
     const newHistoryItem = { command: commandStr, output };
