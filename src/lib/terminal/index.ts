@@ -5,6 +5,7 @@ import { whoami } from './whoami';
 import { test } from './test';
 import { type Command } from './types';
 import { debug } from './debug';
+import { clear } from './clear';
 
 export const commands: { [key: string]: Command } = {
   about,
@@ -12,4 +13,5 @@ export const commands: { [key: string]: Command } = {
   whoami,
   test,
   debug,
+  clear,
 };
