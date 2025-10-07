@@ -59,44 +59,46 @@ export default function Likestagram() {
 
   return (
     <div className="h-full w-full bg-background p-4 flex justify-center items-start">
-      <Card className="w-full max-w-sm">
-        <CardContent className="p-4 relative">
-          {postImage && (
-            <div className="aspect-square relative mb-4">
-              <Image
-                src={postImage.imageUrl}
-                alt="Post"
-                fill
-                className="rounded-lg object-cover"
-              />
+      <div className="relative">
+        <Card className="w-full max-w-sm">
+          <CardContent className="p-4">
+            {postImage && (
+              <div className="aspect-square relative mb-4">
+                <Image
+                  src={postImage.imageUrl}
+                  alt="Post"
+                  fill
+                  className="rounded-lg object-cover"
+                />
+              </div>
+            )}
+            <div className="flex items-center gap-4">
+              <Button variant="ghost" size="icon" onClick={handleLike}>
+                <Heart
+                  className={cn(
+                    'h-6 w-6',
+                    isLiked
+                      ? 'text-red-500 fill-red-500'
+                      : 'text-primary-foreground'
+                  )}
+                />
+              </Button>
+              <p className="text-sm font-medium text-primary-foreground">
+                {likes} {likes === 1 ? 'like' : 'likes'}
+              </p>
             </div>
-          )}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={handleLike}>
-              <Heart
-                className={cn(
-                  'h-6 w-6',
-                  isLiked
-                    ? 'text-red-500 fill-red-500'
-                    : 'text-primary-foreground'
-                )}
-              />
-            </Button>
-            <p className="text-sm font-medium text-primary-foreground">
-              {likes} {likes === 1 ? 'like' : 'likes'}
-            </p>
+          </CardContent>
+        </Card>
+        {floatingHearts.map((heart) => (
+          <div
+            key={heart.id}
+            className="absolute bottom-4 left-[-20px] flex items-center animate-like-animation pointer-events-none"
+          >
+            <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+            <span className="ml-1 text-sm font-bold text-red-500">+1</span>
           </div>
-          {floatingHearts.map((heart) => (
-            <div
-              key={heart.id}
-              className="absolute bottom-16 left-8 flex items-center animate-like-animation pointer-events-none"
-            >
-              <Heart className="h-5 w-5 text-red-500 fill-red-500" />
-              <span className="ml-1 text-sm font-bold text-red-500">+1</span>
-            </div>
-          ))}
-        </CardContent>
-      </Card>
+        ))}
+      </div>
     </div>
   );
 }
