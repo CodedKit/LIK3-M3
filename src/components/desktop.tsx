@@ -7,7 +7,7 @@ import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
 import { Heart, Terminal as TerminalIcon, Music, Settings, User } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
@@ -95,10 +95,11 @@ export default function Desktop({ onLogout }: DesktopProps) {
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
           <DialogHeader className="p-4 border-b bg-card rounded-t-lg">
-            <DialogTitle className='font-headline'>{activeApp?.name}</DialogTitle>
+            <WindowCloseButton />
+            <DialogTitle className='font-headline text-center'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
-          <div className="flex-grow overflow-y-auto">
+          <div className="flex-grow overflow-y-auto p-6">
             {activeApp?.component}
           </div>
         </DialogContent>

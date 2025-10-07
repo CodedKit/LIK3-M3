@@ -23,6 +23,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form"
+import { DialogFooter } from '@/components/ui/dialog';
 
 const profileSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -86,8 +87,8 @@ export default function ProfileApp({ onClose }: ProfileAppProps) {
   };
 
   return (
-    <div className="h-full w-full bg-background p-4">
-      <Card>
+    <div className="h-full w-full bg-background">
+      <Card className="border-0 shadow-none">
         <CardHeader>
           <CardTitle>Edit Profile</CardTitle>
           <CardDescription>Update your username, description, and profile picture.</CardDescription>
@@ -147,7 +148,9 @@ export default function ProfileApp({ onClose }: ProfileAppProps) {
                 )}
               />
               
-              <Button type="submit">Save Changes</Button>
+              <DialogFooter>
+                <Button type="submit">Save Changes</Button>
+              </DialogFooter>
             </form>
           </Form>
         </CardContent>
