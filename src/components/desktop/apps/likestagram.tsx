@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -12,30 +11,14 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 
 const POST_ID = 'post-1';
-const LIKES_STORAGE_KEY = 'lik3-m3-likes';
-
-type LikesData = {
-  [profileId: string]: {
-    [postId: string]: number;
-  };
-};
 
 export default function Likestagram() {
-  const { activeProfile, addXp } = useUserProfileContext();
+  const { activeProfile, addXp, updateProfile } = useUserProfileContext();
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
-    if (!activeProfile) return;
-
-    try {
-      const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
-      const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
-      const profileLikes = likesData[activeProfile.id] || {};
-      const postLikes = profileLikes[POST_ID] || 0;
-      setLikes(postLikes);
-    } catch (error) {
-      console.error('Failed to load likes from localStorage', error);
-      setLikes(0);
+    if (activeProfile?.likes) {
+      setLikes(activeProfile.likes[POST_ID] || 0);
     }
   }, [activeProfile]);
 
@@ -45,27 +28,20 @@ export default function Likestagram() {
       return;
     }
 
-    try {
-      const storedLikes = window.localStorage.getItem(LIKES_STORAGE_KEY);
-      const likesData: LikesData = storedLikes ? JSON.parse(storedLikes) : {};
+    const currentLikes = activeProfile.likes?.[POST_ID] || 0;
+    const newLikesCount = currentLikes + 1;
 
-      if (!likesData[activeProfile.id]) {
-        likesData[activeProfile.id] = {};
-      }
+    const newLikesData = {
+        ...activeProfile.likes,
+        [POST_ID]: newLikesCount
+    };
 
-      const currentLikes = likesData[activeProfile.id][POST_ID] || 0;
-      const newLikes = currentLikes + 1;
+    updateProfile(activeProfile.id, { likes: newLikesData });
 
-      likesData[activeProfile.id][POST_ID] = newLikes;
-      window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
-      setLikes(newLikes);
-      if (addXp) {
-        addXp(10);
-      }
-    } catch (error) {
-      console.error('Failed to save likes to localStorage', error);
+    if (addXp) {
+      addXp(10);
     }
-  }, [activeProfile, addXp]);
+  }, [activeProfile, addXp, updateProfile]);
 
   const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
   const isLiked = likes > 0;

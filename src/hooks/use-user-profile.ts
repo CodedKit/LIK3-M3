@@ -3,6 +3,15 @@
 
 import { useState, useEffect, useCallback } from 'react';
 
+type LikeData = {
+    [postId: string]: number;
+};
+
+type TerminalHistoryItem = {
+    command: string;
+    output: React.ReactNode;
+};
+
 export type UserProfile = {
   id: string;
   username: string;
@@ -10,10 +19,14 @@ export type UserProfile = {
   description?: string;
   showDebug?: boolean;
   xp?: number;
+  likes?: LikeData;
+  terminalHistory?: TerminalHistoryItem[];
 };
 
-const USER_PROFILES_KEY = 'lik3-m3-user-profiles';
+const USER_PROFILE_KEY_PREFIX = 'lik3-m3-profile-';
 const ACTIVE_PROFILE_ID_KEY = 'lik3-m3-active-profile-id';
+
+const getProfileKey = (profileId: string) => `${USER_PROFILE_KEY_PREFIX}${profileId}`;
 
 export function useUserProfile() {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -22,14 +35,23 @@ export function useUserProfile() {
 
   useEffect(() => {
     try {
-      const profilesItem = window.localStorage.getItem(USER_PROFILES_KEY);
-      const savedProfiles = profilesItem ? JSON.parse(profilesItem) : [];
+      const savedProfiles: UserProfile[] = [];
+      for (let i = 0; i < window.localStorage.length; i++) {
+        const key = window.localStorage.key(i);
+        if (key?.startsWith(USER_PROFILE_KEY_PREFIX)) {
+          const profileItem = window.localStorage.getItem(key);
+          if (profileItem) {
+            savedProfiles.push(JSON.parse(profileItem));
+          }
+        }
+      }
       setProfiles(savedProfiles);
 
       const activeProfileIdItem = window.localStorage.getItem(ACTIVE_PROFILE_ID_KEY);
       if (activeProfileIdItem) {
-        const profile = savedProfiles.find((p: UserProfile) => p.id === activeProfileIdItem);
-        setActiveProfile(profile || null);
+        const activeProfileKey = getProfileKey(activeProfileIdItem);
+        const activeProfileItem = window.localStorage.getItem(activeProfileKey);
+        setActiveProfile(activeProfileItem ? JSON.parse(activeProfileItem) : null);
       }
     } catch (error) {
       console.error("Failed to load data from localStorage", error);
@@ -53,7 +75,7 @@ export function useUserProfile() {
     }
   }, []);
 
-  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp'>) => {
+  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory'>) => {
     if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
         throw new Error('A profile with this username already exists.');
     }
@@ -64,11 +86,14 @@ export function useUserProfile() {
       description: 'New to LIK3 M3!',
       showDebug: false,
       xp: 0,
+      likes: {},
+      terminalHistory: [],
     };
     
     try {
+      const profileKey = getProfileKey(newProfile.id);
+      window.localStorage.setItem(profileKey, JSON.stringify(newProfile));
       const updatedProfiles = [...profiles, newProfile];
-      window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
       setProfiles(updatedProfiles);
       setActive(newProfile);
     } catch (error) {
@@ -78,34 +103,36 @@ export function useUserProfile() {
   }, [profiles, setActive]);
 
   const updateProfile = useCallback((profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => {
-    setProfiles(prevProfiles => {
-      const updatedProfiles = prevProfiles.map(p => {
-        if (p.id === profileId) {
-          return { ...p, ...updatedData };
-        }
-        return p;
-      });
-
-      try {
-        window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
-        const active = updatedProfiles.find(p => p.id === activeProfile?.id);
-        if (active) {
-            setActiveProfile(active);
-        }
-      } catch (error) {
-        console.error("Failed to save updated profiles to localStorage", error);
+    try {
+      const profileKey = getProfileKey(profileId);
+      const profileItem = window.localStorage.getItem(profileKey);
+      if (!profileItem) {
+        console.error(`Profile with id ${profileId} not found in localStorage.`);
+        return;
       }
-      
-      return updatedProfiles;
-    });
 
+      const currentProfile: UserProfile = JSON.parse(profileItem);
+      const updatedProfile: UserProfile = { ...currentProfile, ...updatedData };
+
+      window.localStorage.setItem(profileKey, JSON.stringify(updatedProfile));
+
+      setProfiles(prevProfiles => prevProfiles.map(p => p.id === profileId ? updatedProfile : p));
+
+      if (activeProfile?.id === profileId) {
+        setActiveProfile(updatedProfile);
+      }
+    } catch (error) {
+      console.error("Failed to update profile in localStorage", error);
+    }
   }, [activeProfile?.id]);
   
   const deleteProfile = useCallback((profileId: string) => {
     try {
-      const updatedProfiles = profiles.filter(p => p.id !== profileId);
-      window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
-      setProfiles(updatedProfiles);
+      const profileKey = getProfileKey(profileId);
+      window.localStorage.removeItem(profileKey);
+
+      setProfiles(profiles.filter(p => p.id !== profileId));
+      
       if (activeProfile?.id === profileId) {
         setActive(null);
       }
@@ -116,7 +143,13 @@ export function useUserProfile() {
 
   const resetAllProfiles = useCallback(() => {
     try {
-      window.localStorage.removeItem(USER_PROFILES_KEY);
+        for (let i = 0; i < window.localStorage.length; i++) {
+            const key = window.localStorage.key(i);
+            if (key?.startsWith(USER_PROFILE_KEY_PREFIX)) {
+                window.localStorage.removeItem(key);
+                i--; 
+            }
+        }
       window.localStorage.removeItem(ACTIVE_PROFILE_ID_KEY);
       setProfiles([]);
       setActiveProfile(null);
