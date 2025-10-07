@@ -3,8 +3,14 @@
 
 import { useState, useEffect } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Button } from './ui/button';
+import { Circle } from 'lucide-react';
 
-export default function DebugOverlay() {
+interface DebugOverlayProps {
+  onClose: () => void;
+}
+
+export default function DebugOverlay({ onClose }: DebugOverlayProps) {
   const [storage, setStorage] = useState<[string, string][]>([]);
 
   useEffect(() => {
@@ -32,7 +38,12 @@ export default function DebugOverlay() {
 
   return (
     <div className="fixed bottom-4 left-4 z-[101] rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm max-w-[90vw]">
-      <h3 className="mb-2 font-semibold text-xs">localStorage Debug</h3>
+      <div className="flex justify-between items-center mb-2">
+        <h3 className="font-semibold text-xs">localStorage Debug</h3>
+        <Button onClick={onClose} variant="ghost" size="icon" className="h-6 w-6">
+          <Circle className="h-4 w-4 text-red-500 fill-current" />
+        </Button>
+      </div>
       <div className="max-h-64 overflow-y-auto overflow-x-auto">
         <Table>
           <TableHeader>

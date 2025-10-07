@@ -106,7 +106,7 @@ export default function Home() {
         />
       )}
 
-      {showDebug && <DebugOverlay />}
+      {showDebug && <DebugOverlay onClose={() => setShowDebug(false)} />}
     </main>
   );
 }
