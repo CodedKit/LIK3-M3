@@ -37,14 +37,14 @@ export default function DebugOverlay({ onClose }: DebugOverlayProps) {
   }, []);
 
   return (
-    <div className="fixed bottom-4 left-4 z-[101] rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm max-w-[90vw]">
-      <div className="flex justify-between items-center mb-2">
-        <h3 className="font-semibold text-xs">localStorage Debug</h3>
-        <Button onClick={onClose} variant="ghost" size="icon" className="h-6 w-6">
+    <div className="fixed bottom-4 left-4 z-[101] rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm max-w-[90vw] overflow-x-auto">
+      <div className="flex items-center gap-2 mb-2">
+        <Button onClick={onClose} variant="ghost" size="icon" className="h-6 w-6 flex-shrink-0">
           <Circle className="h-4 w-4 text-red-500 fill-current" />
         </Button>
+        <h3 className="font-semibold text-xs whitespace-nowrap">localStorage Debug</h3>
       </div>
-      <div className="max-h-64 overflow-y-auto overflow-x-auto">
+      <div className="max-h-64 overflow-y-auto">
         <Table>
           <TableHeader>
             <TableRow>
