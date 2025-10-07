@@ -24,7 +24,7 @@ interface TaskbarProps {
 
 export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings }: TaskbarProps) {
     return (
-        <div className="w-full bg-card/80 backdrop-blur-sm border-t h-16 shrink-0 flex items-center justify-between px-4">
+        <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-16 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -40,7 +40,7 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                             )}
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent side="top" align="start" className="w-56">
+                    <DropdownMenuContent side="bottom" sideOffset={8} align="start" className="w-56 md:side-top">
                         <DropdownMenuLabel>
                             <p className="font-bold">{userProfile.username}</p>
                             <p className="text-xs text-muted-foreground">Online</p>

@@ -64,7 +64,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
   const desktopApps = apps.filter(app => app.desktop !== false);
 
   return (
-    <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
+    <div className="flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
       <div className="flex-grow p-2">
         <div className="flex h-auto flex-row flex-wrap gap-2">
           {desktopApps.map((app) => (
