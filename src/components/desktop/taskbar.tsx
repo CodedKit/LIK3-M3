@@ -35,7 +35,7 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                                     alt={userProfile.username}
                                     width={28}
                                     height={28}
-                                    className="rounded-full"
+                                    className="rounded-sm"
                                 />
                             )}
                         </button>
