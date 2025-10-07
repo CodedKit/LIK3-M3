@@ -42,11 +42,11 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                                     <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
                                 </div>
                             )}
+                            <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" sideOffset={8} align="start" className="w-56 md:side-top">
                         <DropdownMenuLabel>
-                            <p className="font-bold">{userProfile.username}</p>
                             <p className="text-xs text-muted-foreground">Online</p>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
