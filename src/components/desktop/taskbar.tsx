@@ -49,7 +49,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                             <div className="flex flex-col items-start">
                                 <div className='flex items-center gap-2'>
                                     <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
-                                    <p className="text-xs font-bold text-primary">Lvl. {level}</p>
+                                    <p className="text-xs font-bold text-muted-foreground">Lvl. {level}</p>
                                 </div>
                                 <div className="relative w-24 mt-1">
                                     <Progress value={progress} className="h-3" />
