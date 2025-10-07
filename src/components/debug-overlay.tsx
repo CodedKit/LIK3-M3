@@ -31,7 +31,7 @@ export default function DebugOverlay() {
   }, []);
 
   return (
-    <div className="fixed bottom-4 left-4 z-[101] max-w-lg rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm">
+    <div className="fixed bottom-4 left-4 z-[101] rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm max-w-[90vw]">
       <h3 className="mb-2 font-semibold text-xs">localStorage Debug</h3>
       <div className="max-h-64 overflow-y-auto overflow-x-auto">
         <Table>
