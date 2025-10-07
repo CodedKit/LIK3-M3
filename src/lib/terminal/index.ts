@@ -1,5 +1,6 @@
-import { about } from './about.tsx';
-import { help } from './help.tsx';
+
+import { about } from './about';
+import { help } from './help';
 import { whoami } from './whoami';
 import { test } from './test';
 import { type Command } from './types';

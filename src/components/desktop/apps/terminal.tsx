@@ -3,15 +3,11 @@
 
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { useUserProfileContext } from '@/context/user-profile-context';
-import { cn } from '@/lib/utils';
 import { commands } from '@/lib/terminal';
 
-type Command = {
-  command: string;
-  output: React.ReactNode;
-};
-
-const TERMINAL_HISTORY_KEY = 'virtual-temptations-terminal-history';
+const TERMINAL_STORAGE_KEY = 'virtual-temptations-terminal-current';
+const WELCOME_MESSAGE = `Welcome to LIK3 M3 Terminal
+Type 'help' for a list of commands.`;
 
 interface TerminalAppProps {
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
@@ -19,83 +15,89 @@ interface TerminalAppProps {
 
 export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
   const { activeProfile } = useUserProfileContext();
-  const [history, setHistory] = useState<Command[]>([]);
+  const [content, setContent] = useState('');
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
-  const endOfHistoryRef = useRef<HTMLDivElement>(null);
+  const endOfContentRef = useRef<HTMLDivElement>(null);
 
   const user = activeProfile?.username || 'user';
   const prompt = `[${user}@lik3m3 ~]$`;
 
-  const logToConsole = useCallback((...args: any[]) => {
-    console.log(...args);
-  }, []);
-
+  // Load from localStorage on mount
   useEffect(() => {
     try {
-      const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
-      if (savedHistory) {
-        setHistory(JSON.parse(savedHistory));
+      const savedContent = window.localStorage.getItem(TERMINAL_STORAGE_KEY);
+      if (savedContent) {
+        setContent(savedContent);
+      } else {
+        setContent(WELCOME_MESSAGE);
       }
     } catch (error) {
-      console.error("Failed to load terminal history from localStorage", error);
+      console.error("Failed to load terminal content from localStorage", error);
+      setContent(WELCOME_MESSAGE);
     }
     inputRef.current?.focus();
   }, []);
-  
+
+  // Save to localStorage on content change
   useEffect(() => {
     try {
-        window.localStorage.setItem(TERMINAL_HISTORY_KEY, JSON.stringify(history));
+      window.localStorage.setItem(TERMINAL_STORAGE_KEY, content);
     } catch (error) {
-        console.error("Failed to save terminal history to localStorage", error);
+      console.error("Failed to save terminal content to localStorage", error);
     }
-    endOfHistoryRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [history]);
+    endOfContentRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [content]);
 
-  useEffect(() => {
-    const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
-    if (history.length === 0 && !savedHistory) { // Check both state and localStorage
-        logToConsole('Welcome to LIK3 M3 Terminal');
-        logToConsole("Type 'help' for a list of commands.");
+  // Helper to convert ReactNode to string for consistent storage
+  const getOutputAsString = (output: React.ReactNode): string => {
+    if (typeof output === 'string') return output;
+    if (React.isValidElement(output) && typeof output.props.children === 'string') {
+        // Simple case for <p> or <li> with string children
+        return output.props.children;
     }
-  }, [logToConsole, history.length]);
+    // Fallback for more complex components, may need improvement
+    return '[object]';
+  };
 
   const handleCommand = (commandStr: string) => {
-    const [commandName, ...args] = commandStr.trim().split(' ');
-    let output: React.ReactNode = `Command not found: ${commandName}. Type 'help' for a list of commands.`;
-
-    if(commandStr.trim() === '') {
-        setHistory((prev) => [...prev, { command: '', output: '' }]);
+    const trimmedCommand = commandStr.trim();
+    const commandLine = `${prompt} ${trimmedCommand}`;
+    let newContent = content ? `${content}\n${commandLine}` : commandLine;
+    
+    if (trimmedCommand === '') {
+        setContent(newContent);
+        console.log(commandLine);
         return;
     }
 
+    const [commandName, ...args] = trimmedCommand.split(' ');
+
     if (commandName.toLowerCase() === 'clear') {
-      setHistory([]);
+      setContent('');
       try {
-        window.localStorage.removeItem(TERMINAL_HISTORY_KEY);
+        window.localStorage.removeItem(TERMINAL_STORAGE_KEY);
       } catch (error) {
-          console.error("Failed to clear terminal history from localStorage", error);
+        console.error("Failed to clear terminal history from localStorage", error);
       }
       return;
     }
-    
-    const commandToExecute = commands[commandName.toLowerCase()];
-    
-    if (commandToExecute) {
-      output = commandToExecute.execute({ args, commands, user, setShowDebug });
-    }
 
-    const newHistoryItem = { command: commandStr, output };
-    setHistory((prev) => [...prev, newHistoryItem]);
-    
-    logToConsole(`${prompt} ${commandStr}`);
-    if (output) {
-      if (typeof output === 'string') {
-        logToConsole(output);
-      } else {
-        logToConsole('[ReactNode Output]');
-      }
+    const commandToExecute = commands[commandName.toLowerCase()];
+    let output: string;
+
+    if (commandToExecute) {
+      // The `execute` functions now need to return a string.
+      const rawOutput = commandToExecute.execute({ args, commands, user, setShowDebug });
+      output = getOutputAsString(rawOutput); // Ensure we have a string
+    } else {
+      output = `Command not found: ${commandName}. Type 'help' for a list of commands.`;
     }
+    
+    newContent = `${newContent}\n${output}`;
+    setContent(newContent);
+    console.log(commandLine);
+    console.log(output);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -105,38 +107,14 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
     }
   };
 
-  const isHistoryEmpty = () => {
-    if (history.length > 0) return false;
-    try {
-      const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
-      return !savedHistory || JSON.parse(savedHistory).length === 0;
-    } catch {
-      return true;
-    }
-  }
-
   return (
     <div
       className="h-full w-full bg-black p-4 font-code text-sm text-green-400 focus:outline-none"
       onClick={() => inputRef.current?.focus()}
       tabIndex={0}
     >
-      {isHistoryEmpty() && (
-        <div>
-          <p>Welcome to LIK3 M3 Terminal</p>
-          <p>Type 'help' for a list of commands.</p>
-          <br />
-        </div>
-      )}
-      {history.map((item, index) => (
-        <div key={index}>
-          <div className="flex gap-2">
-            <span className="text-pink-500">{prompt}</span>
-            <span>{item.command}</span>
-          </div>
-          {item.output && <div className="text-white">{item.output}</div>}
-        </div>
-      ))}
+      <pre className="whitespace-pre-wrap">{content}</pre>
+      
       <div className="flex gap-2">
         <label htmlFor="terminal-input" className="text-pink-500">
           {prompt}
@@ -154,7 +132,7 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
             autoCorrect="off"
           />
       </div>
-       <div ref={endOfHistoryRef} />
+      <div ref={endOfContentRef} />
     </div>
   );
 }
