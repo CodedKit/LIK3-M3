@@ -11,6 +11,8 @@ type Command = {
   output: React.ReactNode;
 };
 
+const TERMINAL_HISTORY_KEY = 'virtual-temptations-terminal-history';
+
 export default function TerminalApp() {
   const { activeProfile } = useUserProfileContext();
   const [history, setHistory] = useState<Command[]>([]);
@@ -26,17 +28,32 @@ export default function TerminalApp() {
   }, []);
 
   useEffect(() => {
+    try {
+      const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
+      if (savedHistory) {
+        setHistory(JSON.parse(savedHistory));
+      }
+    } catch (error) {
+      console.error("Failed to load terminal history from localStorage", error);
+    }
     inputRef.current?.focus();
   }, []);
   
   useEffect(() => {
+    try {
+        window.localStorage.setItem(TERMINAL_HISTORY_KEY, JSON.stringify(history));
+    } catch (error) {
+        console.error("Failed to save terminal history to localStorage", error);
+    }
     endOfHistoryRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
   useEffect(() => {
-    logToConsole('Welcome to LIK3 M3 Terminal');
-    logToConsole("Type 'help' for a list of commands.");
-  }, [logToConsole]);
+    if (history.length === 0) { // Only log initial welcome messages if history is empty
+        logToConsole('Welcome to LIK3 M3 Terminal');
+        logToConsole("Type 'help' for a list of commands.");
+    }
+  }, [logToConsole, history.length]);
 
   const handleCommand = (commandStr: string) => {
     const [commandName, ...args] = commandStr.trim().split(' ');
@@ -49,6 +66,11 @@ export default function TerminalApp() {
 
     if (commandName.toLowerCase() === 'clear') {
       setHistory([]);
+      try {
+        window.localStorage.removeItem(TERMINAL_HISTORY_KEY);
+      } catch (error) {
+          console.error("Failed to clear terminal history from localStorage", error);
+      }
       return;
     }
     
@@ -63,8 +85,6 @@ export default function TerminalApp() {
     
     logToConsole(`${prompt} ${commandStr}`);
     if (output) {
-      // This is a bit tricky since output is ReactNode. For logging, we'll try to get a string representation.
-      // This is a simplified approach.
       if (typeof output === 'string') {
         logToConsole(output);
       } else {
@@ -86,11 +106,13 @@ export default function TerminalApp() {
       onClick={() => inputRef.current?.focus()}
       tabIndex={0}
     >
-      <div>
-        <p>Welcome to LIK3 M3 Terminal</p>
-        <p>Type 'help' for a list of commands.</p>
-        <br />
-      </div>
+      {history.length === 0 && (
+        <div>
+          <p>Welcome to LIK3 M3 Terminal</p>
+          <p>Type 'help' for a list of commands.</p>
+          <br />
+        </div>
+      )}
       {history.map((item, index) => (
         <div key={index}>
           <div className="flex gap-2">
