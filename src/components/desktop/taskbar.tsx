@@ -60,7 +60,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                             </div>
                         </button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent side="bottom" sideOffset={16} align="start" className="w-56 md:side-top">
+                    <DropdownMenuContent side="bottom" sideOffset={20} align="start" className="w-56 md:side-top">
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={onOpenProfile}>
                                 <User className="mr-2 h-4 w-4" />
