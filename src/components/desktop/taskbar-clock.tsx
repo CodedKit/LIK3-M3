@@ -2,8 +2,13 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { Button } from '../ui/button';
 
-export default function TaskbarClock() {
+interface TaskbarClockProps {
+    onClick: () => void;
+}
+
+export default function TaskbarClock({ onClick }: TaskbarClockProps) {
   const [time, setTime] = useState(new Date());
 
   useEffect(() => {
@@ -12,8 +17,8 @@ export default function TaskbarClock() {
   }, []);
 
   return (
-    <div>
+    <Button variant="ghost" onClick={onClick} className="h-auto px-2 py-1">
       {time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-    </div>
+    </Button>
   );
 }

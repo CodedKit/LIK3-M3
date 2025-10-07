@@ -23,9 +23,10 @@ interface TaskbarProps {
   onLogout: () => void;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
+  onToggleDebug: () => void;
 }
 
-export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug }: TaskbarProps) {
     const { level, progress } = calculateLevel(userProfile.xp);
 
     return (
@@ -92,7 +93,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                       <span className="text-[10px] font-medium">98%</span>
                     </div>
                 </div>
-                <TaskbarClock />
+                <TaskbarClock onClick={onToggleDebug} />
             </div>
         </div>
     );
