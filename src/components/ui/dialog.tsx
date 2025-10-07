@@ -70,7 +70,7 @@ const DialogHeader = ({
 }: DialogHeaderProps) => (
   <div
     className={cn(
-      "relative flex flex-col space-y-1.5 text-center sm:text-left p-4 border-b bg-card rounded-t-lg h-10 justify-center",
+      "relative flex items-center justify-center p-4 border-b bg-card rounded-t-lg h-12",
       className
     )}
     {...props}
