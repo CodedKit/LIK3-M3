@@ -53,6 +53,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const apps: Omit<AppInstance, 'component'>[] = [
     { id: 'likestagram', name: 'Likestagram', hasNav: true },
+    { id: 'likestagramProfile', name: 'Profile', hasNav: true },
     { id: 'terminal', name: 'Terminal' },
     { id: 'music', name: 'Music' },
     { id: 'ehmazon', name: 'Ehmazon', hasNav: true },
