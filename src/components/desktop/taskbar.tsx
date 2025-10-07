@@ -29,7 +29,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
     const { level, progress } = calculateLevel(userProfile.xp);
 
     return (
-        <div className="relative z-50 w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-14 shrink-0 flex items-center justify-between px-4">
+        <div className="relative z-40 w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-14 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
