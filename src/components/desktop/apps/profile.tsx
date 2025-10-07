@@ -179,9 +179,9 @@ export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
 
           <Separator className="my-8" />
             
-          <Card className="border-destructive">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-destructive">Delete Account</CardTitle>
+              <CardTitle>Delete Account</CardTitle>
               <CardDescription>
                 This action is permanent and cannot be undone. All your data will be permanently deleted.
               </CardDescription>
