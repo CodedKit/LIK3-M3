@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { useUserProfile, UserProfile } from '@/hooks/use-user-profile';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 type UserProfileContextType = ReturnType<typeof useUserProfile>;
 

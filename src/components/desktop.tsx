@@ -13,6 +13,16 @@ import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
 import ProfileApp from '@/components/desktop/apps/profile';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 interface DesktopProps {
   onLogout: () => void;
@@ -20,8 +30,9 @@ interface DesktopProps {
 
 export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
-  const { activeProfile, clearAllProfiles } = useUserProfileContext();
+  const { activeProfile, deleteProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
@@ -50,9 +61,12 @@ export default function Desktop({ onLogout }: DesktopProps) {
     }
   };
   
-  const handleReset = () => {
-    clearAllProfiles();
-    onLogout();
+  const handleResetConfirm = () => {
+    if (activeProfile) {
+      deleteProfile(activeProfile.id);
+      onLogout();
+    }
+    setIsResetDialogOpen(false);
   }
 
   if (!activeProfile) {
@@ -87,7 +101,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
       <Taskbar 
         userProfile={activeProfile} 
         onLogout={onLogout} 
-        onReset={handleReset} 
+        onReset={() => setIsResetDialogOpen(true)} 
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
       />
@@ -104,6 +118,24 @@ export default function Desktop({ onLogout }: DesktopProps) {
           </div>
         </DialogContent>
       </Dialog>
+
+      <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>no huh</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResetConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Yes bbi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
