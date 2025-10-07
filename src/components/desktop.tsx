@@ -8,21 +8,11 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User, Trash2 } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
 import ProfileApp from '@/components/desktop/apps/profile';
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
 
 interface DesktopProps {
   onLogout: () => void;
@@ -30,9 +20,8 @@ interface DesktopProps {
 
 export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
-  const { activeProfile, deleteProfile } = useUserProfileContext();
+  const { activeProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
-  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
@@ -51,7 +40,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
     { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
     { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
-    { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} />, desktop: false },
+    { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} onLogout={onLogout} />, desktop: false },
   ];
   
   const openApp = (appId: string) => {
@@ -61,14 +50,6 @@ export default function Desktop({ onLogout }: DesktopProps) {
     }
   };
   
-  const handleResetConfirm = () => {
-    if (activeProfile) {
-      deleteProfile(activeProfile.id);
-      onLogout();
-    }
-    setIsResetDialogOpen(false);
-  }
-
   if (!activeProfile) {
     return null;
   }
@@ -101,16 +82,15 @@ export default function Desktop({ onLogout }: DesktopProps) {
       <Taskbar 
         userProfile={activeProfile} 
         onLogout={onLogout} 
-        onReset={() => setIsResetDialogOpen(true)} 
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
       />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
-          <DialogHeader>
+          <DialogHeader className="p-4 border-b bg-card rounded-t-lg h-10 justify-center">
             <WindowCloseButton />
-            <DialogTitle className='text-center'>{activeApp?.name}</DialogTitle>
+            <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto p-6">
@@ -118,25 +98,6 @@ export default function Desktop({ onLogout }: DesktopProps) {
           </div>
         </DialogContent>
       </Dialog>
-
-      <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your account
-              and remove your data from our servers.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>no huh</AlertDialogCancel>
-            <AlertDialogAction onClick={handleResetConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex items-center gap-2">
-              <Trash2 className="h-4 w-4" />
-              Yes bbi
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </div>
   );
 }

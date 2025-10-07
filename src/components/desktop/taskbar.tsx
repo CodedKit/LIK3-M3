@@ -19,12 +19,11 @@ import VolumeControl from './volume-control';
 interface TaskbarProps {
   userProfile: UserProfile;
   onLogout: () => void;
-  onReset: () => void;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
 }
 
-export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings, onOpenProfile }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile }: TaskbarProps) {
     return (
         <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
@@ -62,10 +61,6 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                         <DropdownMenuItem onClick={onLogout}>
                             <Power className="mr-2 h-4 w-4" />
                             <span>Logout</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem onClick={onReset} className="text-destructive focus:text-destructive">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            <span>Reset Profile</span>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

@@ -24,6 +24,19 @@ import {
   FormMessage,
 } from "@/components/ui/form"
 import { DialogFooter } from '@/components/ui/dialog';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import { Separator } from '@/components/ui/separator';
+import { Trash2 } from 'lucide-react';
+
 
 const profileSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -32,11 +45,13 @@ const profileSchema = z.object({
 
 interface ProfileAppProps {
   onClose: () => void;
+  onLogout: () => void;
 }
 
-export default function ProfileApp({ onClose }: ProfileAppProps) {
-  const { activeProfile, updateProfile } = useUserProfileContext();
+export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
+  const { activeProfile, updateProfile, deleteProfile } = useUserProfileContext();
   const { toast } = useToast();
+  const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   
   const [selectedAvatar, setSelectedAvatar] = useState(activeProfile?.avatarUrl || '');
   const avatarOptions = PlaceHolderImages.filter(img => img.id.startsWith('user-avatar-'));
@@ -58,6 +73,14 @@ export default function ProfileApp({ onClose }: ProfileAppProps) {
       setSelectedAvatar(activeProfile.avatarUrl);
     }
   }, [activeProfile, form]);
+
+  const handleResetConfirm = () => {
+    if (activeProfile) {
+      deleteProfile(activeProfile.id);
+      onLogout();
+    }
+    setIsResetDialogOpen(false);
+  }
 
   if (!activeProfile) {
     return <p>No active profile. Please log in.</p>;
@@ -153,8 +176,40 @@ export default function ProfileApp({ onClose }: ProfileAppProps) {
               </DialogFooter>
             </form>
           </Form>
+
+          <Separator className="my-8" />
+            
+          <Card className="border-destructive">
+            <CardHeader>
+              <CardTitle className="text-destructive">Delete Account</CardTitle>
+              <CardDescription>
+                This action is permanent and cannot be undone. All your data will be permanently deleted.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button variant="destructive" onClick={() => setIsResetDialogOpen(true)}>Delete Account</Button>
+            </CardContent>
+          </Card>
         </CardContent>
       </Card>
+      <AlertDialog open={isResetDialogOpen} onOpenChange={setIsResetDialogOpen}>
+        <AlertDialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure you want to delete your account?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete your account
+              and remove your data from our servers.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>no huh</AlertDialogCancel>
+            <AlertDialogAction onClick={handleResetConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex items-center gap-2">
+              <Trash2 className="h-4 w-4" />
+              Yes bbi
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
