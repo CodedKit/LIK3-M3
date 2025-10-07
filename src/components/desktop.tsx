@@ -14,6 +14,9 @@ import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
 import ProfileApp from '@/components/desktop/apps/profile';
 import EhmazonApp from '@/components/desktop/apps/ehmazon';
+import { type LikestagramUser } from '@/lib/likestagram';
+import LikestagramProfileApp from '@/components/desktop/apps/likestagram/profile';
+
 
 interface DesktopProps {
   onLogout: () => void;
@@ -25,6 +28,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
+  const [viewingProfile, setViewingProfile] = useState<LikestagramUser | null>(null);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
@@ -36,15 +40,22 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const closeApp = () => {
     setActiveApp(null);
+    setViewingProfile(null);
+  };
+
+  const handleViewProfile = (user: LikestagramUser) => {
+    setViewingProfile(user);
+    openApp('likestagramProfile');
   };
 
   const apps = [
-    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
+    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram onViewProfile={handleViewProfile} /> },
     { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp setShowDebug={setShowDebug} /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
     { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" />, component: <EhmazonApp /> },
     { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
     { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} onLogout={onLogout} />, desktop: false },
+    { id: 'likestagramProfile', name: 'Likestagram Profile', component: <LikestagramProfileApp user={viewingProfile} />, desktop: false },
   ];
   
   const openApp = (appId: string) => {
@@ -94,7 +105,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
           <DialogHeader className="h-12">
             <WindowCloseButton />
-            <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight pt-1'>{activeApp?.name}</DialogTitle>
+            <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight pt-1'>{activeApp?.id === 'likestagramProfile' ? viewingProfile?.username : activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto">

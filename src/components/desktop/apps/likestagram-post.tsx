@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardFooter, CardDescription } from '@/components/ui/card';
-import { type LikestagramPost as PostData } from '@/lib/likestagram';
+import { type LikestagramPost as PostData, type LikestagramUser } from '@/lib/likestagram';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type FloatingHeart = {
@@ -17,9 +17,10 @@ type FloatingHeart = {
 
 interface LikestagramPostProps {
   post: PostData;
+  onViewProfile: (user: LikestagramUser) => void;
 }
 
-export default function LikestagramPost({ post }: LikestagramPostProps) {
+export default function LikestagramPost({ post, onViewProfile }: LikestagramPostProps) {
   const { activeProfile, addXp, updateProfile } = useUserProfileContext();
   const [likes, setLikes] = useState(post.initialLikes);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
@@ -63,6 +64,7 @@ export default function LikestagramPost({ post }: LikestagramPostProps) {
     <div className="relative">
       <Card className="w-full max-w-sm">
         <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-4">
+          <button onClick={() => onViewProfile(post.user)} className="flex items-center gap-3">
             {post.user.avatar && (
                  <Avatar className="h-10 w-10">
                     <AvatarImage src={post.user.avatar.imageUrl} alt={post.user.username} />
@@ -70,6 +72,7 @@ export default function LikestagramPost({ post }: LikestagramPostProps) {
                 </Avatar>
             )}
             <div className="font-semibold text-primary-foreground">{post.user.username}</div>
+          </button>
         </CardHeader>
         <CardContent className="p-0">
           {post.image && (
@@ -101,7 +104,7 @@ export default function LikestagramPost({ post }: LikestagramPostProps) {
                 </p>
             </div>
             <CardDescription>
-                <span className="font-bold text-primary-foreground mr-2">{post.user.username}</span>
+                <button onClick={() => onViewProfile(post.user)} className="font-bold text-primary-foreground mr-2">{post.user.username}</button>
                 {post.description}
             </CardDescription>
         </CardFooter>
