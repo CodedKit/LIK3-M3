@@ -9,6 +9,6 @@ export const help: Command = {
       .map(cmd => `  ${cmd.name.padEnd(10)} - ${cmd.description}`)
       .join('\n');
     
-    return `Available commands:\n${commandList}\n  clear         - clear the terminal`;
+    return `Available commands:\n${commandList}\n  clear         - Clears the terminal history.`;
   },
 };
