@@ -93,7 +93,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
             <DialogTitle className='text-center text-sm font-medium leading-none tracking-tight'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
-          <div className="flex-grow overflow-y-auto p-6">
+          <div className="flex-grow overflow-y-auto">
             {activeApp?.component}
           </div>
         </DialogContent>
