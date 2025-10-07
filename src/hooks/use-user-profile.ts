@@ -154,7 +154,7 @@ export function useUserProfile() {
         }
     }
 
-    const defaultBg = PlaceHolderImages.find(img => img.id === 'desktop-bg-4');
+    const defaultBg = PlaceHolderImages.find(img => img.id === 'desktop-bg-5');
 
     const newProfile: UserProfile = {
       ...newProfileData,

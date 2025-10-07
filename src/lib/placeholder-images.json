@@ -83,6 +83,12 @@
       "description": "A placeholder image for a desktop background.",
       "imageUrl": "https://images.unsplash.com/photo-1485470733090-0aae1788d5af?q=80&w=2117&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
       "imageHint": "night sky"
+    },
+    {
+      "id": "desktop-bg-5",
+      "description": "A very content cat.",
+      "imageUrl": "https://i.imgur.com/h4w6p6G.jpeg",
+      "imageHint": "smug cat"
     }
   ]
 }
