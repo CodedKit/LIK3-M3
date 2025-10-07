@@ -83,7 +83,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                     </DropdownMenuContent>
                 </DropdownMenu>
                 <div className="flex items-center gap-1 text-primary-foreground">
-                    <CircleDollarSign className="h-4 w-4 text-primary" />
+                    <CircleDollarSign className="h-6 w-6 text-primary" />
                     <span className="text-sm font-medium">{userProfile.money?.toLocaleString() || 0}</span>
                 </div>
             </div>
