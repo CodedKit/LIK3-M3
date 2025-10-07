@@ -1,9 +1,10 @@
 
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { cn } from '@/lib/utils';
+import { commands } from '@/lib/terminal';
 
 type Command = {
   command: string;
@@ -20,6 +21,10 @@ export default function TerminalApp() {
   const user = activeProfile?.username || 'user';
   const prompt = `[${user}@lik3m3 ~]$`;
 
+  const logToConsole = useCallback((...args: any[]) => {
+    console.log(...args);
+  }, []);
+
   useEffect(() => {
     inputRef.current?.focus();
   }, []);
@@ -28,46 +33,43 @@ export default function TerminalApp() {
     endOfHistoryRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [history]);
 
-  const handleCommand = (commandStr: string) => {
-    let output: React.ReactNode;
-    const [command, ...args] = commandStr.trim().split(' ');
+  useEffect(() => {
+    logToConsole('Welcome to LIK3 M3 Terminal');
+    logToConsole("Type 'help' for a list of commands.");
+  }, [logToConsole]);
 
-    switch (command.toLowerCase()) {
-      case 'help':
-        output = (
-          <ul className="list-disc pl-5">
-            <li><span className="font-bold text-pink-400">about</span> - learn more about LIK3 M3</li>
-            <li><span className="font-bold text-pink-400">whoami</span> - display the current user</li>
-            <li><span className="font-bold text-pink-400">clear</span> - clear the terminal</li>
-            <li><span className="font-bold text-pink-400">help</span> - show this help message</li>
-          </ul>
-        );
-        break;
-      case 'whoami':
-        output = user;
-        break;
-      case 'about':
-        output = (
-            <p>
-                <span className='font-headline text-primary'>LIK3 M3</span> is a virtual space for exploring identity.
-            </p>
-        );
-        break;
-      case 'clear':
-        setHistory([]);
+  const handleCommand = (commandStr: string) => {
+    const [commandName, ...args] = commandStr.trim().split(' ');
+    let output: React.ReactNode = `Command not found: ${commandName}. Type 'help' for a list of commands.`;
+
+    if(commandStr.trim() === '') {
+        setHistory((prev) => [...prev, { command: '', output: '' }]);
         return;
-      case '':
-        output = null;
-        break;
-      default:
-        output = `Command not found: ${command}. Type 'help' for a list of commands.`;
-        break;
+    }
+
+    if (commandName.toLowerCase() === 'clear') {
+      setHistory([]);
+      return;
     }
     
-    if(output !== null){
-        setHistory((prev) => [...prev, { command: commandStr, output }]);
-    } else {
-        setHistory((prev) => [...prev, { command: '', output: ''}]);
+    const commandToExecute = commands[commandName.toLowerCase()];
+    
+    if (commandToExecute) {
+      output = commandToExecute.execute({ args, commands, user });
+    }
+
+    const newHistoryItem = { command: commandStr, output };
+    setHistory((prev) => [...prev, newHistoryItem]);
+    
+    logToConsole(`${prompt} ${commandStr}`);
+    if (output) {
+      // This is a bit tricky since output is ReactNode. For logging, we'll try to get a string representation.
+      // This is a simplified approach.
+      if (typeof output === 'string') {
+        logToConsole(output);
+      } else {
+        logToConsole('[ReactNode Output]');
+      }
     }
   };
 
