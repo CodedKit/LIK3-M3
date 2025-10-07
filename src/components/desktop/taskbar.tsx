@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { User, Power, Settings, Trash2, Wifi, Volume2, Battery } from 'lucide-react';
+import { User, Power, Settings, Trash2, Wifi, Battery } from 'lucide-react';
 import { type UserProfile } from '@/context/user-profile-context';
 import {
   DropdownMenu,
@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import TaskbarClock from './taskbar-clock';
+import VolumeControl from './volume-control';
 
 interface TaskbarProps {
   userProfile: UserProfile;
@@ -72,7 +73,7 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
             <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
                 <div className="flex items-center gap-2">
                     <Wifi className="h-5 w-5" />
-                    <Volume2 className="h-5 w-5" />
+                    <VolumeControl />
                     <div className="flex items-center gap-1">
                       <Battery className="h-5 w-5" />
                       <span className="text-[10px] font-medium">98%</span>
