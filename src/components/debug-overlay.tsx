@@ -8,6 +8,7 @@ import { Circle, Contrast } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { type UserProfile } from '@/context/user-profile-context';
+import { useToast } from '@/hooks/use-toast';
 
 interface DebugOverlayProps {
   onClose: () => void;
@@ -17,6 +18,7 @@ interface DebugOverlayProps {
 export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayProps) {
   const [storage, setStorage] = useState<[string, string][]>([]);
   const [isOpaque, setIsOpaque] = useState(false);
+  const { toast } = useToast();
 
   useEffect(() => {
     const getStorageData = () => {
@@ -40,6 +42,13 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
     };
   }, []);
 
+  const handleShowToast = () => {
+    toast({
+      title: "Example Toast",
+      description: "This is a test notification.",
+    });
+  };
+
   const profileData = activeProfile ? Object.entries(activeProfile) : [];
 
   return (
@@ -60,9 +69,10 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
       </div>
 
       <Tabs defaultValue="localstorage">
-        <TabsList className="grid w-full grid-cols-2">
+        <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="localstorage">localStorage</TabsTrigger>
             <TabsTrigger value="profile">Active Profile</TabsTrigger>
+            <TabsTrigger value="toggles">Toggles</TabsTrigger>
         </TabsList>
         <TabsContent value="localstorage" className="max-h-64 overflow-auto mt-4">
             <Table>
@@ -117,6 +127,13 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
             ) : (
                 <p className="text-center text-xs text-muted-foreground">No active profile.</p>
             )}
+        </TabsContent>
+        <TabsContent value="toggles" className="max-h-64 overflow-auto mt-4">
+            <div className="flex flex-col space-y-2">
+                <Button onClick={handleShowToast} variant="outline" size="sm">
+                    Show Example Toast
+                </Button>
+            </div>
         </TabsContent>
       </Tabs>
     </div>
