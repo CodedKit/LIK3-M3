@@ -39,7 +39,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                                         height={28}
                                         className="h-7 w-7 rounded-sm object-cover"
                                     />
-                                    <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
+                                    <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
                                 </div>
                             )}
                         </button>
