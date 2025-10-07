@@ -73,7 +73,10 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                 <div className="flex items-center gap-2">
                     <Wifi className="h-5 w-5" />
                     <Volume2 className="h-5 w-5" />
-                    <Battery className="h-5 w-5" />
+                    <div className="flex items-center gap-1">
+                      <Battery className="h-5 w-5" />
+                      <span className="text-[10px] font-medium">98%</span>
+                    </div>
                 </div>
                 <TaskbarClock />
             </div>
