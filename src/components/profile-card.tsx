@@ -21,8 +21,8 @@ export default function ProfileCard({ profile, onClick, onDelete, className }: P
         className
       )}
     >
-      <div className="w-full">
-        <Avatar className="h-auto w-full rounded-lg">
+      <div className="w-full aspect-square">
+        <Avatar className="h-full w-full rounded-lg">
           <AvatarImage src={profile.avatarUrl} alt={profile.username} />
           <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
         </Avatar>
