@@ -8,11 +8,12 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
 import ProfileApp from '@/components/desktop/apps/profile';
+import EhmazonApp from '@/components/desktop/apps/ehmazon';
 
 interface DesktopProps {
   onLogout: () => void;
@@ -41,6 +42,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
     { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp setShowDebug={setShowDebug} /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
+    { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" />, component: <EhmazonApp /> },
     { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
     { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} onLogout={onLogout} />, desktop: false },
   ];
