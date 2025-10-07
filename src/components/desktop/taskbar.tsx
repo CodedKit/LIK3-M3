@@ -4,6 +4,8 @@
 import Image from 'next/image';
 import { User, Power, Settings, Wifi, Battery } from 'lucide-react';
 import { type UserProfile } from '@/context/user-profile-context';
+import { calculateLevel } from '@/lib/leveling';
+import { Progress } from '@/components/ui/progress';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,25 +26,36 @@ interface TaskbarProps {
 }
 
 export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile }: TaskbarProps) {
+    const { level, progress } = calculateLevel(userProfile.xp);
+
     return (
-        <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
+        <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-14 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <button className="flex items-center gap-2 focus:outline-none">
-                            {userProfile.avatarUrl && (
-                                <div className="relative">
+                        <button className="flex items-center gap-3 focus:outline-none">
+                            <div className="relative">
+                                {userProfile.avatarUrl && (
                                     <Image
                                         src={userProfile.avatarUrl}
                                         alt={userProfile.username}
-                                        width={28}
-                                        height={28}
-                                        className="h-7 w-7 rounded-sm object-cover"
+                                        width={36}
+                                        height={36}
+                                        className="h-9 w-9 rounded-sm object-cover"
                                     />
-                                    <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
+                                )}
+                                <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
+                            </div>
+                            <div className="flex flex-col items-start">
+                                <div className='flex items-center gap-2'>
+                                    <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
+                                    <p className="text-xs font-bold text-primary">Lvl. {level}</p>
                                 </div>
-                            )}
-                            <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
+                                <div className='w-full mt-1'>
+                                    <Progress value={progress} className="h-1 w-24" />
+                                    <p className="text-[8px] text-muted-foreground">{Math.floor(progress)}%</p>
+                                </div>
+                            </div>
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" sideOffset={8} align="start" className="w-56 md:side-top">

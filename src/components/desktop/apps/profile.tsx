@@ -16,6 +16,8 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { cn } from '@/lib/utils';
+import { Progress } from '@/components/ui/progress';
+import { calculateLevel } from '@/lib/leveling';
 import {
   Form,
   FormControl,
@@ -110,6 +112,9 @@ export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
     }
   };
 
+  const { level, progress, xpForCurrentLevel, totalXpForNextLevel } = calculateLevel(activeProfile.xp);
+  const currentXp = activeProfile.xp || 0;
+
   return (
     <div className="h-full w-full bg-background">
       <Card className="border-0 shadow-none">
@@ -172,9 +177,17 @@ export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
                 )}
               />
 
-              <div>
+              <div className="space-y-2">
                 <Label>Experience</Label>
-                <p className="text-sm font-medium text-primary-foreground">{activeProfile.xp ?? 0} XP</p>
+                <div className='flex items-center gap-2'>
+                    <p className="text-sm font-bold text-primary">Lvl. {level}</p>
+                    <p className="text-xs font-medium text-primary-foreground">({currentXp} XP)</p>
+                </div>
+                <Progress value={progress} className="h-2" />
+                <div className="flex justify-between text-xs text-muted-foreground">
+                  <span>{currentXp - xpForCurrentLevel} / {totalXpForNextLevel - xpForCurrentLevel} XP</span>
+                  <span>{Math.floor(progress)}%</span>
+                </div>
               </div>
               
               <DialogFooter>
