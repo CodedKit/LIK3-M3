@@ -6,30 +6,29 @@ import Image from 'next/image';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useUserProfileContext } from '@/context/user-profile-context';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-
-const POST_ID = 'post-1';
+import { Card, CardContent, CardHeader, CardFooter, CardDescription } from '@/components/ui/card';
+import { type LikestagramPost as PostData } from '@/lib/likestagram';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
 type FloatingHeart = {
   id: number;
 };
 
 interface LikestagramPostProps {
-  postImage: ImagePlaceholder | undefined;
+  post: PostData;
 }
 
-export default function LikestagramPost({ postImage }: LikestagramPostProps) {
+export default function LikestagramPost({ post }: LikestagramPostProps) {
   const { activeProfile, addXp, updateProfile } = useUserProfileContext();
-  const [likes, setLikes] = useState(0);
+  const [likes, setLikes] = useState(post.initialLikes);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
 
   useEffect(() => {
     if (activeProfile?.likes) {
-      setLikes(activeProfile.likes[POST_ID] || 0);
+      setLikes(activeProfile.likes[post.id] || post.initialLikes);
     }
-  }, [activeProfile]);
+  }, [activeProfile, post.id, post.initialLikes]);
 
   const handleLike = useCallback(() => {
     if (!activeProfile) {
@@ -43,12 +42,12 @@ export default function LikestagramPost({ postImage }: LikestagramPostProps) {
         setFloatingHearts((currentHearts) => currentHearts.filter(h => h.id !== newHeartId));
     }, 1000);
 
-    const currentLikes = activeProfile.likes?.[POST_ID] || 0;
+    const currentLikes = activeProfile.likes?.[post.id] || post.initialLikes;
     const newLikesCount = currentLikes + 1;
 
     const newLikesData = {
         ...activeProfile.likes,
-        [POST_ID]: newLikesCount
+        [post.id]: newLikesCount
     };
 
     updateProfile(activeProfile.id, { likes: newLikesData });
@@ -56,45 +55,61 @@ export default function LikestagramPost({ postImage }: LikestagramPostProps) {
     if (addXp) {
       addXp(10);
     }
-  }, [activeProfile, addXp, updateProfile]);
+  }, [activeProfile, addXp, updateProfile, post.id, post.initialLikes]);
 
-  const isLiked = likes > 0;
+  const isLiked = activeProfile?.likes?.[post.id] ? (activeProfile.likes[post.id] > post.initialLikes) : false;
 
   return (
     <div className="relative">
       <Card className="w-full max-w-sm">
-        <CardContent className="p-4">
-          {postImage && (
-            <div className="aspect-square relative mb-4">
+        <CardHeader className="flex flex-row items-center gap-3 space-y-0 p-4">
+            {post.user.avatar && (
+                 <Avatar className="h-10 w-10">
+                    <AvatarImage src={post.user.avatar.imageUrl} alt={post.user.username} />
+                    <AvatarFallback>{post.user.username.charAt(0)}</AvatarFallback>
+                </Avatar>
+            )}
+            <div className="font-semibold text-primary-foreground">{post.user.username}</div>
+        </CardHeader>
+        <CardContent className="p-0">
+          {post.image && (
+            <div className="aspect-square relative">
               <Image
-                src={postImage.imageUrl}
+                src={post.image.imageUrl}
                 alt="Post"
                 fill
-                className="rounded-lg object-cover"
+                className="object-cover"
+                data-ai-hint={post.image.imageHint}
               />
             </div>
           )}
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="icon" onClick={handleLike}>
-              <Heart
-                className={cn(
-                  'h-6 w-6',
-                  isLiked
-                    ? 'text-red-500 fill-red-500'
-                    : 'text-primary-foreground'
-                )}
-              />
-            </Button>
-            <p className="text-sm font-medium text-primary-foreground">
-              {likes} {likes === 1 ? 'like' : 'likes'}
-            </p>
-          </div>
         </CardContent>
+        <CardFooter className="p-4 flex flex-col items-start gap-2">
+            <div className="flex items-center gap-2">
+                <Button variant="ghost" size="icon" onClick={handleLike} className="-ml-2">
+                <Heart
+                    className={cn(
+                    'h-6 w-6',
+                    isLiked
+                        ? 'text-red-500 fill-red-500'
+                        : 'text-primary-foreground'
+                    )}
+                />
+                </Button>
+                <p className="text-sm font-medium text-primary-foreground">
+                {likes} {likes === 1 ? 'like' : 'likes'}
+                </p>
+            </div>
+            <CardDescription>
+                <span className="font-bold text-primary-foreground mr-2">{post.user.username}</span>
+                {post.description}
+            </CardDescription>
+        </CardFooter>
       </Card>
       {floatingHearts.map((heart) => (
         <div
           key={heart.id}
-          className="absolute bottom-5 -left-6 flex items-center animate-like-animation pointer-events-none"
+          className="absolute bottom-16 -left-6 flex items-center animate-like-animation pointer-events-none"
         >
           <Heart className="h-5 w-5 text-red-500 fill-red-500" />
           <span className="ml-1 text-sm font-bold text-red-500">+1</span>

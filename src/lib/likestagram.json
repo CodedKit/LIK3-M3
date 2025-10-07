@@ -1,0 +1,43 @@
+
+{
+  "users": [
+    {
+      "id": "likestagram-user-1",
+      "username": "pixel_pioneer",
+      "avatarId": "user-avatar-1"
+    },
+    {
+      "id": "likestagram-user-2",
+      "username": "code_connoisseur",
+      "avatarId": "user-avatar-2"
+    },
+    {
+        "id": "likestagram-user-3",
+        "username": "design_diva",
+        "avatarId": "user-avatar-3"
+    }
+  ],
+  "posts": [
+    {
+      "id": "post-1",
+      "userId": "likestagram-user-1",
+      "imageId": "product-1",
+      "description": "Just got these new headphones! The sound quality is out of this world. 🎧 #music #audio",
+      "initialLikes": 142
+    },
+    {
+      "id": "post-2",
+      "userId": "likestagram-user-2",
+      "imageId": "product-2",
+      "description": "Loving my new smartwatch. Tracking my runs has never been easier. 🏃‍♂️ #fitness #tech",
+      "initialLikes": 88
+    },
+    {
+      "id": "post-3",
+      "userId": "likestagram-user-3",
+      "imageId": "product-4",
+      "description": "Capturing some amazing views with my new drone. The world looks different from up here! 🚁 #drone #photography",
+      "initialLikes": 210
+    }
+  ]
+}

@@ -1,16 +1,15 @@
 
 'use client';
 
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 import LikestagramPost from './likestagram-post';
-
+import { LikestagramPosts } from '@/lib/likestagram';
 
 export default function Likestagram() {
-  const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
-
   return (
-    <div className="h-full w-full bg-background p-4 flex justify-center items-start">
-      <LikestagramPost postImage={postImage} />
+    <div className="h-full w-full bg-background p-4 flex flex-col items-center gap-8 overflow-y-auto">
+      {LikestagramPosts.map(post => (
+        <LikestagramPost key={post.id} post={post} />
+      ))}
     </div>
   );
 }
