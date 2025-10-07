@@ -108,9 +108,9 @@ export default function Desktop({ onLogout }: DesktopProps) {
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
-          <DialogHeader className="p-4 border-b bg-card rounded-t-lg">
+          <DialogHeader>
             <WindowCloseButton />
-            <DialogTitle className='font-headline text-center'>{activeApp?.name}</DialogTitle>
+            <DialogTitle className='text-center'>{activeApp?.name}</DialogTitle>
             <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto p-6">
