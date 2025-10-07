@@ -29,7 +29,11 @@ const profileSchema = z.object({
   description: z.string().max(100, 'Description must be at most 100 characters.').optional(),
 });
 
-export default function ProfileApp() {
+interface ProfileAppProps {
+  onClose: () => void;
+}
+
+export default function ProfileApp({ onClose }: ProfileAppProps) {
   const { activeProfile, updateProfile } = useUserProfileContext();
   const { toast } = useToast();
   
@@ -71,6 +75,7 @@ export default function ProfileApp() {
             title: "Profile Updated",
             description: "Your profile has been saved successfully.",
         });
+        onClose();
     } catch (error: any) {
         toast({
             title: "Error",

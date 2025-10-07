@@ -18,14 +18,6 @@ interface DesktopProps {
   onLogout: () => void;
 }
 
-const apps = [
-  { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
-  { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
-  { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={() => {}} /> },
-  { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
-  { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp />, desktop: false },
-];
-
 export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile, clearAllProfiles } = useUserProfileContext();
@@ -39,19 +31,23 @@ export default function Desktop({ onLogout }: DesktopProps) {
     setCurrentTrackIndex(null);
   };
 
+  const closeApp = () => {
+    setActiveApp(null);
+  };
+
+  const apps = [
+    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
+    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+    { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
+    { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
+    { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp onClose={closeApp} />, desktop: false },
+  ];
+  
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
     if(app) {
-      if (app.id === 'music') {
-        setActiveApp({...app, component: <MusicApp onPlayTrack={handlePlayTrack} />});
-      } else {
-        setActiveApp(app);
-      }
+      setActiveApp(app);
     }
-  };
-
-  const closeApp = () => {
-    setActiveApp(null);
   };
   
   const handleReset = () => {
