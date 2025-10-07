@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -51,26 +52,28 @@ export function useUserProfile() {
   }, []);
 
   const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id'>) => {
-    if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
-        throw new Error('A profile with this username already exists.');
-    }
+    setProfiles(prevProfiles => {
+      if (prevProfiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
+          throw new Error('A profile with this username already exists.');
+      }
       
-    const newProfile: UserProfile = {
-      ...newProfileData,
-      id: `profile_${Date.now()}_${Math.random()}`,
-      description: 'New to Virtual Temptations!'
-    };
-    
-    try {
-      const updatedProfiles = [...profiles, newProfile];
-      window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
-      setProfiles(updatedProfiles);
-      setActive(newProfile);
-    } catch (error) {
-      console.error("Failed to save user profile to localStorage", error);
-      throw new Error('Failed to save profile.');
-    }
-  }, [profiles, setActive]);
+      const newProfile: UserProfile = {
+        ...newProfileData,
+        id: `profile_${Date.now()}_${Math.random()}`,
+        description: 'New to Virtual Temptations!'
+      };
+      
+      try {
+        const updatedProfiles = [...prevProfiles, newProfile];
+        window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
+        setActive(newProfile);
+        return updatedProfiles;
+      } catch (error) {
+        console.error("Failed to save user profile to localStorage", error);
+        throw new Error('Failed to save profile.');
+      }
+    });
+  }, [setActive]);
 
   const updateProfile = useCallback((profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => {
     setProfiles(prevProfiles => {
