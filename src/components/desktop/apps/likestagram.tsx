@@ -92,7 +92,7 @@ export default function Likestagram() {
         {floatingHearts.map((heart) => (
           <div
             key={heart.id}
-            className="absolute bottom-4 left-[-20px] flex items-center animate-like-animation pointer-events-none"
+            className="absolute bottom-4 -left-6 flex items-center animate-like-animation pointer-events-none"
           >
             <Heart className="h-5 w-5 text-red-500 fill-red-500" />
             <span className="ml-1 text-sm font-bold text-red-500">+1</span>
