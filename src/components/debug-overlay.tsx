@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,7 +33,7 @@ export default function DebugOverlay() {
   return (
     <div className="fixed bottom-4 left-4 z-[101] max-w-lg rounded-lg border bg-card/80 p-4 text-card-foreground shadow-lg backdrop-blur-sm">
       <h3 className="mb-2 font-semibold text-xs">localStorage Debug</h3>
-      <div className="max-h-64 overflow-y-auto">
+      <div className="max-h-64 overflow-y-auto overflow-x-auto">
         <Table>
           <TableHeader>
             <TableRow>
@@ -44,10 +45,10 @@ export default function DebugOverlay() {
             {storage.length > 0 ? (
               storage.map(([key, value]) => (
                 <TableRow key={key}>
-                  <TableCell className="max-w-xs truncate py-2 align-top text-xs font-medium">
+                  <TableCell className="py-2 align-top text-xs font-medium whitespace-nowrap">
                     {key}
                   </TableCell>
-                  <TableCell className="max-w-xs truncate py-2 align-top text-xs">
+                  <TableCell className="py-2 align-top text-xs whitespace-pre-wrap break-all">
                     {value}
                   </TableCell>
                 </TableRow>
