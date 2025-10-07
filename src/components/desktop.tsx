@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
@@ -43,13 +43,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     setViewingProfile(null);
   };
 
-  const handleViewProfile = (user: LikestagramUser) => {
-    setViewingProfile(user);
-    openApp('likestagramProfile');
-  };
-
   const apps = [
-    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram onViewProfile={handleViewProfile} /> },
+    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram onViewProfile={setViewingProfile} /> },
     { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp setShowDebug={setShowDebug} /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
     { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" />, component: <EhmazonApp /> },
@@ -64,6 +59,12 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       setActiveApp(app);
     }
   };
+
+  useEffect(() => {
+    if (viewingProfile) {
+      openApp('likestagramProfile');
+    }
+  }, [viewingProfile]);
   
   if (!activeProfile) {
     return null;
