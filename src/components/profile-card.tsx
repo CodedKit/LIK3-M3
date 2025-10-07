@@ -1,18 +1,22 @@
 
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import type { UserProfile } from '@/context/user-profile-context';
 import { Trash2 } from 'lucide-react';
+import { calculateLevel } from '@/lib/leveling';
 
 interface ProfileCardProps {
-  profile: Pick<UserProfile, 'id' | 'username' | 'avatarUrl'>;
-  onClick: (profile: Pick<UserProfile, 'id' | 'username' | 'avatarUrl'>) => void;
+  profile: Pick<UserProfile, 'id' | 'username' | 'avatarUrl' | 'xp'>;
+  onClick: (profile: UserProfile) => void;
   onDelete: (event: React.MouseEvent, profileId: string) => void;
   className?: string;
 }
 
 export default function ProfileCard({ profile, onClick, onDelete, className }: ProfileCardProps) {
+  const { level } = calculateLevel(profile.xp);
+
   return (
     <div
       onClick={() => onClick(profile)}
@@ -28,7 +32,10 @@ export default function ProfileCard({ profile, onClick, onDelete, className }: P
           <AvatarFallback>{profile.username.charAt(0)}</AvatarFallback>
         </Avatar>
       </div>
-      <p className="mt-4 text-lg font-headline text-primary-foreground">{profile.username}</p>
+      <div className="mt-4 flex flex-col items-center">
+        <p className="text-lg font-headline text-primary-foreground">{profile.username}</p>
+        <p className="text-xs font-medium text-muted-foreground">Lvl. {level}</p>
+      </div>
       <Button
         variant="outline"
         size="icon"

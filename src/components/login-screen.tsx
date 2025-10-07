@@ -70,9 +70,11 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit, onInvalid }: 
                     </form>
                 </Form>
             ) : (
-                <Button size="xs" variant="outline" className="mt-2 w-full">
-                    + New Profile
-                </Button>
+                <div className="mt-4 flex flex-col items-center">
+                    <Button size="xs" variant="outline" className="w-full">
+                        + New Profile
+                    </Button>
+                </div>
             )}
         </div>
     </div>
