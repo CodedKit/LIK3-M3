@@ -8,7 +8,7 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User, Trash2 } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
@@ -130,7 +130,8 @@ export default function Desktop({ onLogout }: DesktopProps) {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>no huh</AlertDialogCancel>
-            <AlertDialogAction onClick={handleResetConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+            <AlertDialogAction onClick={handleResetConfirm} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 flex items-center gap-2">
+              <Trash2 className="h-4 w-4" />
               Yes bbi
             </AlertDialogAction>
           </AlertDialogFooter>
