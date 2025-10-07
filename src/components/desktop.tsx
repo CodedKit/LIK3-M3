@@ -123,9 +123,12 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const canGoBack = openApps.length > 1;
 
+  const isGradient = activeProfile.desktopBgUrl?.startsWith('linear-gradient') || activeProfile.desktopBgUrl?.startsWith('radial-gradient');
+
+
   return (
     <div className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
-      {activeProfile.desktopBgUrl && (
+      {activeProfile.desktopBgUrl && !isGradient && (
         <Image
           src={activeProfile.desktopBgUrl}
           alt="Desktop Background"
@@ -133,6 +136,13 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
           className="object-cover z-0"
         />
       )}
+      {activeProfile.desktopBgUrl && isGradient && (
+        <div 
+          className="absolute inset-0 z-0"
+          style={{ background: activeProfile.desktopBgUrl }}
+        />
+      )}
+
       <div className="relative z-10 flex-grow p-2">
         <div className="flex h-auto flex-row flex-wrap gap-2">
           {desktopApps.map((app) => (
