@@ -21,6 +21,7 @@ export type UserProfile = {
   xp?: number;
   likes?: LikeData;
   terminalHistory?: TerminalHistoryItem[];
+  money?: number;
 };
 
 const USER_PROFILE_KEY_PREFIX = 'lik3-m3-profile-';
@@ -75,7 +76,7 @@ export function useUserProfile() {
     }
   }, []);
 
-  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory'>) => {
+  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory' | 'money'>) => {
     if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
         throw new Error('A profile with this username already exists.');
     }
@@ -88,6 +89,7 @@ export function useUserProfile() {
       xp: 0,
       likes: {},
       terminalHistory: [],
+      money: 500,
     };
     
     try {

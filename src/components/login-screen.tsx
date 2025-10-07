@@ -80,7 +80,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit, onInvalid }: 
 
 interface LoginScreenProps {
     profiles: UserProfile[];
-    onAccountCreate: (newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp'>) => void;
+    onAccountCreate: (newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'money'>) => void;
     onLogin: (profile: UserProfile) => void;
     onProfileDelete: (profileId: string) => void;
     showDebug: boolean;

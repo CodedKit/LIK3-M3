@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { User, Power, Settings, Wifi, Battery } from 'lucide-react';
+import { User, Power, Settings, Wifi, Battery, CircleDollarSign } from 'lucide-react';
 import { type UserProfile } from '@/context/user-profile-context';
 import { calculateLevel } from '@/lib/leveling';
 import { Progress } from '@/components/ui/progress';
@@ -80,6 +80,10 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                <div className="flex items-center gap-1 text-primary-foreground">
+                    <CircleDollarSign className="h-4 w-4 text-primary" />
+                    <span className="text-sm font-medium">{userProfile.money?.toLocaleString() || 0}</span>
+                </div>
             </div>
             <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
                 <div className="flex items-center gap-2">
