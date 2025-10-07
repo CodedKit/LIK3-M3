@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Playlist } from '@/lib/music';
+import { Card } from '@/components/ui/card';
 
 interface MediaPlayerProps {
     currentTrackIndex: number;
@@ -36,7 +37,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
-        <div className="flex items-center gap-3 p-2 rounded-lg border bg-transparent backdrop-blur-sm">
+        <Card className="flex items-center gap-3 p-2 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
                     <Circle className="h-4 w-4 text-red-500 fill-current" />
@@ -71,7 +72,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
                     <SkipForward className="h-5 w-5 fill-current" />
                 </Button>
             </div>
-        </div>
+        </Card>
     </div>
   );
 }
