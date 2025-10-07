@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -75,8 +76,7 @@ export default function Likestagram() {
                 src={postImage.imageUrl}
                 alt="Post"
                 fill
-                style={{ objectFit: 'cover', width: 'auto', height: 'auto' }}
-                className="rounded-lg"
+                className="rounded-lg object-cover"
               />
             </div>
           )}
