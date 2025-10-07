@@ -86,8 +86,6 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         onLogout={onLogout} 
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
-        showDebug={showDebug}
-        setShowDebug={setShowDebug}
       />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>

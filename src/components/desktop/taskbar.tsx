@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { User, Power, Settings, Wifi, Battery, Bug } from 'lucide-react';
+import { User, Power, Settings, Wifi, Battery } from 'lucide-react';
 import { type UserProfile } from '@/context/user-profile-context';
 import {
   DropdownMenu,
@@ -12,7 +12,6 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-  DropdownMenuCheckboxItem,
 } from '@/components/ui/dropdown-menu';
 import TaskbarClock from './taskbar-clock';
 import VolumeControl from './volume-control';
@@ -22,11 +21,9 @@ interface TaskbarProps {
   onLogout: () => void;
   onOpenSettings: () => void;
   onOpenProfile: () => void;
-  showDebug: boolean;
-  setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
-export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, showDebug, setShowDebug }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile }: TaskbarProps) {
     return (
         <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
@@ -59,13 +56,6 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                                 <Settings className="mr-2 h-4 w-4" />
                                 <span>Settings</span>
                             </DropdownMenuItem>
-                             <DropdownMenuCheckboxItem
-                                checked={showDebug}
-                                onCheckedChange={() => setShowDebug(s => !s)}
-                            >
-                                <Bug className="mr-2 h-4 w-4" />
-                                <span>Debug Mode</span>
-                            </DropdownMenuCheckboxItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={onLogout}>
