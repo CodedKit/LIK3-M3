@@ -51,9 +51,11 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                                     <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
                                     <p className="text-xs font-bold text-primary">Lvl. {level}</p>
                                 </div>
-                                <div className='w-full mt-1'>
-                                    <Progress value={progress} className="h-1 w-24" />
-                                    <p className="text-[8px] text-muted-foreground">{Math.floor(progress)}%</p>
+                                <div className="relative w-24 mt-1">
+                                    <Progress value={progress} className="h-3" />
+                                    <p className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white/75">
+                                        {Math.floor(progress)}%
+                                    </p>
                                 </div>
                             </div>
                         </button>
