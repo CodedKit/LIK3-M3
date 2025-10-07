@@ -2,6 +2,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import Image from 'next/image';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
@@ -86,7 +87,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       case 'chatcord':
         return <ChatCordApp />;
       case 'settings':
-        return <SettingsApp />;
+        return <SettingsApp onClose={closeApp} />;
       case 'profile':
         return <ProfileApp onClose={closeApp} onLogout={onLogout} />;
       default:
@@ -123,8 +124,16 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const canGoBack = openApps.length > 1;
 
   return (
-    <div className="flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
-      <div className="flex-grow p-2">
+    <div className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
+      {activeProfile.desktopBgUrl && (
+        <Image
+          src={activeProfile.desktopBgUrl}
+          alt="Desktop Background"
+          fill
+          className="object-cover z-0"
+        />
+      )}
+      <div className="relative z-10 flex-grow p-2">
         <div className="flex h-auto flex-row flex-wrap gap-2">
           {desktopApps.map((app) => (
             <AppIcon

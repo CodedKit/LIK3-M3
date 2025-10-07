@@ -26,6 +26,7 @@ export type UserProfile = {
   id: string;
   username: string;
   avatarUrl: string;
+  desktopBgUrl?: string;
   description?: string;
   showDebug?: boolean;
   xp?: number;
