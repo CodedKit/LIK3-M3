@@ -2,6 +2,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { calculateLevel } from '@/lib/leveling';
+import { toast } from './use-toast';
 
 type LikeData = {
     [postId: string]: number;
@@ -162,8 +164,21 @@ export function useUserProfile() {
 
   const addXp = useCallback((amount: number) => {
     if (!activeProfile) return;
+    
     const currentXp = activeProfile.xp || 0;
-    updateProfile(activeProfile.id, { xp: currentXp + amount });
+    const newXp = currentXp + amount;
+    
+    const { level: oldLevel } = calculateLevel(currentXp);
+    const { level: newLevel } = calculateLevel(newXp);
+    
+    if (newLevel > oldLevel) {
+        toast({
+            title: "Level Up!",
+            description: `You've reached level ${newLevel}!`,
+        });
+    }
+
+    updateProfile(activeProfile.id, { xp: newXp });
   }, [activeProfile, updateProfile]);
 
   return { profiles, activeProfile, addProfile, setActive, deleteProfile, updateProfile, resetAllProfiles, isLoading, addXp };
