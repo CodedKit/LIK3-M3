@@ -31,13 +31,16 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                     <DropdownMenuTrigger asChild>
                         <button className="flex items-center gap-2 focus:outline-none">
                             {userProfile.avatarUrl && (
-                                <Image
-                                    src={userProfile.avatarUrl}
-                                    alt={userProfile.username}
-                                    width={28}
-                                    height={28}
-                                    className="h-7 w-7 rounded-sm object-cover"
-                                />
+                                <div className="relative">
+                                    <Image
+                                        src={userProfile.avatarUrl}
+                                        alt={userProfile.username}
+                                        width={28}
+                                        height={28}
+                                        className="h-7 w-7 rounded-sm object-cover"
+                                    />
+                                    <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
+                                </div>
                             )}
                         </button>
                     </DropdownMenuTrigger>
