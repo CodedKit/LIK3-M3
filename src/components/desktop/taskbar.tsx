@@ -2,7 +2,7 @@
 'use client';
 
 import Image from 'next/image';
-import { User, Power, Settings, Trash2 } from 'lucide-react';
+import { User, Power, Settings, Trash2, Wifi, Volume2, Battery } from 'lucide-react';
 import { type UserProfile } from '@/context/user-profile-context';
 import {
   DropdownMenu,
@@ -13,6 +13,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import TaskbarClock from './taskbar-clock';
 
 interface TaskbarProps {
   userProfile: UserProfile;
@@ -22,7 +23,7 @@ interface TaskbarProps {
 
 export default function Taskbar({ userProfile, onLogout, onReset }: TaskbarProps) {
     return (
-        <div className="w-full bg-card/80 backdrop-blur-sm border-t h-16 shrink-0 flex items-center px-4">
+        <div className="w-full bg-card/80 backdrop-blur-sm border-t h-16 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -65,6 +66,14 @@ export default function Taskbar({ userProfile, onLogout, onReset }: TaskbarProps
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+            </div>
+            <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
+                <div className="flex items-center gap-2">
+                    <Wifi className="h-5 w-5" />
+                    <Volume2 className="h-5 w-5" />
+                    <Battery className="h-5 w-5" />
+                </div>
+                <TaskbarClock />
             </div>
         </div>
     );
