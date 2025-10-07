@@ -12,7 +12,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent } from '@/components/ui/card';
 
 const POST_ID = 'post-1';
-const LIKES_STORAGE_KEY = 'virtual-temptations-likes';
+const LIKES_STORAGE_KEY = 'lik3-m3-likes';
 
 type LikesData = {
   [profileId: string]: {

@@ -12,8 +12,8 @@ export type UserProfile = {
   xp?: number;
 };
 
-const USER_PROFILES_KEY = 'virtual-temptations-user-profiles';
-const ACTIVE_PROFILE_ID_KEY = 'virtual-temptations-active-profile-id';
+const USER_PROFILES_KEY = 'lik3-m3-user-profiles';
+const ACTIVE_PROFILE_ID_KEY = 'lik3-m3-active-profile-id';
 
 export function useUserProfile() {
   const [profiles, setProfiles] = useState<UserProfile[]>([]);
@@ -61,7 +61,7 @@ export function useUserProfile() {
     const newProfile: UserProfile = {
       ...newProfileData,
       id: `profile_${Date.now()}_${Math.random()}`,
-      description: 'New to Virtual Temptations!',
+      description: 'New to LIK3 M3!',
       showDebug: false,
       xp: 0,
     };

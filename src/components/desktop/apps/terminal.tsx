@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { commands } from '@/lib/terminal';
 
-const HISTORY_STORAGE_KEY = 'virtual-temptations-terminal-history';
+const HISTORY_STORAGE_KEY = 'lik3-m3-terminal-history';
 const WELCOME_MESSAGE = `Welcome to LIK3 M3 Terminal
 Type 'help' for a list of commands.`;
 
