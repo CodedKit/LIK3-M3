@@ -1,8 +1,9 @@
+
 'use client';
 
 import Image from 'next/image';
 import { User, Power, Settings, Trash2 } from 'lucide-react';
-import { type UserProfile } from '@/hooks/use-user-profile';
+import { type UserProfile } from '@/context/user-profile-context';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +13,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface TaskbarProps {
   userProfile: UserProfile;
@@ -21,17 +21,15 @@ interface TaskbarProps {
 }
 
 export default function Taskbar({ userProfile, onLogout, onReset }: TaskbarProps) {
-    const avatar = PlaceHolderImages.find((img) => img.id === userProfile.avatarUrl);
-
     return (
         <div className="w-full bg-card/80 backdrop-blur-sm border-t h-16 shrink-0 flex items-center px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button className="flex items-center gap-2 focus:outline-none">
-                            {avatar && (
+                            {userProfile.avatarUrl && (
                                 <Image
-                                    src={avatar.imageUrl}
+                                    src={userProfile.avatarUrl}
                                     alt={userProfile.username}
                                     width={40}
                                     height={40}
