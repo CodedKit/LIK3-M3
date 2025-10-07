@@ -61,10 +61,6 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                         </button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" sideOffset={8} align="start" className="w-56 md:side-top">
-                        <DropdownMenuLabel>
-                            <p className="text-xs text-muted-foreground">Online</p>
-                        </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
                         <DropdownMenuGroup>
                             <DropdownMenuItem onClick={onOpenProfile}>
                                 <User className="mr-2 h-4 w-4" />
