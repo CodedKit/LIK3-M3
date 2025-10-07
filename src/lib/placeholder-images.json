@@ -89,6 +89,12 @@
       "description": "A very content cat.",
       "imageUrl": "https://i.imgur.com/h4w6p6G.jpeg",
       "imageHint": "smug cat"
+    },
+    {
+      "id": "desktop-bg-6",
+      "description": "A very, very content cat.",
+      "imageUrl": "https://i.imgur.com/J2r9jTf.jpeg",
+      "imageHint": "judgemental cat"
     }
   ]
 }
