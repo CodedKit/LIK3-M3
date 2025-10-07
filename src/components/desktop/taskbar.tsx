@@ -24,7 +24,7 @@ interface TaskbarProps {
 
 export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings }: TaskbarProps) {
     return (
-        <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-16 shrink-0 flex items-center justify-between px-4">
+        <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -33,8 +33,8 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                                 <Image
                                     src={userProfile.avatarUrl}
                                     alt={userProfile.username}
-                                    width={40}
-                                    height={40}
+                                    width={28}
+                                    height={28}
                                     className="rounded-full"
                                 />
                             )}
