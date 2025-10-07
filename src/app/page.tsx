@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useUserProfileContext, type UserProfile } from '@/context/user-profile-context';
 import BootScreen from '@/components/boot-screen';
 import LoginScreen from '@/components/login-screen';
@@ -12,19 +12,22 @@ export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
   const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
 
-  useEffect(() => {
-    const bootTimer = setTimeout(() => {
-      if (!isLoading) {
-        if (activeProfile) {
-          setAppState('desktop');
-        } else {
-          setAppState('login');
-        }
+  const handleBootComplete = useCallback(() => {
+    if (!isLoading) {
+      if (activeProfile) {
+        setAppState('desktop');
+      } else {
+        setAppState('login');
       }
-    }, 3000);
-
-    return () => clearTimeout(bootTimer);
+    }
   }, [isLoading, activeProfile]);
+
+  useEffect(() => {
+    if (appState === 'booting') {
+      const bootTimer = setTimeout(handleBootComplete, 3000);
+      return () => clearTimeout(bootTimer);
+    }
+  }, [appState, handleBootComplete]);
 
   const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id'>) => {
     addProfile(newProfileData);
@@ -43,7 +46,7 @@ export default function Home() {
 
   return (
     <main className="h-screen w-screen overflow-hidden bg-background">
-      {appState === 'booting' && <BootScreen />}
+      {appState === 'booting' && <BootScreen onSkip={handleBootComplete} />}
       
       {appState === 'login' && !isLoading && (
         <LoginScreen 

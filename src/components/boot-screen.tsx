@@ -2,8 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { Button } from '@/components/ui/button';
 
-export default function BootScreen() {
+interface BootScreenProps {
+    onSkip: () => void;
+}
+
+export default function BootScreen({ onSkip }: BootScreenProps) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -31,6 +36,9 @@ export default function BootScreen() {
             <p className="mt-2 text-[8px] text-muted-foreground">{progress}%</p>
         </div>
       </div>
+      <Button onClick={onSkip} variant="link" className="absolute bottom-10 text-xs text-muted-foreground">
+        Skip
+      </Button>
     </div>
   );
 }
