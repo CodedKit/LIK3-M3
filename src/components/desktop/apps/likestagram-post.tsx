@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardFooter, CardDescription } from '@/components/ui/card';
 import { type LikestagramPost as PostData, type LikestagramUser } from '@/lib/likestagram';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { eventManager } from '@/lib/event-manager';
 
 type FloatingHeart = {
   id: number;
@@ -44,19 +45,26 @@ export default function LikestagramPost({ post, onViewProfile }: LikestagramPost
     }, 1000);
 
     const currentLikes = activeProfile.likes?.[post.id] || post.initialLikes;
-    const newLikesCount = currentLikes + 1;
+    const newLikeCount = currentLikes + 1;
 
     const newLikesData = {
         ...activeProfile.likes,
-        [post.id]: newLikesCount
+        [post.id]: newLikeCount
     };
 
     updateProfile(activeProfile.id, { likes: newLikesData });
 
+    // Emit the event for the new architecture
+    eventManager.emit('postLiked', {
+      postId: post.id,
+      author: post.user.username,
+      newLikeCount: newLikeCount,
+    });
+
     if (addXp) {
       addXp(10);
     }
-  }, [activeProfile, addXp, updateProfile, post.id, post.initialLikes]);
+  }, [activeProfile, addXp, updateProfile, post.id, post.user.username, post.initialLikes]);
 
   const isLiked = activeProfile?.likes?.[post.id] ? (activeProfile.likes[post.id] > post.initialLikes) : false;
 

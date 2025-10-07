@@ -1,0 +1,46 @@
+{
+  "new-user": {
+    "description": "Shows tutorial tips for new users.",
+    "type": "boolean",
+    "defaultValue": true,
+    "temporaryDuration": 1800000,
+    "onSet": "showWelcomeMessage",
+    "onRemove": "hideWelcomeMessage"
+  },
+  "heartsWithVillagerX": {
+    "description": "Tracks NPC relationship level.",
+    "type": "number",
+    "defaultValue": 0
+  },
+  "questStatusFarmRepair": {
+    "description": "Tracks the progression of the farm repair quest.",
+    "type": "string",
+    "defaultValue": "not-started",
+    "dependsOn": [
+      {
+        "key": "new-user",
+        "value": true
+      }
+    ]
+  },
+  "festivalParticipation": {
+    "description": "Tracks if the user has participated in the current festival.",
+    "type": "boolean",
+    "defaultValue": false,
+    "sceneId": "summerFestival2025",
+    "temporaryDuration": 86400000
+  },
+  "pixel_pioneer_superfan": {
+    "description": "Awarded for liking a pixel_pioneer post exactly 200 times.",
+    "type": "boolean",
+    "defaultValue": false,
+    "onSet": "superfan",
+    "trigger": {
+      "event": "postLiked",
+      "conditions": [
+        "author=pixel_pioneer",
+        "newLikeCount=200"
+      ]
+    }
+  }
+}

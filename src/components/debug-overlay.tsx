@@ -7,8 +7,21 @@ import { Button } from './ui/button';
 import { Circle, Contrast } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { type UserProfile } from '@/context/user-profile-context';
+import { type UserProfile } from '@/hooks/use-user-profile';
 import { useToast } from '@/hooks/use-toast';
+
+// Helper function to format milliseconds into a human-readable duration
+function formatDuration(ms: number) {
+  if (ms < 0) return "expired";
+  const seconds = Math.floor(ms / 1000);
+  if (seconds < 60) return `~${seconds}s`;
+  const minutes = Math.floor(seconds / 60);
+  if (minutes < 60) return `~${minutes}m`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `~${hours}h`;
+  const days = Math.floor(hours / 24);
+  return `~${days}d`;
+}
 
 interface DebugOverlayProps {
   onClose: () => void;
@@ -50,6 +63,7 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
   };
 
   const profileData = activeProfile ? Object.entries(activeProfile) : [];
+  const flagsData = activeProfile?.flags ? Object.entries(activeProfile.flags) : [];
 
   return (
     <div className={cn(
@@ -69,9 +83,10 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
       </div>
 
       <Tabs defaultValue="localstorage">
-        <TabsList className="grid w-full grid-cols-3">
+        <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="localstorage">localStorage</TabsTrigger>
             <TabsTrigger value="profile">Active Profile</TabsTrigger>
+            <TabsTrigger value="flags">Flags</TabsTrigger>
             <TabsTrigger value="toggles">Toggles</TabsTrigger>
         </TabsList>
         <TabsContent value="localstorage" className="max-h-64 overflow-auto mt-4">
@@ -126,6 +141,34 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
                 </Table>
             ) : (
                 <p className="text-center text-xs text-muted-foreground">No active profile.</p>
+            )}
+        </TabsContent>
+        <TabsContent value="flags" className="max-h-64 overflow-auto mt-4">
+            {flagsData.length > 0 ? (
+                 <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead className="text-xs whitespace-nowrap">Key</TableHead>
+                        <TableHead className="text-xs">Value</TableHead>
+                        <TableHead className="text-xs text-right">Expires</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {flagsData.map(([key, flag]) => (
+                            <TableRow key={key}>
+                                <TableCell className="py-2 align-top text-xs font-medium whitespace-nowrap">{key}</TableCell>
+                                <TableCell className="py-2 align-top text-xs whitespace-pre-wrap break-all">
+                                    {String(flag.value)}
+                                </TableCell>
+                                <TableCell className="py-2 align-top text-xs text-right">
+                                    {flag.expiresAt ? formatDuration(flag.expiresAt - Date.now()) : '—'}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+            ) : (
+                <p className="text-center text-xs text-muted-foreground">No flags set for active profile.</p>
             )}
         </TabsContent>
         <TabsContent value="toggles" className="max-h-64 overflow-auto mt-4">

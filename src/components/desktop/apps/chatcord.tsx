@@ -1,14 +1,32 @@
 
+/*
+  ================================================================================
+  FILE OVERVIEW: Ink Story Player (Misleadingly named chatcord.tsx)
+  ================================================================================
+
+  This file implements a player for interactive fiction stories created with Ink.
+  The filename `chatcord.tsx` is a remnant of a previous feature and does not
+  reflect the file's current functionality.
+
+  The application consists of two main views:
+  1. A `SceneSelector` to choose a story.
+  2. A `StoryPlayer` to play the selected interactive story.
+
+  The `ChatCordApp` component manages which view is currently active.
+*/
 'use client';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { Story } from 'inkjs/engine/Story';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
-import { scenes, type Scene } from '@/lib/story/scenes';
+import { Scene } from '@/lib/scene-types';
+import { sceneManager } from '@/lib/scene-manager';
+import { eventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { useUserProfile } from '@/hooks/use-user-profile';
 
 type HistoryItem = {
   id: string;
@@ -21,11 +39,20 @@ type Choice = {
   index: number;
 };
 
+/**
+ * Renders the main interactive story player UI.
+ * It takes a `scene` object, loads the story using `inkjs`, and manages the
+ * narrative flow, including displaying story text and handling player choices.
+ * @param {object} props - The component props.
+ * @param {Scene} props.scene - The story scene object to be played.
+ * @param {() => void} props.onBack - Callback function to return to the scene selector.
+ */
 function StoryPlayer({ scene, onBack }: { scene: Scene; onBack: () => void }) {
   const [story, setStory] = useState<Story | null>(null);
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [choices, setChoices] = useState<Choice[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { setFlag, getFlag, enterScene, exitScene } = useUserProfile();
 
   const scrollToBottom = useCallback(() => {
     if (scrollContainerRef.current) {
@@ -67,12 +94,27 @@ function StoryPlayer({ scene, onBack }: { scene: Scene; onBack: () => void }) {
 
 
   useEffect(() => {
-    if (scene) {
+    if (scene && scene.storyContent && setFlag && getFlag && enterScene && exitScene) {
         const newStory = new Story(scene.storyContent);
+
+        newStory.BindExternalFunction("setFlag", (key: string, value: any) => {
+            setFlag(key, value);
+        });
+
+        newStory.BindExternalFunction("getFlag", (key: string) => {
+            return getFlag(key);
+        });
+        
+        enterScene(scene.id);
+        
         setStory(newStory);
         setHistory([]);
         setChoices([]);
         continueStory(newStory, []);
+
+        return () => {
+            exitScene(scene.id);
+        }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [scene]);
@@ -171,7 +213,14 @@ function StoryPlayer({ scene, onBack }: { scene: Scene; onBack: () => void }) {
   );
 }
 
-function SceneSelector({ onSelectScene }: { onSelectScene: (scene: Scene) => void }) {
+/**
+ * Renders the initial scene selection screen.
+ * It displays a list of all available stories from `src/lib/story/scenes.ts`.
+ * @param {object} props - The component props.
+ * @param {(scene: Scene) => void} props.onSelectScene - Callback function that gets triggered
+ *   when a user selects a scene, passing the selected scene object.
+ */
+function SceneSelector({ onSelectScene, scenes }: { onSelectScene: (scene: Scene) => void, scenes: Scene[] }) {
     return (
       <div className="h-full w-full flex flex-col">
         <header className="p-4 border-b">
@@ -199,12 +248,38 @@ function SceneSelector({ onSelectScene }: { onSelectScene: (scene: Scene) => voi
     );
 }
 
+/**
+ * The main component for the story player application.
+ * It manages the application's state, switching between the `SceneSelector` view
+ * and the `StoryPlayer` view based on whether a scene has been selected.
+ */
 export default function ChatCordApp() {
   const [activeScene, setActiveScene] = useState<Scene | null>(null);
+  const [availableScenes, setAvailableScenes] = useState<Scene[]>([]);
+
+  useEffect(() => {
+    const handleAvailableScenesChanged = (scenes: Scene[]) => {
+      setAvailableScenes(scenes);
+    };
+
+    const handleForceScene = (scene: Scene) => {
+        setActiveScene(scene);
+    };
+
+    setAvailableScenes(sceneManager.getAvailableScenes());
+
+    const unsubscribeScenesChanged = eventManager.on('availableScenesChanged', handleAvailableScenesChanged);
+    const unsubscribeForceScene = eventManager.on('forceScene', handleForceScene);
+
+    return () => {
+      unsubscribeScenesChanged();
+      unsubscribeForceScene();
+    };
+  }, []);
 
   if (activeScene) {
     return <StoryPlayer scene={activeScene} onBack={() => setActiveScene(null)} />;
   }
 
-  return <SceneSelector onSelectScene={setActiveScene} />;
+  return <SceneSelector onSelectScene={setActiveScene} scenes={availableScenes} />;
 }
