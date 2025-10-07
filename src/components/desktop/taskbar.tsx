@@ -20,9 +20,10 @@ interface TaskbarProps {
   onLogout: () => void;
   onReset: () => void;
   onOpenSettings: () => void;
+  onOpenProfile: () => void;
 }
 
-export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings, onOpenProfile }: TaskbarProps) {
     return (
         <div className="w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
@@ -47,7 +48,7 @@ export default function Taskbar({ userProfile, onLogout, onReset, onOpenSettings
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
+                            <DropdownMenuItem onClick={onOpenProfile}>
                                 <User className="mr-2 h-4 w-4" />
                                 <span>Account Info</span>
                             </DropdownMenuItem>

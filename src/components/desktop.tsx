@@ -8,10 +8,11 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
+import ProfileApp from '@/components/desktop/apps/profile';
 
 interface DesktopProps {
   onLogout: () => void;
@@ -22,6 +23,7 @@ const apps = [
   { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
   { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={() => {}} /> },
   { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
+  { id: 'profile', name: 'Profile', icon: <User className="h-12 w-12" />, component: <ProfileApp />, desktop: false },
 ];
 
 export default function Desktop({ onLogout }: DesktopProps) {
@@ -86,7 +88,13 @@ export default function Desktop({ onLogout }: DesktopProps) {
         />
       )}
 
-      <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} onOpenSettings={() => openApp('settings')} />
+      <Taskbar 
+        userProfile={activeProfile} 
+        onLogout={onLogout} 
+        onReset={handleReset} 
+        onOpenSettings={() => openApp('settings')}
+        onOpenProfile={() => openApp('profile')}
+      />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">

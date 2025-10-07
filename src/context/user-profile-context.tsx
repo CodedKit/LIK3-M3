@@ -3,15 +3,7 @@
 import { createContext, useContext, ReactNode } from 'react';
 import { useUserProfile, UserProfile } from '@/hooks/use-user-profile';
 
-type UserProfileContextType = {
-  profiles: UserProfile[];
-  activeProfile: UserProfile | null;
-  addProfile: (newProfileData: Omit<UserProfile, 'id'>) => void;
-  setActive: (profile: UserProfile | null) => void;
-  deleteProfile: (profileId: string) => void;
-  clearAllProfiles: () => void;
-  isLoading: boolean;
-};
+type UserProfileContextType = ReturnType<typeof useUserProfile>;
 
 const UserProfileContext = createContext<UserProfileContextType | undefined>(undefined);
 

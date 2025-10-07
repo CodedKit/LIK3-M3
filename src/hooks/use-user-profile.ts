@@ -6,6 +6,7 @@ export type UserProfile = {
   id: string;
   username: string;
   avatarUrl: string;
+  description?: string;
 };
 
 const USER_PROFILES_KEY = 'virtual-temptations-user-profiles';
@@ -66,7 +67,8 @@ export function useUserProfile() {
       
     const newProfile: UserProfile = {
       ...newProfileData,
-      id: `profile_${Date.now()}_${Math.random()}`
+      id: `profile_${Date.now()}_${Math.random()}`,
+      description: 'New to Virtual Temptations!'
     };
     
     console.log("Creating new profile:", newProfile);
@@ -80,6 +82,30 @@ export function useUserProfile() {
       throw new Error('Failed to save profile.');
     }
   }, [profiles, setActive]);
+
+  const updateProfile = useCallback((profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => {
+    setProfiles(prevProfiles => {
+      const updatedProfiles = prevProfiles.map(p => {
+        if (p.id === profileId) {
+          return { ...p, ...updatedData };
+        }
+        return p;
+      });
+
+      try {
+        window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
+        const active = updatedProfiles.find(p => p.id === activeProfile?.id);
+        if (active) {
+            setActiveProfile(active);
+        }
+      } catch (error) {
+        console.error("Failed to save updated profiles to localStorage", error);
+      }
+      
+      return updatedProfiles;
+    });
+
+  }, [activeProfile?.id]);
   
   const deleteProfile = useCallback((profileId: string) => {
     console.log("Deleting profile:", profileId);
@@ -106,5 +132,5 @@ export function useUserProfile() {
     }
   }, []);
 
-  return { profiles, activeProfile, addProfile, setActive, deleteProfile, clearAllProfiles, isLoading };
+  return { profiles, activeProfile, addProfile, setActive, deleteProfile, updateProfile, clearAllProfiles, isLoading };
 }
