@@ -12,9 +12,14 @@ import { Card, CardContent } from '@/components/ui/card';
 
 const POST_ID = 'post-1';
 
+type FloatingHeart = {
+  id: number;
+};
+
 export default function Likestagram() {
   const { activeProfile, addXp, updateProfile } = useUserProfileContext();
   const [likes, setLikes] = useState(0);
+  const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
 
   useEffect(() => {
     if (activeProfile?.likes) {
@@ -27,6 +32,12 @@ export default function Likestagram() {
       console.error("handleLike called without an active profile.");
       return;
     }
+
+    const newHeartId = Date.now();
+    setFloatingHearts((currentHearts) => [...currentHearts, { id: newHeartId }]);
+    setTimeout(() => {
+        setFloatingHearts((currentHearts) => currentHearts.filter(h => h.id !== newHeartId));
+    }, 1000);
 
     const currentLikes = activeProfile.likes?.[POST_ID] || 0;
     const newLikesCount = currentLikes + 1;
@@ -49,7 +60,7 @@ export default function Likestagram() {
   return (
     <div className="h-full w-full bg-background p-4 flex justify-center items-start">
       <Card className="w-full max-w-sm">
-        <CardContent className="p-4">
+        <CardContent className="p-4 relative">
           {postImage && (
             <div className="aspect-square relative mb-4">
               <Image
@@ -75,6 +86,15 @@ export default function Likestagram() {
               {likes} {likes === 1 ? 'like' : 'likes'}
             </p>
           </div>
+          {floatingHearts.map((heart) => (
+            <div
+              key={heart.id}
+              className="absolute bottom-16 left-8 flex items-center animate-like-animation pointer-events-none"
+            >
+              <Heart className="h-5 w-5 text-red-500 fill-red-500" />
+              <span className="ml-1 text-sm font-bold text-red-500">+1</span>
+            </div>
+          ))}
         </CardContent>
       </Card>
     </div>
