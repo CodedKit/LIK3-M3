@@ -34,7 +34,7 @@ type AppInstance = {
 
 export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopProps) {
   const [openApps, setOpenApps] = useState<AppInstance[]>([]);
-  const { activeProfile } = useUserProfileContext();
+  const { activeProfile, updateProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   
   const activeApp = openApps[openApps.length - 1];
@@ -75,7 +75,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       case 'likestagramProfile':
         return <LikestagramProfileApp user={props.user} />;
       case 'terminal':
-        return <TerminalApp setShowDebug={setShowDebug} />;
+        return <TerminalApp setShowDebug={setShowDebug} updateProfile={updateProfile} activeProfile={activeProfile} />;
       case 'music':
         return <MusicApp onPlayTrack={handlePlayTrack} />;
       case 'ehmazon':

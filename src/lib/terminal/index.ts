@@ -6,6 +6,7 @@ import { test } from './test';
 import { type Command } from './types';
 import { debug } from './debug';
 import { clear } from './clear';
+import { cheat } from './cheat';
 
 export const commands: { [key: string]: Command } = {
   about,
@@ -14,4 +15,5 @@ export const commands: { [key: string]: Command } = {
   test,
   debug,
   clear,
+  cheat,
 };
