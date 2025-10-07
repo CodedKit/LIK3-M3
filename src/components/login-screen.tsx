@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm, type UseFormReturn, type FieldErrors } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { UserCircle, Check } from 'lucide-react';
+import { UserCircle, Check, Bug } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, useFormField } from '@/components/ui/form';
@@ -14,6 +14,7 @@ import type { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import ProfileCard from './profile-card';
 import { cn } from '@/lib/utils';
+import DebugOverlay from './debug-overlay';
 
 const formSchema = z.object({
   username: z.string().min(3, 'Username must be at least 3 characters.').max(20, 'Username must be at most 20 characters.'),
@@ -86,6 +87,7 @@ interface LoginScreenProps {
 
 export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProfileDelete }: LoginScreenProps) {
   const [isCreating, setIsCreating] = useState(false);
+  const [showDebug, setShowDebug] = useState(false);
   const { toast } = useToast();
   
   const form = useForm<z.infer<typeof formSchema>>({
@@ -163,6 +165,12 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
+      <div className="absolute top-4 right-4">
+        <Button variant="ghost" size="icon" onClick={() => setShowDebug(!showDebug)}>
+          <Bug className="h-5 w-5" />
+        </Button>
+      </div>
+
       <div className="flex flex-row flex-wrap items-start justify-center gap-8 p-8">
         {profiles.map((profile) => (
           <ProfileCard
@@ -193,6 +201,8 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             />
         )}
       </div>
+      
+      {showDebug && <DebugOverlay />}
     </div>
   );
 }
