@@ -10,7 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, useFormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import type { UserProfile } from '@/hooks/use-user-profile';
+import { UserProfile } from '@/hooks/use-user-profile';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import ProfileCard from './profile-card';
 import { cn } from '@/lib/utils';
@@ -160,8 +160,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
     }
   };
 
-  const showAddProfileCard = profiles.length < 5 || isCreating;
-  const showZeroState = profiles.length === 0;
+  const showAddProfileCard = profiles.length < 5;
 
   return (
     <div className="flex h-full w-full flex-col items-center justify-center animate-in fade-in duration-500">
@@ -181,7 +180,7 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
           />
         ))}
         
-        {showAddProfileCard && (!showZeroState || (showZeroState && isCreating)) && (
+        {(showAddProfileCard || isCreating) && (
           <AddProfileCard 
             isCreating={isCreating}
             openCreator={openCreator}
@@ -189,16 +188,6 @@ export default function LoginScreen({ profiles, onAccountCreate, onLogin, onProf
             onSubmit={onSubmit}
             onInvalid={onInvalid}
           />
-        )}
-
-        {showZeroState && !isCreating && (
-            <AddProfileCard 
-              isCreating={isCreating}
-              openCreator={openCreator}
-              form={form}
-              onSubmit={onSubmit}
-              onInvalid={onInvalid}
-            />
         )}
       </div>
       

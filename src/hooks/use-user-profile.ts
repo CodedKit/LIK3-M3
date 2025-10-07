@@ -18,29 +18,20 @@ export function useUserProfile() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    console.log("Attempting to load profiles from localStorage...");
     try {
       const profilesItem = window.localStorage.getItem(USER_PROFILES_KEY);
-      let savedProfiles: UserProfile[] = [];
-      if (profilesItem) {
-        const parsedProfiles = JSON.parse(profilesItem);
-        if (Array.isArray(parsedProfiles)) {
-          savedProfiles = parsedProfiles;
-          setProfiles(savedProfiles);
-          console.log("Loaded profiles:", savedProfiles);
-        }
-      }
+      const savedProfiles = profilesItem ? JSON.parse(profilesItem) : [];
+      setProfiles(savedProfiles);
 
       const activeProfileIdItem = window.localStorage.getItem(ACTIVE_PROFILE_ID_KEY);
-      if (activeProfileIdItem && savedProfiles.length > 0) {
-        const profile = savedProfiles.find(p => p.id === activeProfileIdItem);
-        if (profile) {
-          setActiveProfile(profile);
-          console.log("Active profile found and set:", profile);
-        }
+      if (activeProfileIdItem) {
+        const profile = savedProfiles.find((p: UserProfile) => p.id === activeProfileIdItem);
+        setActiveProfile(profile || null);
       }
     } catch (error) {
       console.error("Failed to load data from localStorage", error);
+      setProfiles([]);
+      setActiveProfile(null);
     } finally {
       setIsLoading(false);
     }
@@ -48,7 +39,6 @@ export function useUserProfile() {
 
   const setActive = useCallback((profile: UserProfile | null) => {
     setActiveProfile(profile);
-    console.log("Setting active profile:", profile);
     try {
       if (profile) {
         window.localStorage.setItem(ACTIVE_PROFILE_ID_KEY, profile.id);
@@ -71,7 +61,6 @@ export function useUserProfile() {
       description: 'New to Virtual Temptations!'
     };
     
-    console.log("Creating new profile:", newProfile);
     try {
       const updatedProfiles = [...profiles, newProfile];
       window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));
@@ -108,7 +97,6 @@ export function useUserProfile() {
   }, [activeProfile?.id]);
   
   const deleteProfile = useCallback((profileId: string) => {
-    console.log("Deleting profile:", profileId);
     try {
       const updatedProfiles = profiles.filter(p => p.id !== profileId);
       window.localStorage.setItem(USER_PROFILES_KEY, JSON.stringify(updatedProfiles));

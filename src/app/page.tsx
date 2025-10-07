@@ -13,14 +13,8 @@ export default function Home() {
   const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
 
   const handleBootComplete = useCallback(() => {
-    if (!isLoading) {
-      if (activeProfile) {
-        setAppState('desktop');
-      } else {
-        setAppState('login');
-      }
-    }
-  }, [isLoading, activeProfile]);
+    setAppState('login');
+  }, []);
 
   useEffect(() => {
     if (appState === 'booting') {
@@ -29,9 +23,16 @@ export default function Home() {
     }
   }, [appState, handleBootComplete]);
 
+  useEffect(() => {
+    if (!isLoading && activeProfile) {
+      setAppState('desktop');
+    } else if (!isLoading && !activeProfile) {
+      setAppState('login');
+    }
+  }, [isLoading, activeProfile]);
+
   const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id'>) => {
     addProfile(newProfileData);
-    setAppState('desktop');
   };
   
   const handleLogin = (profile: UserProfile) => {
