@@ -21,7 +21,7 @@ const apps = [
   { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
   { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
   { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={() => {}} /> },
-  { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp /> },
+  { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp />, desktop: false },
 ];
 
 export default function Desktop({ onLogout }: DesktopProps) {
@@ -61,11 +61,13 @@ export default function Desktop({ onLogout }: DesktopProps) {
     return null;
   }
 
+  const desktopApps = apps.filter(app => app.desktop !== false);
+
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
       <div className="flex-grow p-2">
         <div className="flex h-auto flex-row flex-wrap gap-2">
-          {apps.map((app) => (
+          {desktopApps.map((app) => (
             <AppIcon
               key={app.id}
               name={app.name}
