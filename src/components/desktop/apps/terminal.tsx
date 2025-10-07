@@ -49,7 +49,8 @@ export default function TerminalApp() {
   }, [history]);
 
   useEffect(() => {
-    if (history.length === 0) { // Only log initial welcome messages if history is empty
+    const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
+    if (history.length === 0 && !savedHistory) { // Check both state and localStorage
         logToConsole('Welcome to LIK3 M3 Terminal');
         logToConsole("Type 'help' for a list of commands.");
     }
@@ -100,13 +101,23 @@ export default function TerminalApp() {
     }
   };
 
+  const isHistoryEmpty = () => {
+    if (history.length > 0) return false;
+    try {
+      const savedHistory = window.localStorage.getItem(TERMINAL_HISTORY_KEY);
+      return !savedHistory || JSON.parse(savedHistory).length === 0;
+    } catch {
+      return true;
+    }
+  }
+
   return (
     <div
       className="h-full w-full bg-black p-4 font-code text-sm text-green-400 focus:outline-none"
       onClick={() => inputRef.current?.focus()}
       tabIndex={0}
     >
-      {history.length === 0 && (
+      {isHistoryEmpty() && (
         <div>
           <p>Welcome to LIK3 M3 Terminal</p>
           <p>Type 'help' for a list of commands.</p>
