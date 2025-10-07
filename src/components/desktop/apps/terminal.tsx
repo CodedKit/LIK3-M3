@@ -9,13 +9,18 @@ const HISTORY_STORAGE_KEY = 'virtual-temptations-terminal-history';
 const WELCOME_MESSAGE = `Welcome to LIK3 M3 Terminal
 Type 'help' for a list of commands.`;
 
+interface HistoryItem {
+  command: string;
+  output: string;
+}
+
 interface TerminalAppProps {
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
 export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
   const { activeProfile } = useUserProfileContext();
-  const [history, setHistory] = useState<string[]>([]);
+  const [history, setHistory] = useState<HistoryItem[]>([]);
   const [content, setContent] = useState(WELCOME_MESSAGE);
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -24,14 +29,19 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
   const user = activeProfile?.username || 'user';
   const prompt = `[${user}@lik3m3 ~]$`;
 
-  // Function to execute a command and get its output
-  const executeCommand = (commandStr: string): string => {
+  // Function to get a command's output
+  const getCommandOutput = (commandStr: string): string => {
     const trimmedCommand = commandStr.trim();
     if (trimmedCommand === '') return '';
-
+  
+    // Special handling for 'clear' as it doesn't have a standard output
+    if (trimmedCommand.toLowerCase() === 'clear') {
+      return '';
+    }
+  
     const [commandName, ...args] = trimmedCommand.split(' ');
     const commandToExecute = commands[commandName.toLowerCase()];
-
+  
     if (commandToExecute) {
       const output = commandToExecute.execute({ args, commands, user, setShowDebug });
       // Ensure output is a string
@@ -48,16 +58,15 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
   useEffect(() => {
     try {
       const savedHistoryItem = window.localStorage.getItem(HISTORY_STORAGE_KEY);
-      const savedHistory = savedHistoryItem ? JSON.parse(savedHistoryItem) : [];
+      const savedHistory: HistoryItem[] = savedHistoryItem ? JSON.parse(savedHistoryItem) : [];
       setHistory(savedHistory);
 
       let newContent = WELCOME_MESSAGE;
-      for (const command of savedHistory) {
-        const commandLine = `${prompt} ${command}`;
-        const output = executeCommand(command);
+      for (const item of savedHistory) {
+        const commandLine = `${prompt} ${item.command}`;
         newContent += `\n${commandLine}`;
-        if (output) {
-          newContent += `\n${output}`;
+        if (item.output) {
+          newContent += `\n${item.output}`;
         }
       }
       setContent(newContent);
@@ -90,7 +99,7 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
     }
 
     const commandLine = `${prompt} ${trimmedCommand}`;
-    const output = executeCommand(trimmedCommand);
+    const output = getCommandOutput(trimmedCommand);
     
     let newContent = content ? `${content}\n${commandLine}` : commandLine;
     if (output) {
@@ -100,7 +109,8 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
     
     // Add to history and save
     if (trimmedCommand !== '') {
-        const newHistory = [...history, trimmedCommand];
+        const newHistoryItem: HistoryItem = { command: trimmedCommand, output };
+        const newHistory = [...history, newHistoryItem];
         setHistory(newHistory);
         try {
           window.localStorage.setItem(HISTORY_STORAGE_KEY, JSON.stringify(newHistory));
