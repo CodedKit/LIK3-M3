@@ -25,6 +25,7 @@ export default function MusicApp({ onPlayTrack }: MusicAppProps) {
                 width={48}
                 height={48}
                 className="rounded-sm"
+                style={{ width: 'auto', height: 'auto' }}
                 data-ai-hint={song.albumArt.imageHint}
               />
             )}

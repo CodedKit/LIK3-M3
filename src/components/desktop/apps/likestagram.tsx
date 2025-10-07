@@ -75,7 +75,7 @@ export default function Likestagram() {
                 src={postImage.imageUrl}
                 alt="Post"
                 fill
-                style={{ objectFit: 'cover' }}
+                style={{ objectFit: 'cover', width: 'auto', height: 'auto' }}
                 className="rounded-lg"
               />
             </div>

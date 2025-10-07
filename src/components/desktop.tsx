@@ -6,40 +6,42 @@ import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
-import MusicApp from '@/components/desktop/apps/music';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { Heart, Terminal as TerminalIcon, Music } from 'lucide-react';
-import MediaPlayer from './desktop/media-player';
+import MusicApp from '@/components/desktop/apps/music';
+import MediaPlayer from '@/components/desktop/media-player';
 
 interface DesktopProps {
   onLogout: () => void;
 }
 
+const apps = [
+  { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
+  { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
+  { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={() => {}} /> },
+];
+
 export default function Desktop({ onLogout }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile, clearAllProfiles } = useUserProfileContext();
-  const [isMediaPlayerVisible, setIsMediaPlayerVisible] = useState(false);
-  const [currentTrackIndex, setCurrentTrackIndex] = useState(0);
+  const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
-    setIsMediaPlayerVisible(true);
-  };
-  
-  const handleCloseMediaPlayer = () => {
-    setIsMediaPlayerVisible(false);
   };
 
-  const apps = [
-    { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
-    { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
-    { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={handlePlayTrack} /> },
-  ];
+  const handleClosePlayer = () => {
+    setCurrentTrackIndex(null);
+  };
 
   const openApp = (appId: string) => {
     const app = apps.find(a => a.id === appId);
     if(app) {
+      if (app.id === 'music') {
+        setActiveApp({...app, component: <MusicApp onPlayTrack={handlePlayTrack} />});
+      } else {
         setActiveApp(app);
+      }
     }
   };
 
@@ -59,7 +61,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
       <div className="flex-grow p-2">
-        <div className="flex h-full flex-wrap content-start gap-2">
+        <div className="flex flex-wrap h-full gap-2">
           {apps.map((app) => (
             <AppIcon
               key={app.id}
@@ -71,11 +73,11 @@ export default function Desktop({ onLogout }: DesktopProps) {
         </div>
       </div>
 
-      {isMediaPlayerVisible && (
+      {currentTrackIndex !== null && (
         <MediaPlayer 
-          currentTrackIndex={currentTrackIndex}
-          setCurrentTrackIndex={setCurrentTrackIndex}
-          onClose={handleCloseMediaPlayer}
+            currentTrackIndex={currentTrackIndex}
+            setCurrentTrackIndex={setCurrentTrackIndex}
+            onClose={handleClosePlayer}
         />
       )}
 
@@ -85,6 +87,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
           <DialogHeader className="p-4 border-b bg-card rounded-t-lg">
             <DialogTitle className='font-headline'>{activeApp?.name}</DialogTitle>
+            <DialogDescription className="sr-only">Opened application: {activeApp?.name}</DialogDescription>
           </DialogHeader>
           <div className="flex-grow overflow-y-auto">
             {activeApp?.component}

@@ -1,9 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Power, Settings, User, Wifi, BatteryFull, Volume2, Trash2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { User, Power, Settings, Trash2 } from 'lucide-react';
+import { type UserProfile } from '@/hooks/use-user-profile';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,9 +12,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import type { UserProfile } from '@/hooks/use-user-profile';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 interface TaskbarProps {
   userProfile: UserProfile;
@@ -24,70 +21,53 @@ interface TaskbarProps {
 }
 
 export default function Taskbar({ userProfile, onLogout, onReset }: TaskbarProps) {
-  const [currentTime, setCurrentTime] = useState('');
+    const avatar = PlaceHolderImages.find((img) => img.id === userProfile.avatarUrl);
 
-  useEffect(() => {
-    const updateClock = () => {
-      const now = new Date();
-      setCurrentTime(now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }));
-    };
-    updateClock();
-    const timer = setInterval(updateClock, 1000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <footer className="h-12 w-full flex-shrink-0 border-t border-white/10 bg-black/30 backdrop-blur-sm">
-      <div className="flex h-full items-center justify-between px-4">
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 px-3 font-headline text-lg">
-                VT
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-56 mb-2" side="top" align="start">
-            <DropdownMenuLabel>
-                <div className="flex items-center gap-3">
-                    <Avatar>
-                        <AvatarImage src={userProfile.avatarUrl} alt={userProfile.username} />
-                        <AvatarFallback>{userProfile.username.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <span>{userProfile.username}</span>
-                </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <User className="mr-2 h-4 w-4" />
-                <span>Account Info</span>
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings className="mr-2 h-4 w-4" />
-                <span>Settings</span>
-              </DropdownMenuItem>
-            </DropdownMenuGroup>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={onLogout}>
-              <Power className="mr-2 h-4 w-4" />
-              <span>Logout</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={onReset} className="text-destructive focus:bg-destructive/20 focus:text-destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                <span>Reset Profile</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-
-        <div className="flex items-center gap-4 text-sm text-primary-foreground">
-            <div className='flex items-center gap-2'>
-                <Wifi className="h-4 w-4" />
-                <BatteryFull className="h-4 w-4" />
-                <Volume2 className="h-4 w-4" />
+    return (
+        <div className="w-full bg-card/80 backdrop-blur-sm border-t h-16 shrink-0 flex items-center px-4">
+            <div className="flex items-center gap-4">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <button className="flex items-center gap-2 focus:outline-none">
+                            {avatar && (
+                                <Image
+                                    src={avatar.imageUrl}
+                                    alt={userProfile.username}
+                                    width={40}
+                                    height={40}
+                                    className="rounded-full"
+                                />
+                            )}
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent side="top" align="start" className="w-56">
+                        <DropdownMenuLabel>
+                            <p className="font-bold">{userProfile.username}</p>
+                            <p className="text-xs text-muted-foreground">Online</p>
+                        </DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuGroup>
+                            <DropdownMenuItem>
+                                <User className="mr-2 h-4 w-4" />
+                                <span>Account Info</span>
+                            </DropdownMenuItem>
+                            <DropdownMenuItem>
+                                <Settings className="mr-2 h-4 w-4" />
+                                <span>Settings</span>
+                            </DropdownMenuItem>
+                        </DropdownMenuGroup>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={onLogout}>
+                            <Power className="mr-2 h-4 w-4" />
+                            <span>Logout</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={onReset} className="text-destructive focus:text-destructive">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            <span>Reset Profile</span>
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
             </div>
-            <div className='w-px h-5 bg-border' />
-            <span>{currentTime}</span>
         </div>
-      </div>
-    </footer>
-  );
+    );
 }
