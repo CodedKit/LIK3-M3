@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -7,9 +8,10 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
+import SettingsApp from '@/components/desktop/apps/settings';
 
 interface DesktopProps {
   onLogout: () => void;
@@ -19,6 +21,7 @@ const apps = [
   { id: 'likestagram', name: 'Likestagram', icon: <Heart className="h-12 w-12" />, component: <Likestagram /> },
   { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" />, component: <TerminalApp /> },
   { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" />, component: <MusicApp onPlayTrack={() => {}} /> },
+  { id: 'settings', name: 'Settings', icon: <Settings className="h-12 w-12" />, component: <SettingsApp /> },
 ];
 
 export default function Desktop({ onLogout }: DesktopProps) {
@@ -61,7 +64,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
       <div className="flex-grow p-2">
-        <div className="flex flex-row flex-wrap gap-2">
+        <div className="flex h-auto flex-row flex-wrap gap-2">
           {apps.map((app) => (
             <AppIcon
               key={app.id}
@@ -81,7 +84,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
         />
       )}
 
-      <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} />
+      <Taskbar userProfile={activeProfile} onLogout={onLogout} onReset={handleReset} onOpenSettings={() => openApp('settings')} />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
         <DialogContent className="max-w-4xl h-[80vh] flex flex-col p-0">
