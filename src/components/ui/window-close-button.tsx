@@ -12,7 +12,7 @@ export const WindowCloseButton = React.forwardRef<
   <DialogPrimitive.Close
     ref={ref}
     className={cn(
-      'absolute left-4 top-1/2 -translate-y-1/2 rounded-sm opacity-100 ring-offset-background transition-opacity focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground',
+      'absolute left-4 top-1/2 -translate-y-1/2 rounded-sm opacity-100 ring-offset-background transition-opacity focus:outline-none disabled:pointer-events-none data-[state=open]:bg-accent data-[state=open]:text-muted-foreground',
       className
     )}
     {...props}
