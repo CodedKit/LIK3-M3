@@ -9,7 +9,7 @@ import Desktop from '@/components/desktop';
 import DebugOverlay from '@/components/debug-overlay';
 
 type AppState = 'booting' | 'login' | 'desktop';
-const USER_SETTINGS_KEY = 'user-settings';
+const USER_SETTINGS_KEY = 'lik3-m3-user-settings';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
