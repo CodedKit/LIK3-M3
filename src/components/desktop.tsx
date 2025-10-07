@@ -8,7 +8,7 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart, MessageSquare } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
@@ -17,6 +17,7 @@ import EhmazonApp from '@/components/desktop/apps/ehmazon';
 import { type LikestagramUser } from '@/lib/likestagram';
 import LikestagramProfileApp from '@/components/desktop/apps/likestagram/profile';
 import { WindowNavButtons } from '@/components/ui/window-nav-buttons';
+import ChatCordApp from './desktop/apps/chatcord';
 
 
 interface DesktopProps {
@@ -57,6 +58,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'terminal', name: 'Terminal' },
     { id: 'music', name: 'Music' },
     { id: 'ehmazon', name: 'Ehmazon', hasNav: true },
+    { id: 'chatcord', name: 'ChatCord' },
     { id: 'settings', name: 'Settings' },
     { id: 'profile', name: 'Profile' },
   ];
@@ -66,6 +68,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'terminal', name: 'Terminal', icon: <TerminalIcon className="h-12 w-12" /> },
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" /> },
     { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" /> },
+    { id: 'chatcord', name: 'ChatCord', icon: <MessageSquare className="h-12 w-12" /> },
   ];
 
   const getAppComponent = (app: AppInstance, props: any = {}): React.ReactNode => {
@@ -80,6 +83,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         return <MusicApp onPlayTrack={handlePlayTrack} />;
       case 'ehmazon':
         return <EhmazonApp />;
+      case 'chatcord':
+        return <ChatCordApp />;
       case 'settings':
         return <SettingsApp />;
       case 'profile':
