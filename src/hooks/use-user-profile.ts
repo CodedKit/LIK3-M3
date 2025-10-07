@@ -6,6 +6,7 @@ import { calculateLevel } from '@/lib/leveling';
 import { toast } from './use-toast';
 import { FlagManager, ProfileFlag } from '@/lib/flags-manager';
 import flagDefinitions from '@/lib/flags.json';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 const definitions = flagDefinitions as {
   [key: string]: {
@@ -153,9 +154,12 @@ export function useUserProfile() {
         }
     }
 
+    const defaultBg = PlaceHolderImages.find(img => img.id === 'desktop-bg-4');
+
     const newProfile: UserProfile = {
       ...newProfileData,
       id: `profile_${Date.now()}_${Math.random()}`,
+      desktopBgUrl: defaultBg?.imageUrl || '',
       description: 'New to LIK3 M3!',
       showDebug: false,
       xp: 0,
