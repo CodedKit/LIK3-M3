@@ -61,7 +61,7 @@ export default function Desktop({ onLogout }: DesktopProps) {
   return (
     <div className="flex h-full w-full flex-col bg-background animate-in fade-in duration-500">
       <div className="flex-grow p-2">
-        <div className="flex flex-wrap h-full gap-2">
+        <div className="flex flex-row flex-wrap gap-2">
           {apps.map((app) => (
             <AppIcon
               key={app.id}
