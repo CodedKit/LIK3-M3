@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -8,11 +9,37 @@ import Desktop from '@/components/desktop';
 import DebugOverlay from '@/components/debug-overlay';
 
 type AppState = 'booting' | 'login' | 'desktop';
+const USER_SETTINGS_KEY = 'user-settings';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
   const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
   const [showDebug, setShowDebug] = useState(false);
+
+  useEffect(() => {
+    try {
+      const settingsItem = window.localStorage.getItem(USER_SETTINGS_KEY);
+      if (settingsItem) {
+        const settings = JSON.parse(settingsItem);
+        setShowDebug(settings.showDebug || false);
+      }
+    } catch (error) {
+      console.error("Failed to load user settings from localStorage", error);
+    }
+  }, []);
+
+  const handleSetShowDebug = (value: boolean | ((prevState: boolean) => boolean)) => {
+    const newShowDebug = typeof value === 'function' ? value(showDebug) : value;
+    setShowDebug(newShowDebug);
+    try {
+      const settingsItem = window.localStorage.getItem(USER_SETTINGS_KEY);
+      const settings = settingsItem ? JSON.parse(settingsItem) : {};
+      settings.showDebug = newShowDebug;
+      window.localStorage.setItem(USER_SETTINGS_KEY, JSON.stringify(settings));
+    } catch (error) {
+      console.error("Failed to save user settings to localStorage", error);
+    }
+  };
 
   const handleBootComplete = useCallback(() => {
     setAppState('login');
@@ -58,12 +85,12 @@ export default function Home() {
           onLogin={handleLogin} 
           onProfileDelete={deleteProfile}
           showDebug={showDebug}
-          setShowDebug={setShowDebug}
+          setShowDebug={handleSetShowDebug}
         />
       )}
       
       {appState === 'desktop' && !isLoading && activeProfile && (
-        <Desktop onLogout={handleLogout} setShowDebug={setShowDebug} />
+        <Desktop onLogout={handleLogout} setShowDebug={handleSetShowDebug} />
       )}
 
       {showDebug && <DebugOverlay />}
