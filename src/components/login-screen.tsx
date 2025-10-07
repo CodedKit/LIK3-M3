@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState } from 'react';
@@ -10,7 +11,7 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, useFormField } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import { UserProfile } from '@/hooks/use-user-profile';
+import { type UserProfile } from '@/context/user-profile-context';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import ProfileCard from './profile-card';
 import { cn } from '@/lib/utils';
@@ -79,7 +80,7 @@ const AddProfileCard = ({ isCreating, openCreator, form, onSubmit, onInvalid }: 
 
 interface LoginScreenProps {
     profiles: UserProfile[];
-    onAccountCreate: (newProfileData: Omit<UserProfile, 'id'>) => void;
+    onAccountCreate: (newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp'>) => void;
     onLogin: (profile: UserProfile) => void;
     onProfileDelete: (profileId: string) => void;
     showDebug: boolean;

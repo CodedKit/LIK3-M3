@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
@@ -20,7 +21,7 @@ type LikesData = {
 };
 
 export default function Likestagram() {
-  const { activeProfile } = useUserProfileContext();
+  const { activeProfile, addXp } = useUserProfileContext();
   const [likes, setLikes] = useState(0);
 
   useEffect(() => {
@@ -58,10 +59,13 @@ export default function Likestagram() {
       likesData[activeProfile.id][POST_ID] = newLikes;
       window.localStorage.setItem(LIKES_STORAGE_KEY, JSON.stringify(likesData));
       setLikes(newLikes);
+      if (addXp) {
+        addXp(10);
+      }
     } catch (error) {
       console.error('Failed to save likes to localStorage', error);
     }
-  }, [activeProfile]);
+  }, [activeProfile, addXp]);
 
   const postImage = PlaceHolderImages.find(img => img.id === 'user-avatar-1');
   const isLiked = likes > 0;

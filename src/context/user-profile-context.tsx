@@ -1,7 +1,8 @@
+
 'use client';
 
 import { createContext, useContext, ReactNode } from 'react';
-import { useUserProfile } from '@/hooks/use-user-profile';
+import { useUserProfile, type UserProfile } from '@/hooks/use-user-profile';
 
 type UserProfileContextType = ReturnType<typeof useUserProfile>;
 
@@ -24,3 +25,5 @@ export function useUserProfileContext() {
   }
   return context;
 }
+
+export type { UserProfile };

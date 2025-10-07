@@ -1,4 +1,5 @@
 
+
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -170,6 +171,11 @@ export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
                   </FormItem>
                 )}
               />
+
+              <div>
+                <Label>Experience</Label>
+                <p className="text-sm font-medium text-primary-foreground">{activeProfile.xp ?? 0} XP</p>
+              </div>
               
               <DialogFooter>
                 <Button type="submit">Save Changes</Button>

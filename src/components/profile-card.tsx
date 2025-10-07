@@ -1,7 +1,8 @@
+
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import type { UserProfile } from '@/hooks/use-user-profile';
+import type { UserProfile } from '@/context/user-profile-context';
 import { Trash2 } from 'lucide-react';
 
 interface ProfileCardProps {
