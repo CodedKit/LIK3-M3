@@ -40,6 +40,8 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
     };
   }, []);
 
+  const profileData = activeProfile ? Object.entries(activeProfile) : [];
+
   return (
     <div className={cn(
         "fixed bottom-4 left-4 z-[101] rounded-lg border p-4 text-card-foreground shadow-lg w-full max-w-lg",
@@ -94,9 +96,24 @@ export default function DebugOverlay({ onClose, activeProfile }: DebugOverlayPro
         </TabsContent>
         <TabsContent value="profile" className="max-h-64 overflow-auto mt-4">
             {activeProfile ? (
-                <pre className="text-xs whitespace-pre-wrap break-all font-code">
-                    {JSON.stringify(activeProfile, null, 2)}
-                </pre>
+                 <Table>
+                    <TableHeader>
+                        <TableRow>
+                        <TableHead className="text-xs whitespace-nowrap">Key</TableHead>
+                        <TableHead className="text-xs">Value</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {profileData.map(([key, value]) => (
+                            <TableRow key={key}>
+                                <TableCell className="py-2 align-top text-xs font-medium whitespace-nowrap">{key}</TableCell>
+                                <TableCell className="py-2 align-top text-xs whitespace-pre-wrap break-all">
+                                    {typeof value === 'object' ? JSON.stringify(value) : String(value)}
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
             ) : (
                 <p className="text-center text-xs text-muted-foreground">No active profile.</p>
             )}
