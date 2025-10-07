@@ -13,24 +13,24 @@ const USER_SETTINGS_KEY = 'user-settings';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
-  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading } = useUserProfileContext();
-  const [showDebug, setShowDebug] = useState(false);
+  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading, updateProfile } = useUserProfileContext();
+  const [showGlobalDebug, setShowGlobalDebug] = useState(false);
 
   useEffect(() => {
     try {
       const settingsItem = window.localStorage.getItem(USER_SETTINGS_KEY);
       if (settingsItem) {
         const settings = JSON.parse(settingsItem);
-        setShowDebug(settings.showDebug || false);
+        setShowGlobalDebug(settings.showDebug || false);
       }
     } catch (error) {
       console.error("Failed to load user settings from localStorage", error);
     }
   }, []);
 
-  const handleSetShowDebug = (value: boolean | ((prevState: boolean) => boolean)) => {
-    const newShowDebug = typeof value === 'function' ? value(showDebug) : value;
-    setShowDebug(newShowDebug);
+  const handleSetShowGlobalDebug = (value: boolean | ((prevState: boolean) => boolean)) => {
+    const newShowDebug = typeof value === 'function' ? value(showGlobalDebug) : value;
+    setShowGlobalDebug(newShowDebug);
     try {
       const settingsItem = window.localStorage.getItem(USER_SETTINGS_KEY);
       const settings = settingsItem ? JSON.parse(settingsItem) : {};
@@ -39,6 +39,12 @@ export default function Home() {
     } catch (error) {
       console.error("Failed to save user settings to localStorage", error);
     }
+  };
+
+  const handleSetProfileDebug = (value: boolean | ((prevState: boolean) => boolean)) => {
+    if (!activeProfile) return;
+    const newShowDebug = typeof value === 'function' ? value(activeProfile.showDebug || false) : value;
+    updateProfile(activeProfile.id, { showDebug: newShowDebug });
   };
 
   const handleBootComplete = useCallback(() => {
@@ -60,7 +66,7 @@ export default function Home() {
     }
   }, [isLoading, activeProfile]);
 
-  const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id'>) => {
+  const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id' | 'showDebug'>) => {
     addProfile(newProfileData);
   };
   
@@ -74,6 +80,9 @@ export default function Home() {
     setAppState('login');
   }
 
+  const showDebug = activeProfile ? activeProfile.showDebug : showGlobalDebug;
+  const setShowDebug = activeProfile ? handleSetProfileDebug : handleSetShowGlobalDebug;
+
   return (
     <main className="h-screen w-screen overflow-hidden bg-background">
       {appState === 'booting' && <BootScreen onSkip={handleBootComplete} />}
@@ -85,12 +94,16 @@ export default function Home() {
           onLogin={handleLogin} 
           onProfileDelete={deleteProfile}
           showDebug={showDebug}
-          setShowDebug={handleSetShowDebug}
+          setShowDebug={setShowDebug}
         />
       )}
       
       {appState === 'desktop' && !isLoading && activeProfile && (
-        <Desktop onLogout={handleLogout} setShowDebug={handleSetShowDebug} />
+        <Desktop 
+          onLogout={handleLogout} 
+          showDebug={showDebug || false}
+          setShowDebug={setShowDebug} 
+        />
       )}
 
       {showDebug && <DebugOverlay />}

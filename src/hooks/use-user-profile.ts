@@ -8,6 +8,7 @@ export type UserProfile = {
   username: string;
   avatarUrl: string;
   description?: string;
+  showDebug?: boolean;
 };
 
 const USER_PROFILES_KEY = 'virtual-temptations-user-profiles';
@@ -51,7 +52,7 @@ export function useUserProfile() {
     }
   }, []);
 
-  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id'>) => {
+  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug'>) => {
     if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
         throw new Error('A profile with this username already exists.');
     }
@@ -59,7 +60,8 @@ export function useUserProfile() {
     const newProfile: UserProfile = {
       ...newProfileData,
       id: `profile_${Date.now()}_${Math.random()}`,
-      description: 'New to Virtual Temptations!'
+      description: 'New to Virtual Temptations!',
+      showDebug: false,
     };
     
     try {

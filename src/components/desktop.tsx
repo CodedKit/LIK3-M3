@@ -16,10 +16,11 @@ import ProfileApp from '@/components/desktop/apps/profile';
 
 interface DesktopProps {
   onLogout: () => void;
+  showDebug: boolean;
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
 }
 
-export default function Desktop({ onLogout, setShowDebug }: DesktopProps) {
+export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopProps) {
   const [activeApp, setActiveApp] = useState<{id: string, name: string, component: React.ReactNode} | null>(null);
   const { activeProfile } = useUserProfileContext();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
@@ -85,6 +86,8 @@ export default function Desktop({ onLogout, setShowDebug }: DesktopProps) {
         onLogout={onLogout} 
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
+        showDebug={showDebug}
+        setShowDebug={setShowDebug}
       />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>
