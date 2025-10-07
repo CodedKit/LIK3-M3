@@ -24,15 +24,15 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const [selectedBg, setSelectedBg] = useState(activeProfile?.desktopBgUrl || '');
   const backgroundOptions = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
 
-  const handleSaveVisuals = () => {
+  const handleBackgroundSelect = (imageUrl: string) => {
     if (!activeProfile) return;
     try {
-      updateProfile(activeProfile.id, { desktopBgUrl: selectedBg });
+      setSelectedBg(imageUrl);
+      updateProfile(activeProfile.id, { desktopBgUrl: imageUrl });
       toast({
-        title: "Settings Saved",
-        description: "Your visual settings have been updated.",
+        title: "Background Updated",
+        description: "Your desktop background has been changed.",
       });
-      onClose();
     } catch (error: any) {
       toast({
         title: "Error",
@@ -45,7 +45,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
 
   return (
     <div className="h-full w-full bg-background p-4">
-      <Tabs defaultValue="gameplay" className="h-full">
+      <Tabs defaultValue="visuals" className="h-full">
         <TabsList className="grid w-full grid-cols-3">
           <TabsTrigger value="gameplay">Gameplay</TabsTrigger>
           <TabsTrigger value="sound">Sound</TabsTrigger>
@@ -93,7 +93,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                           <button
                             key={bg.id}
                             type="button"
-                            onClick={() => setSelectedBg(bg.imageUrl)}
+                            onClick={() => handleBackgroundSelect(bg.imageUrl)}
                             className={cn(
                               'relative aspect-video w-full rounded-lg overflow-hidden border-2',
                               selectedBg === bg.imageUrl ? 'border-primary' : 'border-transparent'
@@ -110,7 +110,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                         ))}
                       </div>
                     </div>
-                    <Button onClick={handleSaveVisuals}>Save Changes</Button>
                 </CardContent>
             </Card>
         </TabsContent>
