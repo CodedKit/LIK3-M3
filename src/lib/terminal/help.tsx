@@ -1,4 +1,3 @@
-
 import { type Command, type CommandExecuteProps } from './types';
 
 export const help: Command = {

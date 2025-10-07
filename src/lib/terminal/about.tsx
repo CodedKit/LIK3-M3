@@ -1,4 +1,3 @@
-
 import { type Command } from './types';
 
 export const about: Command = {
