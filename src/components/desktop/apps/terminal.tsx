@@ -141,21 +141,18 @@ export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
         <label htmlFor="terminal-input" className="text-pink-500">
           {prompt}
         </label>
-        <div className="relative flex-1">
-          <input
+        <input
             id="terminal-input"
             ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            className="absolute inset-0 w-full bg-transparent text-green-400 focus:outline-none caret-green-400"
+            className="w-full flex-1 bg-transparent text-green-400 focus:outline-none caret-green-400"
             autoComplete="off"
             autoCapitalize="off"
             autoCorrect="off"
           />
-           <span className={cn(input ? 'invisible' : 'animate-pulse')}>_</span>
-        </div>
       </div>
        <div ref={endOfHistoryRef} />
     </div>
