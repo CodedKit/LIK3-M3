@@ -23,16 +23,13 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   const currentTrack = Playlist[currentTrackIndex];
 
-  // Effect to load and play a new track
+  // Effect to load and play a new track when the index changes
   useEffect(() => {
     if (currentTrack?.audioSrc && audioRef.current) {
         audioRef.current.src = currentTrack.audioSrc;
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
-            playPromise.then(() => {
-                setIsPlaying(true);
-            }).catch(error => {
-                // Autoplay was prevented.
+            playPromise.catch(error => {
                 console.error("Audio play failed on track change:", error);
                 setIsPlaying(false);
             });
@@ -42,12 +39,11 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   const handlePlayPause = () => {
     if (!audioRef.current) return;
-    if (isPlaying) {
-      audioRef.current.pause();
+    if (audioRef.current.paused) {
+      audioRef.current.play().catch(e => console.error("Play error:", e));
     } else {
-      audioRef.current.play();
+      audioRef.current.pause();
     }
-    setIsPlaying(!isPlaying);
   };
   
   const handleNext = () => {
