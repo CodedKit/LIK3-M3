@@ -28,13 +28,9 @@ export function ColorPopover({
   const { toast } = useToast();
 
   const isImage = (str: string) => str.startsWith('http');
-  const isGif = (str: string) => isImage(str) && str.endsWith('.gif');
-  const isWebm = (str: string) => isImage(str) && str.endsWith('.webm');
   
-  const isUrlAllowed = isHostnameAllowed(url);
-
   const handleSetBackground = () => {
-    if (isImage(url) && !isUrlAllowed) {
+    if (isImage(url) && !isHostnameAllowed(url)) {
       toast({
         title: 'Unsupported Website',
         description: 'The provided URL is from a domain that is not supported.',
@@ -84,26 +80,6 @@ export function ColorPopover({
       </TabsContent>
       
       <TabsContent value="url" className="mt-0 space-y-2">
-        <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-muted/50 text-xs">
-            {(isImage(url) && !isWebm(url) && isUrlAllowed) && (
-                <Image 
-                    src={url} 
-                    alt="Preview" 
-                    fill 
-                    className="object-cover" 
-                    unoptimized={isGif(url)}
-                />
-            )}
-            {isWebm(url) && isUrlAllowed && (
-                <p className="text-muted-foreground">Video preview</p>
-            )}
-            {isImage(url) && !isUrlAllowed && (
-                <p className="text-destructive p-2 text-center">Unsupported website</p>
-            )}
-            {!isImage(url) && (
-                <p className="text-muted-foreground">Preview</p>
-            )}
-        </div>
         <div className="flex items-center gap-2">
             <Input
                 id="custom-url"

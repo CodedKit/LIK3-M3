@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { cn } from '@/lib/utils';
+import { cn, isHostnameAllowed } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ColorPopover } from '@/components/ui/color-popover';
@@ -62,6 +62,15 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   }, [background]);
 
   const handleBackgroundChange = (newBackground: string) => {
+    if (newBackground.startsWith('http') && !isHostnameAllowed(newBackground)) {
+        toast({
+            title: 'Unsupported Website',
+            description: 'The provided URL is from a domain that is not supported.',
+            variant: 'destructive',
+        });
+        return;
+    }
+
     if (!activeProfile) return;
     try {
       setBackground(newBackground);
@@ -75,7 +84,8 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     }
   };
 
-  const isColor = !background.startsWith('http') && !background.startsWith('/');
+  const isCustomUrl = background.startsWith('http');
+  const isColor = !isCustomUrl && !background.startsWith('/');
 
   return (
     <div className="h-full w-full bg-background p-4">
@@ -128,12 +138,27 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                     <button
                                         className={cn(
                                             'relative aspect-video w-full rounded-md overflow-hidden border-2 flex items-center justify-center group',
-                                            isColor ? 'border-primary' : 'border-border'
+                                            isColor || isCustomUrl ? 'border-primary' : 'border-border'
                                         )}
                                         style={isColor ? { background } : {}}
                                     >
-                                        {!isColor && <div className="absolute inset-0 bg-background/50" />}
-                                        <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
+                                        {isCustomUrl ? (
+                                            <>
+                                                <Image 
+                                                    src={background} 
+                                                    alt="Custom Background" 
+                                                    fill 
+                                                    className="object-cover"
+                                                    unoptimized={background.endsWith('.gif')}
+                                                />
+                                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent transition-opacity opacity-0 group-hover:opacity-100"></div>
+                                            </>
+                                        ) : (
+                                            !isColor && <div className="absolute inset-0 bg-background/50" />
+                                        )}
+                                        {!isCustomUrl && (
+                                            <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
+                                        )}
                                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
                                             <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
                                                 Custom
