@@ -134,7 +134,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                     >
                                         {!isColor && <div className="absolute inset-0 bg-background/50" />}
                                         <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
-                                        <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2">
+                                        <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
                                             <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
                                                 Custom
                                             </Badge>
@@ -167,7 +167,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                     className="object-cover"
                                 />
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent transition-opacity opacity-0 group-hover:opacity-100"></div>
-                                <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2">
+                                <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
                                     <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
                                         {img.imageHint}
                                     </Badge>
