@@ -11,7 +11,6 @@ import { cn } from '@/lib/utils';
 import { Paintbrush } from 'lucide-react';
 import { useMemo } from 'react';
 import { ColorPopover } from './color-popover';
-import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function ColorPicker({
   background,
@@ -48,10 +47,7 @@ export function ColorPicker({
     'linear-gradient(to top left,#fda085,#f6d365)',
   ];
 
-  const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
-
   const defaultTab = useMemo(() => {
-    if (background.includes('url') || background.includes('https')) return 'image';
     if (background.includes('gradient')) return 'gradient';
     return 'solid';
   }, [background]);
@@ -88,7 +84,6 @@ export function ColorPicker({
           setBackground={setBackground}
           solids={solids}
           gradients={gradients}
-          images={images}
           defaultTab={defaultTab}
         />
       </PopoverContent>

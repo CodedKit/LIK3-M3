@@ -16,28 +16,22 @@ export function ColorPopover({
   setBackground,
   solids,
   gradients,
-  images,
   defaultTab,
 }: {
   background: string;
   setBackground: (background: string) => void;
   solids: string[];
   gradients: string[];
-  images: { id: string; imageUrl: string; description: string; imageHint: string }[];
   defaultTab: string;
 }) {
-  const defaultTabValue = defaultTab === 'image' ? 'images' : defaultTab;
   return (
-    <Tabs defaultValue={defaultTabValue} className="w-full">
-      <TabsList className="mb-4 w-full grid grid-cols-3">
+    <Tabs defaultValue={defaultTab} className="w-full">
+      <TabsList className="mb-4 w-full grid grid-cols-2">
         <TabsTrigger className="flex-1" value="solid">
           Solid
         </TabsTrigger>
         <TabsTrigger className="flex-1" value="gradient">
           Gradient
-        </TabsTrigger>
-        <TabsTrigger className="flex-1" value="images">
-          Image
         </TabsTrigger>
       </TabsList>
 
@@ -65,29 +59,6 @@ export function ColorPopover({
           </div>
       </TabsContent>
 
-      <TabsContent value="images" className="mt-0">
-          <div className="grid grid-cols-3 gap-2">
-            {images.map((img) => (
-              <button
-                key={img.id}
-                onClick={() => setBackground(img.imageUrl)}
-                className={cn(
-                  'relative aspect-square w-full rounded-md overflow-hidden border-2',
-                  background === img.imageUrl ? 'border-primary' : 'border-transparent'
-                )}
-              >
-                <Image
-                  src={img.imageUrl}
-                  alt={img.description}
-                  fill
-                  className="object-cover"
-                />
-                 {background === img.imageUrl && <div className="absolute inset-0 bg-black/50 flex items-center justify-center"><CheckIcon className="h-4 w-4 text-white" /></div>}
-              </button>
-            ))}
-          </div>
-      </TabsContent>
-
       <TabsContent value="picker" className="mt-0">
         <ChromePicker
           color={background}
@@ -104,4 +75,3 @@ export function ColorPopover({
     </Tabs>
   );
 }
-
