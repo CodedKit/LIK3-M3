@@ -3,7 +3,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-user-profile';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
@@ -40,34 +40,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const [openApps, setOpenApps] = useState<AppInstance[]>([]);
   const { activeProfile, updateProfile } = useAuth();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
   
   const activeApp = openApps[openApps.length - 1];
-
-  useEffect(() => {
-    // This audio element is persistent and controlled by the Desktop.
-    // It's not created inside MediaPlayer to avoid re-creation.
-    audioRef.current = new Audio();
-    const audio = audioRef.current;
-
-    const handlePlay = () => setIsPlaying(true);
-    const handlePause = () => setIsPlaying(false);
-    const handleEnded = () => handleNextTrack();
-
-    audio.addEventListener('play', handlePlay);
-    audio.addEventListener('pause', handlePause);
-    audio.addEventListener('ended', handleEnded);
-
-    return () => {
-        audio.removeEventListener('play', handlePlay);
-        audio.removeEventListener('pause', handlePause);
-        audio.removeEventListener('ended', handleEnded);
-        audio.pause();
-        audio.src = '';
-    }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   useEffect(() => {
     if (!activeProfile) return;
@@ -90,16 +64,10 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
-    setIsPlaying(true);
   };
 
   const handleClosePlayer = () => {
     setCurrentTrackIndex(null);
-    setIsPlaying(false);
-    if(audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = '';
-    }
   };
 
   const handleNextTrack = () => {
@@ -227,9 +195,6 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       <div className='relative z-[60]'>
         {currentTrackIndex !== null && (
           <MediaPlayer 
-              audioRef={audioRef}
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
               currentTrackIndex={currentTrackIndex}
               setCurrentTrackIndex={setCurrentTrackIndex}
               onClose={handleClosePlayer}

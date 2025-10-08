@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useRef, useState } from 'react';
 import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,21 +9,43 @@ import { Playlist } from '@/lib/music';
 import { Card } from '@/components/ui/card';
 import { useFavorites } from '@/hooks/use-favorites';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/hooks/use-auth';
+import { useAuth } from '@/hooks/use-user-profile';
 
 interface MediaPlayerProps {
-    audioRef: React.RefObject<HTMLAudioElement>;
-    isPlaying: boolean;
-    setIsPlaying: (isPlaying: boolean) => void;
     currentTrackIndex: number;
     setCurrentTrackIndex: (index: number) => void;
     onClose: () => void;
 }
 
-export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
+export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
   const { activeProfile } = useAuth();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+
   const currentTrack = Playlist[currentTrackIndex];
+
+  useEffect(() => {
+    audioRef.current = new Audio();
+    const audio = audioRef.current;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => handleNext();
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+        audio.removeEventListener('play', handlePlay);
+        audio.removeEventListener('pause', handlePause);
+        audio.removeEventListener('ended', handleEnded);
+        audio.pause();
+        audio.src = '';
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Effect 1: Handles LOADING a new track when the index changes.
   useEffect(() => {
@@ -33,11 +55,9 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
     if (audio.src !== window.location.origin + currentTrack.audioSrc) {
         audio.src = currentTrack.audioSrc;
         audio.load();
-        if (isPlaying) {
-            audio.play().catch(e => console.error("Audio play failed on new track load", e));
-        }
+        audio.play().catch(e => console.error("Audio play failed on new track load", e));
     }
-  }, [currentTrackIndex, currentTrack, audioRef, isPlaying]);
+  }, [currentTrackIndex, currentTrack]);
 
 
   // Effect 2: Handles SYNCHRONIZING volume when settings change.
@@ -46,10 +66,12 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
     if (!audio || !activeProfile || !activeProfile.volumeSettings) return;
 
     const { master, music } = activeProfile.volumeSettings;
-    const finalVolume = (master / 100) * (music / 100);
+    const masterVolume = typeof master === 'number' ? master : 0;
+    const musicVolume = typeof music === 'number' ? music : 0;
+    const finalVolume = (masterVolume / 100) * (musicVolume / 100);
     audio.volume = finalVolume;
 
-  }, [activeProfile?.volumeSettings, audioRef]);
+  }, [activeProfile?.volumeSettings]);
 
 
   const handlePlayPause = useCallback(() => {
@@ -58,12 +80,10 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
 
     if (audio.paused) {
       audio.play().catch(e => console.error("Play error:", e));
-      setIsPlaying(true);
     } else {
       audio.pause();
-      setIsPlaying(false);
     }
-  }, [audioRef, setIsPlaying]);
+  }, []);
   
   const handleNext = useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % Playlist.length;
