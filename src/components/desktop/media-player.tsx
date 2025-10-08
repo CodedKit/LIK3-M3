@@ -19,14 +19,18 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentTrack = Playlist[currentTrackIndex];
+  console.log(`[MediaPlayer Render] Index: ${currentTrackIndex}, isPlaying: ${isPlaying}, Track: ${currentTrack?.title}`);
+
 
   // Effect 1: Handles loading a new track
   useEffect(() => {
+    console.log('[Effect 1: Load Track] Triggered. Current track:', currentTrack?.title);
     if (audioRef.current && currentTrack?.audioSrc) {
+        console.log('[Effect 1: Load Track] Loading new src:', currentTrack.audioSrc);
         audioRef.current.src = currentTrack.audioSrc;
-        // If we are supposed to be playing, start playback.
         if (isPlaying) {
-            audioRef.current.play().catch(e => console.error("Audio play failed on new track load", e));
+            console.log('[Effect 1: Load Track] Attempting to play new track.');
+            audioRef.current.play().catch(e => console.error("[Effect 1: Load Track] Audio play failed on new track load", e));
         }
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -34,10 +38,13 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   // Effect 2: Handles toggling play/pause for the CURRENT track
   useEffect(() => {
+    console.log(`[Effect 2: Play/Pause] Triggered. isPlaying: ${isPlaying}`);
     if (audioRef.current) {
         if (isPlaying) {
-            audioRef.current.play().catch(e => console.error("Audio play failed on toggle", e));
+            console.log('[Effect 2: Play/Pause] Calling play().');
+            audioRef.current.play().catch(e => console.error("[Effect 2: Play/Pause] Audio play failed on toggle", e));
         } else {
+            console.log('[Effect 2: Play/Pause] Calling pause().');
             audioRef.current.pause();
         }
     }
