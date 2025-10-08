@@ -13,7 +13,6 @@ import { useContext } from 'react';
 import { UserProfileContext, type UserProfile } from '@/context/user-profile-context';
 import { calculateLevel } from '@/lib/leveling';
 import { toast } from './use-toast';
-import { FlagManager } from '@/lib/flags-manager';
 
 export { type UserProfile };
 
@@ -67,16 +66,9 @@ export const useUserProfile = () => {
     }
   };
 
-  // Flags
-  let flagManager: FlagManager | null = null;
-  if (activeProfile) {
-      flagManager = new FlagManager(activeProfile, (updatedData) => {
-        updateProfile(activeProfile.id, updatedData);
-    });
-  }
-
-  const setFlag = (key: string, value: any) => flagManager?.setFlag(key, value);
-  const getFlag = (key: string) => flagManager?.getFlag(key);
+  // Flags - The problematic FlagManager instantiation is now removed.
+  const setFlag = (key: string, value: any) => console.warn('setFlag is managed centrally and should not be called from this deprecated hook.');
+  const getFlag = (key: string) => activeProfile?.flags?.[key] || null;
   const enterScene = (sceneId: string) => { /* Not implemented in deprecated hook */ };
   const exitScene = (sceneId: string) => { /* Not implemented in deprecated hook */ };
 

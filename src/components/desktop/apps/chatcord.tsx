@@ -259,7 +259,7 @@ function SceneSelector({ onSelectScene, scenes }: { onSelectScene: (scene: Scene
  */
 export default function ChatCordApp() {
   const [activeScene, setActiveScene] = useState<Scene | null>(null);
-  const [availableScenes, setAvailableScenes] = useState<Scene[]>([]);
+  const [availableScenes, setAvailableScenes] = useState<Scene[]>(sceneManager.getAvailableScenes());
 
   useEffect(() => {
     const handleAvailableScenesChanged = (scenes: Scene[]) => {
@@ -269,8 +269,6 @@ export default function ChatCordApp() {
     const handleForceScene = (scene: Scene) => {
         setActiveScene(scene);
     };
-
-    setAvailableScenes(sceneManager.getAvailableScenes());
 
     const unsubscribeScenesChanged = eventManager.on('availableScenesChanged', handleAvailableScenesChanged);
     const unsubscribeForceScene = eventManager.on('forceScene', handleForceScene);
