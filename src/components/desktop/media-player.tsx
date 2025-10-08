@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState, useRef } from 'react';
 import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,42 +9,45 @@ import { Playlist } from '@/lib/music';
 import { Card } from '@/components/ui/card';
 import { useFavorites } from '@/hooks/use-favorites';
 import { cn } from '@/lib/utils';
+import { useAuth } from '@/hooks/use-auth';
 
 interface MediaPlayerProps {
     audioRef: React.RefObject<HTMLAudioElement>;
     isPlaying: boolean;
+    setIsPlaying: (isPlaying: boolean) => void;
     currentTrackIndex: number;
     setCurrentTrackIndex: (index: number) => void;
     onClose: () => void;
 }
 
-export default function MediaPlayer({ audioRef, isPlaying, currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
+export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
-
+  const { activeProfile } = useAuth();
   const currentTrack = Playlist[currentTrackIndex];
 
   useEffect(() => {
     const audio = audioRef.current;
-    const track = Playlist[currentTrackIndex];
+    if (!audio || !activeProfile || !activeProfile.volumeSettings) return;
 
-    if (audio && track?.audioSrc) {
-      if (audio.src !== window.location.origin + track.audioSrc) {
-        audio.src = track.audioSrc;
-      }
-      audio.play().catch(error => console.error("Audio play failed:", error));
-    }
-  }, [currentTrackIndex, audioRef]);
+    const { master, music } = activeProfile.volumeSettings;
+    const finalVolume = (master / 100) * (music / 100);
+    audio.volume = finalVolume;
+    
+  }, [activeProfile, currentTrackIndex, audioRef]);
 
 
   const handlePlayPause = useCallback(() => {
     const audio = audioRef.current;
     if (!audio) return;
+
     if (audio.paused) {
       audio.play().catch(e => console.error("Play error:", e));
+      setIsPlaying(true);
     } else {
       audio.pause();
+      setIsPlaying(false);
     }
-  }, [audioRef]);
+  }, [audioRef, setIsPlaying]);
   
   const handleNext = useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % Playlist.length;

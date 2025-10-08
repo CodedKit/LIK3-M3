@@ -38,16 +38,12 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     effects: activeProfile?.volumeSettings?.effects ?? 100,
   }), [activeProfile?.volumeSettings]);
 
-  console.log('[SettingsApp Render] Reading volumeSettings from profile:', volumeSettings);
-
 
   const handleVolumeChange = useCallback((type: 'master' | 'music' | 'ui' | 'effects', value: number) => {
     if (!activeProfile) return;
 
-    console.log(`[handleVolumeChange] Attempting to set ${type} to ${value}`);
-
     const newSettings = {
-        ...volumeSettings, // Start with current settings
+        ...volumeSettings,
         [type]: value,
     };
     updateProfile(activeProfile.id, { volumeSettings: newSettings });
