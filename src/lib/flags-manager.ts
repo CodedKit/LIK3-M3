@@ -56,6 +56,7 @@ export class FlagManager {
         '<=': (a, b) => a <= b,
         '>': (a, b) => a > b,
         '<': (a, b) => a < b,
+        '==': (a, b) => a == b, // Using '==' for loose equality
         '=': (a, b) => a == b,
     };
   
@@ -64,7 +65,9 @@ export class FlagManager {
       
       if (!operator) return false;
 
-      const [field, rawValue] = conditionStr.split(operator);
+      const parts = conditionStr.split(operator);
+      const field = parts[0];
+      const rawValue = parts[1];
       const actualValue = payload[field];
       
       // Convert expected value to number if possible, otherwise keep as string
@@ -74,7 +77,6 @@ export class FlagManager {
         return false;
       }
       
-      // eslint-disable-next-line eqeqeq
       return operators[operator](actualValue, expectedValue);
     });
   }
