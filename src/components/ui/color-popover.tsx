@@ -29,6 +29,7 @@ export function ColorPopover({
 
   const isImage = (str: string) => str.startsWith('http');
   const isGif = (str: string) => isImage(str) && str.endsWith('.gif');
+  const isWebm = (str: string) => isImage(str) && str.endsWith('.webm');
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
@@ -69,7 +70,7 @@ export function ColorPopover({
       </TabsContent>
       
       <TabsContent value="url" className="mt-0 space-y-2">
-        {isImage(url) && (
+        {(isImage(url) && !isWebm(url)) && (
           <div className="relative aspect-video w-full rounded-md overflow-hidden border">
               <Image 
                 src={url} 
@@ -80,6 +81,11 @@ export function ColorPopover({
               />
           </div>
         )}
+         {isWebm(url) && (
+            <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-black">
+                <p className="text-xs text-white">Video preview not supported</p>
+            </div>
+         )}
         <div className="flex items-center gap-2">
             <Input
                 id="custom-url"

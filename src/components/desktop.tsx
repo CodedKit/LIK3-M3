@@ -123,12 +123,15 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const canGoBack = openApps.length > 1;
 
-  const isImage = activeProfile.desktopBgUrl && (activeProfile.desktopBgUrl.startsWith('http') || activeProfile.desktopBgUrl.startsWith('/'));
+  const bgUrl = activeProfile.desktopBgUrl || '';
+  const isVideo = bgUrl.endsWith('.webm');
+  const isImage = (bgUrl.startsWith('http') || bgUrl.startsWith('/')) && !isVideo;
+
 
   return (
     <div 
       className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
-      style={!isImage ? { background: activeProfile.desktopBgUrl } : {}}
+      style={!isImage && !isVideo ? { background: activeProfile.desktopBgUrl } : {}}
     >
       {isImage && (
         <Image
@@ -136,6 +139,15 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
           alt="Desktop Background"
           fill
           className="object-cover z-0"
+        />
+      )}
+      {isVideo && (
+        <video
+            src={activeProfile.desktopBgUrl}
+            autoPlay
+            loop
+            muted
+            className="absolute top-0 left-0 w-full h-full object-cover z-0"
         />
       )}
 
