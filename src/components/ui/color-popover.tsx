@@ -7,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { cn } from '@/lib/utils';
 import { CheckIcon, Paintbrush } from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 import {
   ChromePicker
 } from 'react-color';
@@ -24,14 +25,22 @@ export function ColorPopover({
   gradients: string[];
   defaultTab: string;
 }) {
+  const [url, setUrl] = useState(background.startsWith('http') ? background : '');
+
+  const isImage = (str: string) => str.startsWith('http');
+  const isGif = (str: string) => isImage(str) && str.endsWith('.gif');
+
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
-      <TabsList className="mb-4 w-full grid grid-cols-2">
+      <TabsList className="mb-4 w-full grid grid-cols-3">
         <TabsTrigger className="flex-1" value="solid">
           Solid
         </TabsTrigger>
         <TabsTrigger className="flex-1" value="gradient">
           Gradient
+        </TabsTrigger>
+        <TabsTrigger className="flex-1" value="url">
+          URL
         </TabsTrigger>
       </TabsList>
 
@@ -58,6 +67,32 @@ export function ColorPopover({
             ))}
           </div>
       </TabsContent>
+      
+      <TabsContent value="url" className="mt-0 space-y-2">
+        {isImage(url) && (
+          <div className="relative aspect-video w-full rounded-md overflow-hidden border">
+              <Image 
+                src={url} 
+                alt="Preview" 
+                fill 
+                className="object-cover" 
+                unoptimized={isGif(url)}
+              />
+          </div>
+        )}
+        <div className="flex items-center gap-2">
+            <Input
+                id="custom-url"
+                value={url}
+                className="h-8"
+                onChange={(e) => setUrl(e.currentTarget.value)}
+                placeholder='https://...'
+            />
+            <Button size="icon" className="h-8 w-8" onClick={() => setBackground(url)}>
+                <CheckIcon className="h-4 w-4" />
+            </Button>
+        </div>
+      </TabsContent>
 
       <TabsContent value="picker" className="mt-0">
         <ChromePicker
@@ -66,12 +101,14 @@ export function ColorPopover({
         />
       </TabsContent>
 
-      <Input
-        id="custom"
-        value={background}
-        className="col-span-2 mt-4 h-8"
-        onChange={(e) => setBackground(e.currentTarget.value)}
-      />
+      {!background.startsWith('http') && (
+        <Input
+          id="custom"
+          value={background}
+          className="col-span-2 mt-4 h-8"
+          onChange={(e) => setBackground(e.currentTarget.value)}
+        />
+      )}
     </Tabs>
   );
 }

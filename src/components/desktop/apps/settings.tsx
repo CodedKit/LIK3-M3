@@ -26,7 +26,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const { toast } = useToast();
   
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
-  const [customImageUrl, setCustomImageUrl] = useState('');
   const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
 
   const solids = [
@@ -56,6 +55,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   ];
 
   const defaultTab = useMemo(() => {
+    if (background.startsWith('http')) return 'url';
     if (background.includes('gradient')) return 'gradient';
     return 'solid';
   }, [background]);
@@ -73,12 +73,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
       });
     }
   };
-
-  const handleCustomUrlSubmit = () => {
-    if (customImageUrl) {
-        handleBackgroundChange(customImageUrl);
-    }
-  }
 
   const isColor = !background.startsWith('http') && !background.startsWith('/');
 
@@ -126,7 +120,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                 </CardHeader>
                 <CardContent className="space-y-8">
                      <div className="space-y-4">
-                        <Label>Background Images</Label>
+                        <Label>Backgrounds</Label>
                         <div className="grid grid-cols-3 gap-2">
                             <Popover>
                                 <PopoverTrigger asChild>
@@ -141,7 +135,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                         <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
                                     </button>
                                 </PopoverTrigger>
-                                <PopoverContent className="w-64">
+                                <PopoverContent className="w-72">
                                     <ColorPopover
                                     background={background}
                                     setBackground={handleBackgroundChange}
@@ -168,19 +162,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                 />
                                 </button>
                             ))}
-                        </div>
-                    </div>
-                    <Separator />
-                    <div className="space-y-4">
-                        <Label>Custom Image</Label>
-                        <div className="flex gap-2">
-                        <Input 
-                            id="custom-image-url" 
-                            placeholder="Paste image URL here..." 
-                            value={customImageUrl}
-                            onChange={(e) => setCustomImageUrl(e.target.value)}
-                        />
-                        <Button onClick={handleCustomUrlSubmit}>Set Image</Button>
                         </div>
                     </div>
                 </CardContent>
