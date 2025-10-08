@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -16,8 +16,28 @@ interface MediaPlayerProps {
 
 export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(true);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentTrack = Playlist[currentTrackIndex];
+
+  useEffect(() => {
+    if (audioRef.current) {
+        audioRef.current.src = currentTrack.audioSrc;
+        if (isPlaying) {
+            audioRef.current.play().catch(e => console.error("Audio play failed", e));
+        }
+    }
+  }, [currentTrack, isPlaying]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+        if (isPlaying) {
+            audioRef.current.play().catch(e => console.error("Audio play failed", e));
+        } else {
+            audioRef.current.pause();
+        }
+    }
+  }, [isPlaying]);
 
   const handleNext = () => {
     setCurrentTrackIndex((currentTrackIndex + 1) % Playlist.length);
@@ -37,6 +57,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
+        <audio ref={audioRef} />
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>

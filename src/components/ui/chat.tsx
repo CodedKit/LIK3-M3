@@ -101,11 +101,19 @@ interface ChatMessageProps {
 
 export const ChatMessage = ({ message, user }: ChatMessageProps) => {
     const isUser = message.role === "user";
-  
+    const [avatarSrc, setAvatarSrc] = React.useState(getAvatarSrc());
+
     const getAvatarSrc = () => {
       if (message.role === 'user') return user.avatar;
       if (message.role === 'assistant') return '/bot-avatar.png'; // Example for bot
       return null;
+    }
+
+    const handleAvatarError = () => {
+        const fallback = getAvatarFallback();
+        if(fallback) {
+            setAvatarSrc(`https://placehold.co/32x32/A8A29E/3F3F46.png?text=${fallback}`);
+        }
     }
   
     const getAvatarFallback = () => {
@@ -133,7 +141,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
       >
         {!isUser && (
             <Avatar className="h-8 w-8">
-                <AvatarImage src={getAvatarSrc() || ''} alt="Avatar" />
+                <AvatarImage src={avatarSrc || ''} alt="Avatar" onError={handleAvatarError} />
                 <AvatarFallback>{getAvatarFallback()}</AvatarFallback>
             </Avatar>
         )}
@@ -147,7 +155,7 @@ export const ChatMessage = ({ message, user }: ChatMessageProps) => {
         </div>
         {isUser && (
             <Avatar className="h-8 w-8">
-                <AvatarImage src={getAvatarSrc() || ''} alt={user.name} />
+                <AvatarImage src={avatarSrc || ''} alt={user.name} onError={handleAvatarError} />
                 <AvatarFallback>{getAvatarFallback()}</AvatarFallback>
             </Avatar>
         )}

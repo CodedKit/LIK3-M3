@@ -49,6 +49,9 @@ const nextConfig: NextConfig = {
       }
     ],
   },
+  experimental: {
+    allowedDevOrigins: ["9000-firebase-studio-1759700607133.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev"],
+  },
   webpack(config) {
     config.module.rules.push({
       test: /\.webm$/,
@@ -61,6 +64,26 @@ const nextConfig: NextConfig = {
         },
       },
     });
+    
+    // Updated rule to handle both mp3 and jpg files from the music directory
+    config.module.rules.push({
+      test: /\.(mp3|jpg|jpeg|png|gif)$/,
+      use: {
+        loader: 'file-loader',
+        options: {
+          publicPath: (url: string, resourcePath: string, context: string) => {
+            // This is a simplified logic. A real app might need more robust path handling.
+            if (resourcePath.includes('src/lib/music')) {
+              return `/_next/static/music/${url}`;
+            }
+            return `/_next/static/assets/${url}`;
+          },
+          outputPath: 'static/music/',
+          name: '[name].[hash].[ext]',
+        },
+      },
+    });
+
     return config;
   },
 };

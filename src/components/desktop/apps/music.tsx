@@ -1,19 +1,47 @@
+
 'use client';
 
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Playlist } from '@/lib/music';
+import { Playlist, type Song } from '@/lib/music';
+import { eventManager } from '@/lib/event-manager';
 
 interface MusicAppProps {
   onPlayTrack: (trackIndex: number) => void;
 }
 
 export default function MusicApp({ onPlayTrack }: MusicAppProps) {
+  const [currentPlaylist, setCurrentPlaylist] = useState<Song[]>(Playlist);
+
+  useEffect(() => {
+    const handleMetadataChange = (payload: { songId: string; title?: string; artist?: string }) => {
+      setCurrentPlaylist(prevPlaylist =>
+        prevPlaylist.map(song => {
+          if (song.id === payload.songId) {
+            return {
+              ...song,
+              title: payload.title || song.title,
+              artist: payload.artist || song.artist,
+            };
+          }
+          return song;
+        })
+      );
+    };
+
+    const unsubscribe = eventManager.on('musicMetadataChanged', handleMetadataChange);
+
+    return () => {
+      unsubscribe();
+    };
+  }, []);
+
   return (
     <div className="h-full w-full bg-background p-4">
       <div className="flex flex-col gap-2">
-        {Playlist.map((song, index) => (
+        {currentPlaylist.map((song, index) => (
           <div
             key={song.id}
             className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-white/10"

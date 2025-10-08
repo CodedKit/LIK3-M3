@@ -2,6 +2,7 @@
 import { toast } from '@/hooks/use-toast';
 import { type UserProfile } from '@/context/user-profile-context';
 import { sceneManager } from './scene-manager';
+import { eventManager } from './event-manager';
 
 export type FlagActionArgs = {
   key: string;
@@ -11,6 +12,14 @@ export type FlagActionArgs = {
 };
 
 export type FlagAction = (args: FlagActionArgs) => void;
+
+// This type should match the structure of the value for the updateMusicMetadata flag
+type MusicMetadataPayload = {
+  songId: string;
+  title?: string;
+  artist?: string;
+};
+
 
 export const flagActions: { [key: string]: FlagAction } = {
   showWelcomeMessage: ({ isInitial }) => {
@@ -23,12 +32,21 @@ export const flagActions: { [key: string]: FlagAction } = {
     console.log('Hide welcome message callback triggered.');
   },
   superfan: ({ isInitial }) => {
-    sceneManager.makeSceneAvailable('pixel_pioneer_superfan_chat');
+    sceneManager.makeCharacterAvailable('pixel_pioneer');
     if (!isInitial) {
       toast({
         title: 'Pixel Pioneer Superfan!',
         description: 'Your dedication has been recognized. You are a true pioneer!',
       });
+    }
+  },
+  updateMusicMetadata: ({ value }) => {
+    const payload = value as MusicMetadataPayload;
+    if (payload && payload.songId) {
+      console.log('[FlagAction] Emitting musicMetadataChanged event', payload);
+      eventManager.emit('musicMetadataChanged', payload);
+    } else {
+      console.warn('[FlagAction] updateMusicMetadata called with invalid payload:', value);
     }
   },
 };
