@@ -4,13 +4,12 @@
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { cn } from '@/lib/utils';
-import { CheckIcon, Paintbrush } from 'lucide-react';
+import { cn, isHostnameAllowed } from '@/lib/utils';
+import { CheckIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useState } from 'react';
-import {
-  ChromePicker
-} from 'react-color';
+import { useToast } from '@/hooks/use-toast';
+
 
 export function ColorPopover({
   background,
@@ -26,10 +25,25 @@ export function ColorPopover({
   defaultTab: string;
 }) {
   const [url, setUrl] = useState(background.startsWith('http') ? background : '');
+  const { toast } = useToast();
 
   const isImage = (str: string) => str.startsWith('http');
   const isGif = (str: string) => isImage(str) && str.endsWith('.gif');
   const isWebm = (str: string) => isImage(str) && str.endsWith('.webm');
+  
+  const isUrlAllowed = isHostnameAllowed(url);
+
+  const handleSetBackground = () => {
+    if (isImage(url) && !isUrlAllowed) {
+      toast({
+        title: 'Unsupported Website',
+        description: 'The provided URL is from a domain that is not supported.',
+        variant: 'destructive',
+      });
+      return;
+    }
+    setBackground(url);
+  };
 
   return (
     <Tabs defaultValue={defaultTab} className="w-full">
@@ -70,41 +84,38 @@ export function ColorPopover({
       </TabsContent>
       
       <TabsContent value="url" className="mt-0 space-y-2">
-        {(isImage(url) && !isWebm(url)) && (
-          <div className="relative aspect-video w-full rounded-md overflow-hidden border">
-              <Image 
-                src={url} 
-                alt="Preview" 
-                fill 
-                className="object-cover" 
-                unoptimized={isGif(url)}
-              />
-          </div>
-        )}
-         {isWebm(url) && (
-            <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-black">
-                <p className="text-xs text-white">Video preview not supported</p>
-            </div>
-         )}
+        <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-muted/50 text-xs">
+            {(isImage(url) && !isWebm(url) && isUrlAllowed) && (
+                <Image 
+                    src={url} 
+                    alt="Preview" 
+                    fill 
+                    className="object-cover" 
+                    unoptimized={isGif(url)}
+                />
+            )}
+            {isWebm(url) && isUrlAllowed && (
+                <p className="text-muted-foreground">Video preview</p>
+            )}
+            {isImage(url) && !isUrlAllowed && (
+                <p className="text-destructive p-2 text-center">Unsupported website</p>
+            )}
+            {!isImage(url) && (
+                <p className="text-muted-foreground">Preview</p>
+            )}
+        </div>
         <div className="flex items-center gap-2">
             <Input
                 id="custom-url"
                 value={url}
                 className="h-8"
                 onChange={(e) => setUrl(e.currentTarget.value)}
-                placeholder='https://... (image, gif, webm)'
+                placeholder='image, gif, webm...'
             />
-            <Button size="icon" className="h-8 w-8" onClick={() => setBackground(url)}>
+            <Button size="icon" className="h-8 w-8" onClick={handleSetBackground}>
                 <CheckIcon className="h-4 w-4" />
             </Button>
         </div>
-      </TabsContent>
-
-      <TabsContent value="picker" className="mt-0">
-        <ChromePicker
-          color={background}
-          onChange={(color) => setBackground(color.hex)}
-        />
       </TabsContent>
 
       {!background.startsWith('http') && (
