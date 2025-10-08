@@ -20,24 +20,28 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   const currentTrack = Playlist[currentTrackIndex];
 
+  // Effect 1: Handles loading a new track
   useEffect(() => {
     if (audioRef.current && currentTrack?.audioSrc) {
         audioRef.current.src = currentTrack.audioSrc;
+        // If we are supposed to be playing, start playback.
         if (isPlaying) {
-            audioRef.current.play().catch(e => console.error("Audio play failed", e));
+            audioRef.current.play().catch(e => console.error("Audio play failed on new track load", e));
         }
     }
-  }, [currentTrack, isPlaying]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentTrack]); // This effect ONLY runs when the track changes.
 
+  // Effect 2: Handles toggling play/pause for the CURRENT track
   useEffect(() => {
     if (audioRef.current) {
         if (isPlaying) {
-            audioRef.current.play().catch(e => console.error("Audio play failed", e));
+            audioRef.current.play().catch(e => console.error("Audio play failed on toggle", e));
         } else {
             audioRef.current.pause();
         }
     }
-  }, [isPlaying]);
+  }, [isPlaying]); // This effect ONLY runs when isPlaying state changes.
 
   const handleNext = () => {
     setCurrentTrackIndex((currentTrackIndex + 1) % Playlist.length);
