@@ -17,20 +17,24 @@ export function ColorPopover({
   solids,
   gradients,
   defaultTab,
+  customUrl,
+  setCustomUrl,
 }: {
   background: string;
   setBackground: (background: string) => void;
   solids: string[];
   gradients: string[];
   defaultTab: string;
+  customUrl: string;
+  setCustomUrl: (url: string) => void;
 }) {
-  const [url, setUrl] = useState(background.startsWith('http') ? background : '');
   const { toast } = useToast();
 
   const isImage = (str: string) => str.startsWith('http');
+  const isWebm = (str: string) => str.endsWith('.webm');
   
   const handleSetBackground = () => {
-    if (isImage(url) && !isHostnameAllowed(url)) {
+    if (isImage(customUrl) && !isHostnameAllowed(customUrl)) {
       toast({
         title: 'Unsupported Website',
         description: 'The provided URL is from a domain that is not supported.',
@@ -38,7 +42,7 @@ export function ColorPopover({
       });
       return;
     }
-    setBackground(url);
+    setBackground(customUrl);
   };
 
   return (
@@ -83,9 +87,9 @@ export function ColorPopover({
         <div className="flex items-center gap-2">
             <Input
                 id="custom-url"
-                value={url}
+                value={customUrl}
                 className="h-8"
-                onChange={(e) => setUrl(e.currentTarget.value)}
+                onChange={(e) => setCustomUrl(e.currentTarget.value)}
                 placeholder='image, gif, webm...'
             />
             <Button size="icon" className="h-8 w-8" onClick={handleSetBackground}>

@@ -4,7 +4,6 @@
 import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,11 +11,12 @@ import { useUserProfileContext } from '@/context/user-profile-context';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn, isHostnameAllowed } from '@/lib/utils';
-import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ColorPopover } from '@/components/ui/color-popover';
 import { Paintbrush } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -28,6 +28,9 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
   const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
+  
+  const [customUrl, setCustomUrl] = useState(background.startsWith('http') ? background : '');
+
 
   const solids = [
     '#E2E2E2',
@@ -84,8 +87,11 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     }
   };
 
-  const isCustomUrl = background.startsWith('http');
-  const isColor = !isCustomUrl && !background.startsWith('/');
+  const isColor = !background.startsWith('http') && !background.startsWith('/');
+  const isWebm = (url: string) => url.endsWith('.webm');
+
+  const previewUrl = customUrl.startsWith('http') ? customUrl : background;
+  const isCustomUrlValid = previewUrl.startsWith('http') && isHostnameAllowed(previewUrl);
 
   return (
     <div className="h-full w-full bg-background p-4">
@@ -138,27 +144,34 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                     <button
                                         className={cn(
                                             'relative aspect-video w-full rounded-md overflow-hidden border-2 flex items-center justify-center group',
-                                            isColor || isCustomUrl ? 'border-primary' : 'border-border'
+                                            (isColor || background.startsWith('http')) ? 'border-primary' : 'border-border'
                                         )}
-                                        style={isColor ? { background } : {}}
+                                        style={ (isColor && !background.startsWith('http')) ? { background } : {}}
                                     >
-                                        {isCustomUrl ? (
-                                            <>
-                                                <Image 
-                                                    src={background} 
-                                                    alt="Custom Background" 
-                                                    fill 
-                                                    className="object-cover"
-                                                    unoptimized={background.endsWith('.gif')}
-                                                />
-                                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent transition-opacity opacity-0 group-hover:opacity-100"></div>
-                                            </>
-                                        ) : (
-                                            !isColor && <div className="absolute inset-0 bg-background/50" />
+                                        {isCustomUrlValid && !isWebm(previewUrl) && (
+                                            <Image 
+                                                src={previewUrl} 
+                                                alt="Custom Background" 
+                                                fill 
+                                                className="object-cover"
+                                                unoptimized={previewUrl.endsWith('.gif')}
+                                            />
                                         )}
-                                        {!isCustomUrl && (
-                                            <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
+                                        {isCustomUrlValid && isWebm(previewUrl) && (
+                                            <video
+                                                src={previewUrl}
+                                                autoPlay
+                                                loop
+                                                muted
+                                                className="absolute top-0 left-0 w-full h-full object-cover z-0"
+                                            />
                                         )}
+                                        {!isCustomUrlValid && (isColor ? null : <div className="absolute inset-0 bg-background/50" />) }
+                                        
+                                        {!isCustomUrlValid && !isColor && (
+                                            <Paintbrush className="h-8 w-8 z-10 text-foreground" />
+                                        )}
+                                        
                                         <div className="absolute bottom-2 left-1/2 -translate-x-1/2">
                                             <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
                                                 Custom
@@ -168,11 +181,13 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                 </PopoverTrigger>
                                 <PopoverContent className="w-72">
                                     <ColorPopover
-                                    background={background}
-                                    setBackground={handleBackgroundChange}
-                                    solids={solids}
-                                    gradients={gradients}
-                                    defaultTab={defaultTab}
+                                        background={background}
+                                        setBackground={handleBackgroundChange}
+                                        solids={solids}
+                                        gradients={gradients}
+                                        defaultTab={defaultTab}
+                                        customUrl={customUrl}
+                                        setCustomUrl={setCustomUrl}
                                     />
                                 </PopoverContent>
                             </Popover>
