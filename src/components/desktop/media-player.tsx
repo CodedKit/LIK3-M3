@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -11,43 +11,40 @@ import { useFavorites } from '@/hooks/use-favorites';
 import { cn } from '@/lib/utils';
 
 interface MediaPlayerProps {
+    audioRef: React.RefObject<HTMLAudioElement>;
+    isPlaying: boolean;
     currentTrackIndex: number;
     setCurrentTrackIndex: (index: number) => void;
     onClose: () => void;
 }
 
-export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+export default function MediaPlayer({ audioRef, isPlaying, currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
   const { isFavorite, toggleFavorite } = useFavorites();
 
   const currentTrack = Playlist[currentTrackIndex];
 
   useEffect(() => {
-    if (audioRef.current && currentTrack?.audioSrc) {
-      if (audioRef.current.src !== window.location.origin + currentTrack.audioSrc) {
-          audioRef.current.src = currentTrack.audioSrc;
-          const playPromise = audioRef.current.play();
-          if (playPromise !== undefined) {
-            playPromise.then(() => {
-              setIsPlaying(true);
-            }).catch(error => {
-              console.error("[MediaPlayer] Autoplay failed:", error);
-              setIsPlaying(false);
-            });
-          }
+    const audio = audioRef.current;
+    const track = Playlist[currentTrackIndex];
+
+    if (audio && track?.audioSrc) {
+      if (audio.src !== window.location.origin + track.audioSrc) {
+        audio.src = track.audioSrc;
       }
+      audio.play().catch(error => console.error("Audio play failed:", error));
     }
-  }, [currentTrackIndex, currentTrack?.audioSrc]);
+  }, [currentTrackIndex, audioRef]);
+
 
   const handlePlayPause = useCallback(() => {
-    if (!audioRef.current) return;
-    if (audioRef.current.paused) {
-      audioRef.current.play().catch(e => console.error("Play error:", e));
+    const audio = audioRef.current;
+    if (!audio) return;
+    if (audio.paused) {
+      audio.play().catch(e => console.error("Play error:", e));
     } else {
-      audioRef.current.pause();
+      audio.pause();
     }
-  }, []);
+  }, [audioRef]);
   
   const handleNext = useCallback(() => {
     const nextIndex = (currentTrackIndex + 1) % Playlist.length;
@@ -66,13 +63,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
   const isCurrentSongFavorite = isFavorite(currentTrack.id);
 
   return (
-    <div className="fixed bottom-20 md:bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[60]">
-        <audio 
-          ref={audioRef} 
-          onEnded={handleNext}
-          onPlay={() => setIsPlaying(true)}
-          onPause={() => setIsPlaying(false)}
-        />
+    <div className="fixed bottom-20 md:bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm bg-card/80">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>

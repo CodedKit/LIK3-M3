@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Volume2, Volume1, VolumeX } from 'lucide-react';
 import {
   Popover,
@@ -11,8 +11,39 @@ import {
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
 
-export default function VolumeControl() {
+interface VolumeControlProps {
+  audioRef: React.RefObject<HTMLAudioElement>;
+}
+
+export default function VolumeControl({ audioRef }: VolumeControlProps) {
   const [volume, setVolume] = useState(50);
+
+  // Set initial volume and listen for external changes
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      const initialVolume = Math.round(audio.volume * 100);
+      setVolume(initialVolume);
+
+      const handleVolumeChange = () => {
+        setVolume(Math.round(audio.volume * 100));
+      };
+
+      audio.addEventListener('volumechange', handleVolumeChange);
+      return () => {
+        audio.removeEventListener('volumechange', handleVolumeChange);
+      };
+    }
+  }, [audioRef]);
+
+
+  const handleVolumeChange = (newVolume: number[]) => {
+    const volumeValue = newVolume[0];
+    setVolume(volumeValue);
+    if (audioRef.current) {
+      audioRef.current.volume = volumeValue / 100;
+    }
+  };
 
   const getVolumeIcon = () => {
     if (volume === 0) {
@@ -34,11 +65,11 @@ export default function VolumeControl() {
       <PopoverContent side="top" className="w-auto p-2">
         <div className="h-32">
           <Slider
-            defaultValue={[volume]}
+            value={[volume]}
             max={100}
             step={1}
             orientation="vertical"
-            onValueChange={(value) => setVolume(value[0])}
+            onValueChange={handleVolumeChange}
             className="[&>span:first-child]:bg-white"
           />
         </div>

@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
 import { useAuth } from '@/hooks/use-auth';
 import Taskbar from '@/components/desktop/taskbar';
@@ -20,6 +20,7 @@ import LikestagramProfileApp from '@/components/desktop/apps/likestagram/profile
 import { WindowNavButtons } from '@/components/ui/window-nav-buttons';
 import ChatCordApp from './desktop/apps/chatcord';
 import { FlagManager } from '@/lib/flags-manager';
+import { Playlist } from '@/lib/music';
 
 
 interface DesktopProps {
@@ -39,6 +40,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const [openApps, setOpenApps] = useState<AppInstance[]>([]);
   const { activeProfile, updateProfile } = useAuth();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
   
   const activeApp = openApps[openApps.length - 1];
 
@@ -49,27 +52,36 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         updateProfile(activeProfile.id, updatedData);
     });
 
-    // Evaluate initial flags when the desktop mounts
     flagManager.evaluateInitialFlags();
 
-    // Set up a periodic check for expired flags
     const intervalId = setInterval(() => {
         flagManager.processExpiredFlags();
-    }, 60000); // Check every minute
+    }, 60000); 
 
-    // Cleanup function
     return () => {
-        flagManager.destroy(); // Unsubscribe from all event listeners
+        flagManager.destroy(); 
         clearInterval(intervalId);
     };
   }, [activeProfile, updateProfile]);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
+    setIsPlaying(true);
   };
 
   const handleClosePlayer = () => {
     setCurrentTrackIndex(null);
+    setIsPlaying(false);
+    if(audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = '';
+    }
+  };
+
+  const handleNextTrack = () => {
+    if (currentTrackIndex === null) return;
+    const nextIndex = (currentTrackIndex + 1) % Playlist.length;
+    setCurrentTrackIndex(nextIndex);
   };
 
   const closeApp = () => {
@@ -156,6 +168,13 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
       style={!isImage && !isVideo ? { background: activeProfile.desktopBgUrl } : {}}
     >
+      <audio
+        ref={audioRef}
+        onPlay={() => setIsPlaying(true)}
+        onPause={() => setIsPlaying(false)}
+        onEnded={handleNextTrack}
+      />
+      
       {isImage && (
         <Image
           src={activeProfile.desktopBgUrl!}
@@ -187,13 +206,17 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         </div>
       </div>
 
-      {currentTrackIndex !== null && (
-        <MediaPlayer 
-            currentTrackIndex={currentTrackIndex}
-            setCurrentTrackIndex={setCurrentTrackIndex}
-            onClose={handleClosePlayer}
-        />
-      )}
+      <div className='relative z-[60]'>
+        {currentTrackIndex !== null && (
+          <MediaPlayer 
+              audioRef={audioRef}
+              isPlaying={isPlaying}
+              currentTrackIndex={currentTrackIndex}
+              setCurrentTrackIndex={setCurrentTrackIndex}
+              onClose={handleClosePlayer}
+          />
+        )}
+      </div>
 
       <Taskbar 
         userProfile={activeProfile} 
@@ -201,6 +224,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
         onToggleDebug={() => setShowDebug(s => !s)}
+        audioRef={audioRef}
       />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>

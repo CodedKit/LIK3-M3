@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import TaskbarClock from './taskbar-clock';
 import VolumeControl from './volume-control';
+import React from 'react';
 
 interface TaskbarProps {
   userProfile: UserProfile;
@@ -24,9 +25,10 @@ interface TaskbarProps {
   onOpenSettings: () => void;
   onOpenProfile: () => void;
   onToggleDebug: () => void;
+  audioRef: React.RefObject<HTMLAudioElement>;
 }
 
-export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug, audioRef }: TaskbarProps) {
     const { level, progress } = calculateLevel(userProfile.xp);
 
     return (
@@ -87,7 +89,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
             <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
                 <div className="flex items-center gap-2">
                     <Wifi className="h-5 w-5" />
-                    <VolumeControl />
+                    <VolumeControl audioRef={audioRef} />
                     <div className="flex items-center gap-1">
                       <Battery className="h-5 w-5" />
                       <span className="text-[10px] font-medium">98%</span>
