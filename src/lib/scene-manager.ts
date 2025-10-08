@@ -1,4 +1,5 @@
 
+
 import { eventManager } from './event-manager';
 import { Scene, SceneDefinition } from './scene-types';
 import { scenes as allScenes } from './story/scenes';
@@ -33,7 +34,8 @@ class SceneManager {
   }
 
   public getAvailableScenes(): Scene[] {
-    return this.availableScenes
+    const uniqueSceneIds = [...new Set(this.availableScenes)];
+    return uniqueSceneIds
       .map(id => {
         const sceneData = this.allScenes[id];
         if (sceneData && this.sceneCache[id]) {
