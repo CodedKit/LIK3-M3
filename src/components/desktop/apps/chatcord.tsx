@@ -27,6 +27,7 @@ import { cn } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useFlags } from '@/hooks/use-flags';
+import { Badge } from '@/components/ui/badge';
 
 type HistoryItem = {
   id: string;
@@ -238,7 +239,10 @@ function SceneSelector({ onSelectScene, scenes }: { onSelectScene: (scene: Scene
                 <AvatarFallback>{scene.avatar.fallback}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <h2 className="font-semibold">{scene.title}</h2>
+                <div className='flex items-center gap-2'>
+                    <h2 className="font-semibold">{scene.title}</h2>
+                    <Badge variant="outline">{scene.id}</Badge>
+                </div>
                 <p className="text-sm text-muted-foreground truncate">{scene.description}</p>
               </div>
             </button>
