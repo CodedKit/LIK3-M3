@@ -4,6 +4,14 @@
 import { type ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
 
+// Import metadata from each song's directory
+import metadataHopingAbOz from './music/hoping-ab-oz/metadata.json';
+
+// Import media assets. Webpack will handle these imports and provide a URL.
+import audioHopingAbOz from './music/hoping-ab-oz/audio.mp3';
+import imageHopingAbOz from './music/hoping-ab-oz/cover.jpg';
+
+
 export type Song = {
   id: string;
   title: string;
@@ -12,31 +20,36 @@ export type Song = {
   albumArt: ImagePlaceholder | null;
 };
 
-// =========================================================================
-// INSTRUCTIE: Voeg hier de bestandsnamen van uw MP3's uit de
-// 'public/music' map toe.
-//
-// Voorbeeld:
-// const songFiles = [
-//   'Hoping-Ab-Oz.mp3',
-//   'Een-Ander-Nummer.mp3',
-//   'Nog-Een-Nummer.mp3'
-// ];
-// =========================================================================
-const songFiles: string[] = [
-    'Hoping-Ab-Oz.mp3'
+// Find the default album art from the placeholder images
+const defaultAlbumArt = PlaceHolderImages.find(img => img.id === 'default-album-art') || null;
+
+const songData = [
+  {
+    id: 'hoping-ab-oz',
+    metadata: metadataHopingAbOz,
+    audioSrc: audioHopingAbOz,
+    albumArtSrc: imageHopingAbOz,
+  },
+  // To add a new song:
+  // 1. Create a new folder in `src/lib/music/` (e.g., `my-new-song`).
+  // 2. Add `audio.mp3`, `cover.jpg`, and `metadata.json` to that folder.
+  // 3. Import the files here and add a new object to this `songData` array.
 ];
 
-const defaultAlbumArt = PlaceHolderImages.find(img => img.id === 'default-album-art');
 
-export const Playlist: Song[] = songFiles.map(file => {
-    // Verwijder de .mp3 extensie en vervang streepjes door spaties voor een nette titel.
-    const title = file.replace(/\.mp3$/, '').replace(/-/g, ' ');
-    return {
-        id: file,
-        title: title,
-        artist: 'Unknown Artist',
-        audioSrc: `/music/${file}`,
-        albumArt: defaultAlbumArt || null,
-    };
+export const Playlist: Song[] = songData.map(data => {
+  const albumArtImage = data.albumArtSrc ? {
+      id: `album-art-${data.id}`,
+      description: `Album art for ${data.metadata.title}`,
+      imageUrl: data.albumArtSrc,
+      imageHint: `album art`
+  } : defaultAlbumArt;
+  
+  return {
+    id: data.id,
+    title: data.metadata.title,
+    artist: data.metadata.artist,
+    audioSrc: data.audioSrc,
+    albumArt: albumArtImage,
+  };
 });

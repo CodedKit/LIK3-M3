@@ -60,15 +60,11 @@ const nextConfig: NextConfig = {
   },
    webpack(config) {
     config.module.rules.push({
-      test: /\.webm$/,
-      use: {
-        loader: 'file-loader',
-        options: {
-          publicPath: '/_next/static/videos/',
-          outputPath: 'static/videos/',
-          name: '[name].[hash].[ext]',
-        },
-      },
+      test: /\.(mp3|webm|jpg|jpeg|png|svg)$/i,
+      type: 'asset/resource',
+      generator: {
+        filename: 'static/media/[name].[hash][ext]'
+      }
     });
 
     return config;
