@@ -7,7 +7,7 @@ import { Button } from './ui/button';
 import { Circle, Contrast } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { type UserProfile } from '@/hooks/use-user-profile';
+import { type UserProfile } from '@/context/user-profile-context';
 import { useToast } from '@/hooks/use-toast';
 
 // Helper function to format milliseconds into a human-readable duration

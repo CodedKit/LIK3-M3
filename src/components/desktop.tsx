@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { useUserProfileContext } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
 import Taskbar from '@/components/desktop/taskbar';
 import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
@@ -36,7 +36,7 @@ type AppInstance = {
 
 export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopProps) {
   const [openApps, setOpenApps] = useState<AppInstance[]>([]);
-  const { activeProfile, updateProfile } = useUserProfileContext();
+  const { activeProfile, updateProfile } = useAuth();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   
   const activeApp = openApps[openApps.length - 1];

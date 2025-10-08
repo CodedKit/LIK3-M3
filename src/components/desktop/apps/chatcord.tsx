@@ -26,7 +26,7 @@ import { eventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
 import { ArrowLeft } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { useUserProfile } from '@/hooks/use-user-profile';
+import { useFlags } from '@/hooks/use-flags';
 
 type HistoryItem = {
   id: string;
@@ -52,7 +52,7 @@ function StoryPlayer({ scene, onBack }: { scene: Scene; onBack: () => void }) {
   const [history, setHistory] = useState<HistoryItem[]>([]);
   const [choices, setChoices] = useState<Choice[]>([]);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { setFlag, getFlag, enterScene, exitScene } = useUserProfile();
+  const { setFlag, getFlag, enterScene, exitScene } = useFlags();
 
   const scrollToBottom = useCallback(() => {
     if (scrollContainerRef.current) {

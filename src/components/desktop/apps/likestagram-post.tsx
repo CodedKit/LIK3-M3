@@ -5,7 +5,9 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { useUserProfileContext } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
+import { useExperience } from '@/hooks/use-experience';
+import { useLikes } from '@/hooks/use-likes';
 import { cn } from '@/lib/utils';
 import { Card, CardContent, CardHeader, CardFooter, CardDescription } from '@/components/ui/card';
 import { type LikestagramPost as PostData, type LikestagramUser } from '@/lib/likestagram';
@@ -22,15 +24,18 @@ interface LikestagramPostProps {
 }
 
 export default function LikestagramPost({ post, onViewProfile }: LikestagramPostProps) {
-  const { activeProfile, addXp, updateProfile } = useUserProfileContext();
+  const { activeProfile } = useAuth();
+  const { addXp } = useExperience();
+  const { getLikes, likePost } = useLikes();
   const [likes, setLikes] = useState(post.initialLikes);
   const [floatingHearts, setFloatingHearts] = useState<FloatingHeart[]>([]);
 
   useEffect(() => {
-    if (activeProfile?.likes) {
-      setLikes(activeProfile.likes[post.id] || post.initialLikes);
+    const postLikes = getLikes(post.id);
+    if (postLikes) {
+      setLikes(postLikes);
     }
-  }, [activeProfile, post.id, post.initialLikes]);
+  }, [activeProfile, getLikes, post.id]);
 
   const handleLike = useCallback(() => {
     if (!activeProfile) {
@@ -44,29 +49,21 @@ export default function LikestagramPost({ post, onViewProfile }: LikestagramPost
         setFloatingHearts((currentHearts) => currentHearts.filter(h => h.id !== newHeartId));
     }, 1000);
 
-    const currentLikes = activeProfile.likes?.[post.id] || post.initialLikes;
-    const newLikeCount = currentLikes + 1;
-
-    const newLikesData = {
-        ...activeProfile.likes,
-        [post.id]: newLikeCount
-    };
-
-    updateProfile(activeProfile.id, { likes: newLikesData });
+    likePost(post.id);
 
     // Emit the event for the new architecture
     eventManager.emit('postLiked', {
       postId: post.id,
       author: post.user.username,
-      newLikeCount: newLikeCount,
+      newLikeCount: (getLikes(post.id) || 0) + 1,
     });
 
     if (addXp) {
       addXp(10);
     }
-  }, [activeProfile, addXp, updateProfile, post.id, post.user.username, post.initialLikes]);
+  }, [activeProfile, addXp, likePost, post.id, post.user.username, getLikes]);
 
-  const isLiked = activeProfile?.likes?.[post.id] ? (activeProfile.likes[post.id] > post.initialLikes) : false;
+  const isLiked = getLikes(post.id) ? (getLikes(post.id) || 0) > post.initialLikes : false;
 
   return (
     <div className="relative">

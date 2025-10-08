@@ -7,11 +7,11 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/componen
 import { Products } from '@/lib/products';
 import { ShoppingCart } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { useUserProfileContext } from '@/context/user-profile-context';
+import { useExperience } from '@/hooks/use-experience';
 
 export default function EhmazonApp() {
   const { toast } = useToast();
-  const { addXp } = useUserProfileContext();
+  const { addXp } = useExperience();
 
   const handleAddToCart = (productName: string) => {
     addXp(25);

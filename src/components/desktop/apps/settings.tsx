@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { useUserProfileContext } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
 import { useToast } from '@/hooks/use-toast';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn, isHostnameAllowed } from '@/lib/utils';
@@ -23,7 +23,7 @@ interface SettingsAppProps {
 }
 
 export default function SettingsApp({ onClose }: SettingsAppProps) {
-  const { activeProfile, updateProfile } = useUserProfileContext();
+  const { activeProfile, updateProfile } = useAuth();
   const { toast } = useToast();
   
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');

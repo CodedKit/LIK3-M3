@@ -3,10 +3,10 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { commands } from '@/lib/terminal';
-import { type TerminalHistoryItem, type UserProfile } from '@/hooks/use-user-profile';
+import { type TerminalHistoryItem, type UserProfile } from '@/context/user-profile-context';
 
 const WELCOME_MESSAGE = `Welcome to LIK3 M3 Terminal
-Type 'help' for a list of commands.`;
+Type \'help\' for a list of commands.`;
 
 interface TerminalAppProps {
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
@@ -60,7 +60,7 @@ export default function TerminalApp({ setShowDebug, updateProfile, activeProfile
     if (commandToExecute) {
       output = commandToExecute.execute({ args, commands, user, setShowDebug, activeProfile, updateProfile });
     } else {
-      output = `Command not found: ${commandName}. Type 'help' for a list of commands.`;
+      output = `Command not found: ${commandName}. Type \'help\' for a list of commands.`;
     }
 
     if (typeof output === 'string') {

@@ -1,6 +1,6 @@
 
 import { toast } from '@/hooks/use-toast';
-import { UserProfile } from '@/hooks/use-user-profile';
+import { type UserProfile } from '@/context/user-profile-context';
 import { sceneManager } from './scene-manager';
 
 export type FlagActionArgs = {
@@ -28,7 +28,6 @@ export const flagActions: { [key: string]: FlagAction } = {
       toast({
         title: 'Pixel Pioneer Superfan!',
         description: 'Your dedication has been recognized. You are a true pioneer!',
-        variant: 'success',
       });
     }
   },

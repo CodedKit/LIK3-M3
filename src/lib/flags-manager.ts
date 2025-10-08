@@ -1,5 +1,5 @@
 
-import { UserProfile } from '@/hooks/use-user-profile';
+import { type UserProfile } from '@/context/user-profile-context';
 import { FlagDefinition, FlagDefinitions, FlagDependency } from './flag-types';
 import { flagActions } from './flag-actions';
 import { eventManager } from './event-manager';

@@ -1,5 +1,5 @@
 
-import { type UserProfile } from "@/hooks/use-user-profile";
+import { type UserProfile } from "@/context/user-profile-context";
 
 export interface CommandExecuteProps {
     args: string[];

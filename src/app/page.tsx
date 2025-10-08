@@ -2,7 +2,8 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { useUserProfileContext, type UserProfile } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
+import { UserProfile } from '@/context/user-profile-context';
 import BootScreen from '@/components/boot-screen';
 import LoginScreen from '@/components/login-screen';
 import Desktop from '@/components/desktop';
@@ -13,7 +14,7 @@ const USER_SETTINGS_KEY = 'lik3-m3-user-settings';
 
 export default function Home() {
   const [appState, setAppState] = useState<AppState>('booting');
-  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading, updateProfile } = useUserProfileContext();
+  const { profiles, activeProfile, addProfile, setActive, deleteProfile, isLoading, updateProfile } = useAuth();
   const [showGlobalDebug, setShowGlobalDebug] = useState(false);
 
   useEffect(() => {

@@ -1,5 +1,4 @@
 
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import Image from 'next/image';
-import { useUserProfileContext } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
 import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -52,7 +51,7 @@ interface ProfileAppProps {
 }
 
 export default function ProfileApp({ onClose, onLogout }: ProfileAppProps) {
-  const { activeProfile, updateProfile, deleteProfile } = useUserProfileContext();
+  const { activeProfile, updateProfile, deleteProfile } = useAuth();
   const { toast } = useToast();
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   
