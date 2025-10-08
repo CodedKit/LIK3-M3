@@ -1,10 +1,10 @@
 
 import { eventManager } from './event-manager';
-import { Scene, SceneDefinitions } from './scene-types';
+import { Scene, SceneDefinition } from './scene-types';
 import { scenes as allScenes } from './story/scenes';
 
 class SceneManager {
-  private allScenes: SceneDefinitions = allScenes;
+  private allScenes: { [id: string]: SceneDefinition } = allScenes;
   private availableScenes: string[] = ['new_user_introduction']; // Start with the intro scene
   private sceneCache: { [key: string]: any } = {};
 
@@ -67,7 +67,9 @@ class SceneManager {
       return;
     }
 
-    await this.makeSceneAvailable(sceneId);
+    if (!this.availableScenes.includes(sceneId)) {
+      await this.makeSceneAvailable(sceneId);
+    }
 
     const scene = this.getAvailableScenes().find(s => s.id === sceneId);
     if (scene) {
