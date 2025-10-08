@@ -12,15 +12,26 @@ export type Song = {
   albumArt: ImagePlaceholder | null;
 };
 
-// This list now reflects the actual files in the `public/music` directory.
-const songFiles = [
+// =========================================================================
+// INSTRUCTIE: Voeg hier de bestandsnamen van uw MP3's uit de
+// 'public/music' map toe.
+//
+// Voorbeeld:
+// const songFiles = [
+//   'Hoping-Ab-Oz.mp3',
+//   'Een-Ander-Nummer.mp3',
+//   'Nog-Een-Nummer.mp3'
+// ];
+// =========================================================================
+const songFiles: string[] = [
     'Hoping-Ab-Oz.mp3'
 ];
 
 const defaultAlbumArt = PlaceHolderImages.find(img => img.id === 'default-album-art');
 
 export const Playlist: Song[] = songFiles.map(file => {
-    const title = file.replace('.mp3', '').replace(/-/g, ' ');
+    // Verwijder de .mp3 extensie en vervang streepjes door spaties voor een nette titel.
+    const title = file.replace(/\.mp3$/, '').replace(/-/g, ' ');
     return {
         id: file,
         title: title,
