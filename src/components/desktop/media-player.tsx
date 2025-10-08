@@ -25,18 +25,11 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
   const { activeProfile } = useAuth();
   const currentTrack = Playlist[currentTrackIndex];
 
+  // Effect 1: Handles LOADING a new track when the index changes.
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !activeProfile || !currentTrack?.audioSrc) return;
+    if (!audio || !currentTrack?.audioSrc) return;
 
-    // Update volume from profile
-    if (activeProfile.volumeSettings) {
-        const { master, music } = activeProfile.volumeSettings;
-        const finalVolume = (master / 100) * (music / 100);
-        audio.volume = finalVolume;
-    }
-    
-    // Load and play new track
     if (audio.src !== window.location.origin + currentTrack.audioSrc) {
         audio.src = currentTrack.audioSrc;
         audio.load();
@@ -44,8 +37,19 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
             audio.play().catch(e => console.error("Audio play failed on new track load", e));
         }
     }
+  }, [currentTrackIndex, currentTrack, audioRef, isPlaying]);
 
-  }, [currentTrackIndex, currentTrack, activeProfile, audioRef, isPlaying]);
+
+  // Effect 2: Handles SYNCHRONIZING volume when settings change.
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio || !activeProfile || !activeProfile.volumeSettings) return;
+
+    const { master, music } = activeProfile.volumeSettings;
+    const finalVolume = (master / 100) * (music / 100);
+    audio.volume = finalVolume;
+
+  }, [activeProfile?.volumeSettings, audioRef]);
 
 
   const handlePlayPause = useCallback(() => {
@@ -78,7 +82,7 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
   const isCurrentSongFavorite = isFavorite(currentTrack.id);
 
   return (
-    <div className="fixed bottom-20 md:bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
+    <div className="fixed bottom-20 md:bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[60]">
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm bg-card/80">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onClose}>
