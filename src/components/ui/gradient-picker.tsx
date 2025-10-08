@@ -61,7 +61,19 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
           initPicker();
         }
       }, 100);
-      return () => clearInterval(intervalId);
+
+      // Add a timeout to stop checking after a few seconds to prevent an infinite loop
+      const timeoutId = setTimeout(() => {
+        clearInterval(intervalId);
+        if (!(window as any).GradientPicker) {
+          console.error("GradientPicker script did not load in time.");
+        }
+      }, 5000);
+
+      return () => {
+        clearInterval(intervalId);
+        clearTimeout(timeoutId);
+      };
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
