@@ -46,6 +46,12 @@ const nextConfig: NextConfig = {
         hostname: 'media2.giphy.com',
         port: '',
         pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'storage.googleapis.com',
+        port: '',
+        pathname: '/**',
       }
     ],
   },
@@ -63,14 +69,6 @@ const nextConfig: NextConfig = {
           name: '[name].[hash].[ext]',
         },
       },
-    });
-
-    config.module.rules.push({
-        test: /\.(mp3|jpg|jpeg|png|gif)$/,
-        type: 'asset/resource',
-        generator: {
-            filename: 'static/media/[name].[hash][ext]',
-        },
     });
 
     return config;
