@@ -52,6 +52,8 @@ export function ColorPicker({
     return 'solid';
   }, [background]);
 
+  const isImage = background.startsWith('http') || background.startsWith('/');
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -64,7 +66,7 @@ export function ColorPicker({
           )}
         >
           <div className="flex w-full items-center gap-2">
-            {background ? (
+            {background && !isImage ? (
               <div
                 className="h-4 w-4 rounded !bg-cover !bg-center transition-all"
                 style={{ background }}
@@ -73,7 +75,7 @@ export function ColorPicker({
               <Paintbrush className="h-4 w-4" />
             )}
             <div className="flex-1 truncate">
-              {background ? background : 'Pick a color'}
+              {background ? (isImage ? 'Image' : background) : 'Pick a color'}
             </div>
           </div>
         </Button>

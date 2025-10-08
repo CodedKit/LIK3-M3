@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,10 +10,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { useToast } from '@/hooks/use-toast';
-import { ColorPicker } from '@/components/ui/color-picker';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import { Separator } from '@/components/ui/separator';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { ColorPopover } from '@/components/ui/color-popover';
+import { Paintbrush } from 'lucide-react';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -26,6 +28,36 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
   const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
 
+  const solids = [
+    '#E2E2E2',
+    '#ff75c3',
+    '#ffa647',
+    '#ffe83f',
+    '#9fff5b',
+    '#70e2ff',
+    '#cd93ff',
+    '#09203f',
+  ];
+
+  const gradients = [
+    'linear-gradient(to top left,#accbee,#e7f0fd)',
+    'linear-gradient(to top left,#d5d4d0,#d5d4d0,#eeeeec)',
+    'linear-gradient(to top left,#000000,#434343)',
+    'linear-gradient(to top left,#09203f,#537895)',
+    'linear-gradient(to top left,#f2994a,#f2c94c)',
+    'linear-gradient(to top left,#ee9ca7,#ffdde1)',
+    'linear-gradient(to top left,#a6c1ee,#fbc2eb)',
+    'linear-gradient(to top left,#8abd, #654ea3, #eaafc8)',
+    'linear-gradient(to top left,#84fab0,#8fd3f4)',
+    'linear-gradient(to top left,#a1c4fd,#c2e9fb)',
+    'linear-gradient(to top left,#d4fc79,#96e6a1)',
+    'linear-gradient(to top left,#fda085,#f6d365)',
+  ];
+
+  const defaultTab = useMemo(() => {
+    if (background.includes('gradient')) return 'gradient';
+    return 'solid';
+  }, [background]);
 
   const handleBackgroundChange = (newBackground: string) => {
     if (!activeProfile) return;
@@ -40,6 +72,9 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
       });
     }
   };
+
+  const isImage = background.startsWith('http') || background.startsWith('/');
+  const isColor = !isImage;
 
   return (
     <div className="h-full w-full bg-background p-4">
@@ -84,34 +119,49 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                     <CardDescription>Customize the look of the game.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
-                    <div className="space-y-4">
-                      <Label>Custom Color</Label>
-                      <ColorPicker
-                        background={background}
-                        setBackground={handleBackgroundChange}
-                      />
-                    </div>
-                    <Separator />
                      <div className="space-y-4">
                         <Label>Background Images</Label>
                         <div className="grid grid-cols-3 gap-2">
-                        {images.map((img) => (
-                            <button
-                            key={img.id}
-                            onClick={() => handleBackgroundChange(img.imageUrl)}
-                            className={cn(
-                                'relative aspect-video w-full rounded-md overflow-hidden border-2',
-                                background === img.imageUrl ? 'border-primary' : 'border-transparent'
-                            )}
-                            >
-                            <Image
-                                src={img.imageUrl}
-                                alt={img.description}
-                                fill
-                                className="object-cover"
-                            />
-                            </button>
-                        ))}
+                            <Popover>
+                                <PopoverTrigger asChild>
+                                    <button
+                                        className={cn(
+                                            'relative aspect-video w-full rounded-md overflow-hidden border-2 flex items-center justify-center',
+                                            isColor ? 'border-primary' : 'border-border'
+                                        )}
+                                        style={isColor ? { background } : {}}
+                                    >
+                                        {!isColor && <div className="absolute inset-0 bg-background/50" />}
+                                        <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
+                                    </button>
+                                </PopoverTrigger>
+                                <PopoverContent className="w-64">
+                                    <ColorPopover
+                                    background={background}
+                                    setBackground={handleBackgroundChange}
+                                    solids={solids}
+                                    gradients={gradients}
+                                    defaultTab={defaultTab}
+                                    />
+                                </PopoverContent>
+                            </Popover>
+                            {images.map((img) => (
+                                <button
+                                key={img.id}
+                                onClick={() => handleBackgroundChange(img.imageUrl)}
+                                className={cn(
+                                    'relative aspect-video w-full rounded-md overflow-hidden border-2',
+                                    background === img.imageUrl ? 'border-primary' : 'border-transparent'
+                                )}
+                                >
+                                <Image
+                                    src={img.imageUrl}
+                                    alt={img.description}
+                                    fill
+                                    className="object-cover"
+                                />
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </CardContent>
