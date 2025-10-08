@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useEffect, useCallback, useState, useRef } from 'react';
+import { useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -27,13 +27,25 @@ export default function MediaPlayer({ audioRef, isPlaying, setIsPlaying, current
 
   useEffect(() => {
     const audio = audioRef.current;
-    if (!audio || !activeProfile || !activeProfile.volumeSettings) return;
+    if (!audio || !activeProfile || !currentTrack?.audioSrc) return;
 
-    const { master, music } = activeProfile.volumeSettings;
-    const finalVolume = (master / 100) * (music / 100);
-    audio.volume = finalVolume;
+    // Update volume from profile
+    if (activeProfile.volumeSettings) {
+        const { master, music } = activeProfile.volumeSettings;
+        const finalVolume = (master / 100) * (music / 100);
+        audio.volume = finalVolume;
+    }
     
-  }, [activeProfile, currentTrackIndex, audioRef]);
+    // Load and play new track
+    if (audio.src !== window.location.origin + currentTrack.audioSrc) {
+        audio.src = currentTrack.audioSrc;
+        audio.load();
+        if (isPlaying) {
+            audio.play().catch(e => console.error("Audio play failed on new track load", e));
+        }
+    }
+
+  }, [currentTrackIndex, currentTrack, activeProfile, audioRef, isPlaying]);
 
 
   const handlePlayPause = useCallback(() => {

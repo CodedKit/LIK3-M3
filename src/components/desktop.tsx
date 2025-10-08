@@ -90,6 +90,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
+    setIsPlaying(true);
   };
 
   const handleClosePlayer = () => {
@@ -228,6 +229,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
           <MediaPlayer 
               audioRef={audioRef}
               isPlaying={isPlaying}
+              setIsPlaying={setIsPlaying}
               currentTrackIndex={currentTrackIndex}
               setCurrentTrackIndex={setCurrentTrackIndex}
               onClose={handleClosePlayer}
