@@ -33,6 +33,9 @@ export const AudioProvider = ({ children }: { children: ReactNode }) => {
             break;
     }
 
+    // A master volume of 0 should mute everything.
+    if (master === 0) return;
+
     const finalVolume = (master / 100) * (typeVolume / 100);
 
     if (finalVolume > 0) {

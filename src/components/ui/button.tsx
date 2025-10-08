@@ -25,6 +25,7 @@ const buttonVariants = cva(
       size: {
         default: "h-10 px-4 py-2",
         sm: "h-9 rounded-md px-3",
+        xs: "h-8 px-2.5",
         lg: "h-11 rounded-md px-8",
         icon: "h-10 w-10",
       },
@@ -48,7 +49,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const { playSound } = useAudio();
 
     const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-      playSound('/sounds/click.mp3', 'ui');
+      playSound('/sounds/mouse-click-290204.mp3', 'ui');
       if (onClick) {
         onClick(e);
       }
