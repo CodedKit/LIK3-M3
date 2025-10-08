@@ -25,28 +25,44 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
 
   useEffect(() => {
     const currentRef = ref.current;
-    if (!currentRef || !(window as any).GradientPicker) return;
+    if (!currentRef) return;
 
-    const gp = new (window as any).GradientPicker({
+    const initPicker = () => {
+      const gp = new (window as any).GradientPicker({
         parent: currentRef,
-    });
+      });
 
-    setPicker(gp);
+      setPicker(gp);
 
-    const handleChange = (e: CustomEvent) => {
+      const handleChange = (e: CustomEvent) => {
         const detail = e.detail;
         if (detail && typeof detail.getSafeValue === 'function') {
-            onValueChange(detail.getSafeValue());
+          onValueChange(detail.getSafeValue());
         }
+      };
+
+      gp.on('change', handleChange);
+
+      return () => {
+        gp.off('change', handleChange);
+        if (gp.destroy) {
+          gp.destroy();
+        }
+      };
     };
 
-    gp.on('change', handleChange);
-
-    return () => {
-      gp.off('change', handleChange);
-      gp.destroy();
-    };
-  // We only want this to run once on mount
+    if ((window as any).GradientPicker) {
+      const cleanup = initPicker();
+      return cleanup;
+    } else {
+      const intervalId = setInterval(() => {
+        if ((window as any).GradientPicker) {
+          clearInterval(intervalId);
+          initPicker();
+        }
+      }, 100);
+      return () => clearInterval(intervalId);
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -60,5 +76,5 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
     }
   }, [picker, value]);
 
-  return <div ref={ref as React.RefObject<HTMLDivElement>} className={cn(className)} />;
+  return <div ref={ref as React.RefObject<HTMLDivElement>} className={cn("w-full", className)} />;
 }
