@@ -4,21 +4,21 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { commands } from '@/lib/terminal';
 import { type TerminalHistoryItem, type UserProfile } from '@/context/user-profile-context';
+import { useAuth } from '@/hooks/use-auth';
 
 const WELCOME_MESSAGE = `Welcome to LIK3 M3 Terminal
 Type \'help\' for a list of commands.`;
 
 interface TerminalAppProps {
   setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
-  updateProfile: (profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => void;
-  activeProfile: UserProfile | null;
 }
 
 function isReactNode(node: any): node is React.ReactNode {
   return React.isValidElement(node) || typeof node === 'string' || typeof node === 'number' || Array.isArray(node);
 }
 
-export default function TerminalApp({ setShowDebug, updateProfile, activeProfile }: TerminalAppProps) {
+export default function TerminalApp({ setShowDebug }: TerminalAppProps) {
+  const { activeProfile, updateProfile } = useAuth();
   const [sessionHistory, setSessionHistory] = useState<TerminalHistoryItem[]>([]);
   const [input, setInput] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);

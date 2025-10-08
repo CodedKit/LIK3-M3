@@ -6,7 +6,7 @@ export interface CommandExecuteProps {
     commands: { [key: string]: Command };
     user: string;
     setShowDebug: (show: boolean | ((s: boolean) => boolean)) => void;
-    activeProfile: UserProfile | null;
+    activeProfile: UserProfile;
     updateProfile: (profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => void;
 }
 
