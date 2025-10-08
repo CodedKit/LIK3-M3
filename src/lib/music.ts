@@ -4,10 +4,9 @@
 import { type ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
 
-// --- Automatische Import van Alle Nummers ---
-// De volgende imports laden de audiobestanden direct vanuit de `src/lib/music` map.
+// --- Dynamische Audio Imports ---
+// Deze imports laden de audiobestanden direct vanuit de `src/lib/music` map.
 // Webpack zal deze verwerken en er correcte URLs van maken.
-
 import audio21Inst from './music/21 inst mix ab oz.mp3';
 import audioBirdInst from './music/bird inst mix ab oz.mp3';
 import audioBraveEducation from './music/brave education inst mix ab oz.mp3';
@@ -19,7 +18,6 @@ import audioHiHats from './music/hi hats ab oz.mp3';
 import audioHoping from './music/hoping ab oz.mp3';
 import audioMonkeyMan from './music/monkey man inst mix ab oz.mp3';
 
-
 export type Song = {
   id: string;
   title: string;
@@ -28,43 +26,88 @@ export type Song = {
   albumArt: ImagePlaceholder | null;
 };
 
-// De standaard albumhoes die wordt gebruikt als er geen specifieke hoes is.
 const defaultAlbumArt = PlaceHolderImages.find(img => img.id === 'default-album-art');
+if (!defaultAlbumArt) {
+  throw new Error("Default album art with id 'default-album-art' not found in placeholder-images.json");
+}
 
-// Helper functie om een titel te maken van een bestandsnaam.
-// bv. "brave education inst mix ab oz.mp3" -> "Brave Education Inst Mix Ab Oz"
+// Lijst van de basis bestandsnamen (zonder extensie)
+const songBaseNames = [
+  '21 inst mix ab oz',
+  'bird inst mix ab oz',
+  'brave education inst mix ab oz',
+  'complete saves inst mix ab oz',
+  'dirty ab oz',
+  'GB3AD1300074',
+  'GB3AD1300080',
+  'hi hats ab oz',
+  'hoping ab oz',
+  'monkey man inst mix ab oz'
+];
+
+// Map de expliciete imports naar de basis bestandsnamen
+const audioImports: { [key: string]: any } = {
+  '21 inst mix ab oz': audio21Inst,
+  'bird inst mix ab oz': audioBirdInst,
+  'brave education inst mix ab oz': audioBraveEducation,
+  'complete saves inst mix ab oz': audioCompleteSaves,
+  'dirty ab oz': audioDirtyAbOz,
+  'GB3AD1300074': audioGB3AD1300074,
+  'GB3AD1300080': audioGB3AD1300080,
+  'hi hats ab oz': audioHiHats,
+  'hoping ab oz': audioHoping,
+  'monkey man inst mix ab oz': audioMonkeyMan
+};
+
+// Functie om de bestandsnaam te formatteren naar een titel
 const formatTitleFromFileName = (fileName: string): string => {
   return fileName
-    .replace('.mp3', '')
     .split(' ')
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ');
 };
 
-// De lijst met nummers, nu direct gekoppeld aan de geïmporteerde bestanden.
-const songData: { id: string, file: any, artist: string }[] = [
-  { id: '21-inst-mix', file: audio21Inst, artist: 'Ab Oz' },
-  { id: 'bird-inst-mix', file: audioBirdInst, artist: 'Ab Oz' },
-  { id: 'brave-education', file: audioBraveEducation, artist: 'Ab Oz' },
-  { id: 'complete-saves', file: audioCompleteSaves, artist: 'Ab Oz' },
-  { id: 'dirty-ab-oz', file: audioDirtyAbOz, artist: 'Ab Oz' },
-  { id: 'gb3ad1300074', file: audioGB3AD1300074, artist: 'Unknown' },
-  { id: 'gb3ad1300080', file: audioGB3AD1300080, artist: 'Unknown' },
-  { id: 'hi-hats', file: audioHiHats, artist: 'Ab Oz' },
-  { id: 'hoping-ab-oz', file: audioHoping, artist: 'Ab Oz' },
-  { id: 'monkey-man', file: audioMonkeyMan, artist: 'Ab Oz' },
-];
+export const Playlist: Song[] = songBaseNames.map(baseName => {
+  let metadata = { title: formatTitleFromFileName(baseName), artist: 'Unknown' };
+  let coverImageSrc: string | undefined;
 
-// De uiteindelijke playlist die de app gebruikt.
-export const Playlist: Song[] = songData.map(data => {
-  // Haal de bestandsnaam op uit het pad dat door Webpack wordt gegenereerd.
-  const fileName = data.file.split('/').pop();
+  // Poging 1: Probeer JSON metadata te laden
+  try {
+    const jsonData = require(`./music/${baseName}.json`);
+    if (jsonData.title) metadata.title = jsonData.title;
+    if (jsonData.artist) metadata.artist = jsonData.artist;
+  } catch (e) {
+    // JSON niet gevonden, gebruik de fallback (bestandsnaam) die al is ingesteld.
+  }
+
+  // Poging 2: Probeer de cover afbeelding te laden
+  try {
+    // require() geeft hier de bestands-URL terug, verwerkt door de loader.
+    coverImageSrc = require(`./music/${baseName}.jpg`);
+  } catch (e) {
+    // JPG niet gevonden, coverImageSrc blijft undefined, dus fallback wordt gebruikt.
+  }
+
+  const audioSrc = audioImports[baseName]?.default?.src || audioImports[baseName];
+
+  if (!audioSrc) {
+    console.warn(`Audio source for '${baseName}' could not be resolved.`);
+  }
+
+  const albumArtImage: ImagePlaceholder = coverImageSrc
+    ? {
+        id: `cover-${baseName}`,
+        imageUrl: coverImageSrc,
+        description: `Album art for ${metadata.title}`,
+        imageHint: 'album cover'
+      }
+    : defaultAlbumArt;
 
   return {
-    id: data.id,
-    title: formatTitleFromFileName(fileName),
-    artist: data.artist,
-    audioSrc: data.file,
-    albumArt: defaultAlbumArt || null, // Gebruik altijd de standaard albumhoes.
+    id: baseName.replace(/\s+/g, '-'),
+    title: metadata.title,
+    artist: metadata.artist,
+    audioSrc: audioSrc || null,
+    albumArt: albumArtImage,
   };
 });
