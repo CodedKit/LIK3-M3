@@ -52,7 +52,7 @@ const nextConfig: NextConfig = {
   experimental: {
     allowedDevOrigins: ["9000-firebase-studio-1759700607133.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev"],
   },
-  webpack(config) {
+   webpack(config) {
     config.module.rules.push({
       test: /\.webm$/,
       use: {
@@ -64,27 +64,25 @@ const nextConfig: NextConfig = {
         },
       },
     });
-    
-    // Updated rule to handle both mp3 and jpg files from the music directory
+
+    // This rule handles all media within the src/lib/music directory
     config.module.rules.push({
       test: /\.(mp3|jpg|jpeg|png|gif)$/,
+      include: /src\/lib\/music/, // Only apply this loader to the music directory
       use: {
         loader: 'file-loader',
         options: {
-          publicPath: (url: string, resourcePath: string, context: string) => {
-            // This is a simplified logic. A real app might need more robust path handling.
-            if (resourcePath.includes('src/lib/music')) {
-              // Extract the song folder name from the resource path
-              // e.g., src/lib/music/moonracer/audio.mp3 -> moonracer/audio.mp3
-              const relativePath = resourcePath.split('src/lib/music/')[1];
-              return `/_next/static/music/${relativePath}`;
-            }
-            return `/_next/static/assets/${url}`;
+          publicPath: (url: string, resourcePath: string) => {
+            // Creates a path like /_next/static/music/moonracer/audio.mp3
+            const relativePath = resourcePath.split('src/lib/music/')[1];
+            return `/_next/static/music/${relativePath}`;
           },
-          outputPath: 'static/music/',
-          // Keep the original folder structure within the output path
-          name: '[path][name].[ext]',
-          context: 'src/lib',
+          outputPath: (url: string, resourcePath: string) => {
+            // Outputs to static/music/{song-folder}/{filename}
+            const relativePath = resourcePath.split('src/lib/music/')[1];
+            return `static/music/${relativePath}`;
+          },
+          name: '[name].[ext]',
         },
       },
     });

@@ -24,14 +24,10 @@ export type Song = {
 const allMetadata = [metadataMoonracer, metadataEchoes, metadataStarlight];
 
 export const Playlist: Song[] = allMetadata.map(metadata => {
-    // Construct the path based on the convention: src/lib/music/{song-title-folder}/
-    // The public path will be /_next/static/music/{file}
-    // This requires a custom webpack config in next.config.ts to handle mp3/jpg files.
     const songFolder = metadata.title.toLowerCase().replace(/\s+/g, '-');
     
     return {
         ...metadata,
-        // These paths will be handled by the file-loader in next.config.ts
         audioSrc: `/music/${songFolder}/audio.mp3`,
         albumArt: {
             id: `album-art-${metadata.id}`,
