@@ -92,7 +92,7 @@ export function ColorPopover({
                 value={url}
                 className="h-8"
                 onChange={(e) => setUrl(e.currentTarget.value)}
-                placeholder='https://...'
+                placeholder='https://... (image, gif, webm)'
             />
             <Button size="icon" className="h-8 w-8" onClick={() => setBackground(url)}>
                 <CheckIcon className="h-4 w-4" />
