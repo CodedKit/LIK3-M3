@@ -2,7 +2,6 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import 'gradient-picker';
 import { cn } from '@/lib/utils';
 
 // Since gradient-picker is a web component, we need to declare its type for TypeScript
@@ -26,7 +25,7 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
 
   useEffect(() => {
     const currentRef = ref.current;
-    if (!currentRef) return;
+    if (!currentRef || !(window as any).GradientPicker) return;
 
     const gp = new (window as any).GradientPicker({
         parent: currentRef,

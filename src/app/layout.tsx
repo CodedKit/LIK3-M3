@@ -2,6 +2,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { UserProfileProvider } from '@/context/user-profile-context';
+import Script from 'next/script';
 
 export const metadata: Metadata = {
   title: 'LIK3 M3',
@@ -25,6 +26,7 @@ export default function RootLayout({
           {children}
         </UserProfileProvider>
         <Toaster />
+        <Script src="https://cdn.jsdelivr.net/npm/gradient-picker@1.0.1/dist/gradient-picker.min.js" />
       </body>
     </html>
   );
