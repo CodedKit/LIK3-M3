@@ -3,6 +3,7 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { UserProfileProvider } from '@/context/user-profile-context';
+import { AudioProvider } from '@/context/audio-context';
 
 export const metadata: Metadata = {
   title: 'LIK3 M3',
@@ -23,7 +24,9 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <UserProfileProvider>
-          {children}
+          <AudioProvider>
+            {children}
+          </AudioProvider>
         </UserProfileProvider>
         <Toaster />
       </body>

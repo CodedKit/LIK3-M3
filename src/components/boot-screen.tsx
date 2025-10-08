@@ -1,8 +1,10 @@
+
 'use client';
 
 import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
+import { useAudio } from '@/context/audio-context';
 
 interface BootScreenProps {
     onSkip: () => void;
@@ -10,6 +12,12 @@ interface BootScreenProps {
 
 export default function BootScreen({ onSkip }: BootScreenProps) {
   const [progress, setProgress] = useState(0);
+  const { playSound } = useAudio();
+
+  useEffect(() => {
+    playSound('/sounds/boot.mp3', 'effects');
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {
