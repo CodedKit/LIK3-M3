@@ -59,6 +59,9 @@ const nextConfig: NextConfig = {
     allowedDevOrigins: ["9000-firebase-studio-1759700607133.cluster-fbfjltn375c6wqxlhoehbz44sk.cloudworkstations.dev"],
   },
    webpack(config) {
+    // Deze regel is essentieel om Next.js te vertellen hoe het met mediabestanden
+    // moet omgaan die je mogelijk importeert (hoewel we dat nu niet meer doen voor muziek).
+    // Het is goed om deze hier te houden voor andere mogelijke mediabestanden.
     config.module.rules.push({
       test: /\.(mp3|webm|jpg|jpeg|png|svg)$/i,
       type: 'asset/resource',
