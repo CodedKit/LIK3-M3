@@ -12,12 +12,9 @@ export type Song = {
   albumArt: ImagePlaceholder | null;
 };
 
-// Add the filenames of your songs here.
-// Place the actual .mp3 files in the `public/music/` directory.
+// This list now reflects the actual files in the `public/music` directory.
 const songFiles = [
-    'Moonracer.mp3',
-    'Echoes-in-the-Dark.mp3',
-    'Starlight.mp3',
+    'Hoping-Ab-Oz.mp3'
 ];
 
 const defaultAlbumArt = PlaceHolderImages.find(img => img.id === 'default-album-art');
