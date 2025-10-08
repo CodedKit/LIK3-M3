@@ -23,78 +23,55 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   const currentTrack = Playlist[currentTrackIndex];
 
-  console.log(`[MediaPlayer Render] Index: ${currentTrackIndex}, isPlaying: ${isPlaying}, Track: ${currentTrack?.title}`);
-
-  // Effect to load and play a new track when the index changes
+  // This effect runs ONLY when the track index changes.
   useEffect(() => {
-    console.log('[Effect Load Track] Triggered. currentTrackIndex:', currentTrackIndex);
     if (audioRef.current && currentTrack?.audioSrc) {
-      console.log('[Effect Load Track] audioRef exists. Loading new src:', currentTrack.audioSrc);
       audioRef.current.src = currentTrack.audioSrc;
-      const playPromise = audioRef.current.play();
+      const playPromise = audio_ref.current.play();
       if (playPromise !== undefined) {
         playPromise.catch(error => {
-          console.error("[Effect Load Track] Audio play failed:", error);
+          // Autoplay was prevented. This is a common browser policy.
+          // The user will need to click play manually.
+          console.error("[MediaPlayer] Autoplay failed:", error);
           setIsPlaying(false);
         });
       }
-    } else {
-        console.warn('[Effect Load Track] audioRef or audioSrc is missing.', { hasAudioRef: !!audioRef.current, hasAudioSrc: !!currentTrack?.audioSrc });
     }
-  }, [currentTrack]); // Only re-run when the track itself changes
+  }, [currentTrackIndex, currentTrack?.audioSrc]); // Depend only on primitive, stable values
 
   const handlePlayPause = () => {
-    console.log('[handlePlayPause] Clicked. Current isPlaying state:', isPlaying);
-    if (!audioRef.current) {
-        console.error('[handlePlayPause] audioRef is null, cannot play/pause.');
-        return;
-    };
-
+    if (!audioRef.current) return;
     if (audioRef.current.paused) {
-      console.log('[handlePlayPause] It was paused, calling play().');
-      audioRef.current.play().catch(e => console.error("[handlePlayPause] Play error:", e));
+      audioRef.current.play().catch(e => console.error("Play error:", e));
     } else {
-      console.log('[handlePlayPause] It was playing, calling pause().');
       audioRef.current.pause();
     }
-    // We let the onPlay/onPause events handle the state update
   };
   
   const handleNext = () => {
-    console.log('[handleNext] Clicked.');
     const nextIndex = (currentTrackIndex + 1) % Playlist.length;
     setCurrentTrackIndex(nextIndex);
   };
 
   const handlePrevious = () => {
-    console.log('[handlePrevious] Clicked.');
     const prevIndex = (currentTrackIndex - 1 + Playlist.length) % Playlist.length;
     setCurrentTrackIndex(prevIndex);
   };
 
   if (!currentTrack) {
-    console.error('[MediaPlayer Render] No currentTrack found for index:', currentTrackIndex);
     return null;
   }
   
   const isCurrentSongFavorite = isFavorite(currentTrack.id);
 
   return (
-    <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
+    <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4 z-[100]">
         <audio 
           ref={audioRef} 
-          onEnded={() => {
-            console.log('[Audio Event] onEnded');
-            handleNext();
-          }} 
-          onPlay={() => {
-            console.log('[Audio Event] onPlay - setting isPlaying to true');
-            setIsPlaying(true);
-          }}
-          onPause={() => {
-            console.log('[Audio Event] onPause - setting isPlaying to false');
-            setIsPlaying(false);
-          }}
+          onEnded={handleNext}
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+          // The source is now set exclusively in the useEffect
         />
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
@@ -124,10 +101,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  onClick={() => {
-                      console.log('[Favorite Button] Clicked.');
-                      toggleFavorite(currentTrack.id);
-                  }}
+                  onClick={() => toggleFavorite(currentTrack.id)}
                 >
                     <Heart className={cn("h-5 w-5", isCurrentSongFavorite ? "fill-red-500 text-red-500" : "")} />
                 </Button>
