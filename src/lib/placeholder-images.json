@@ -69,7 +69,7 @@
     {
       "id": "default-album-art",
       "description": "A default album art image.",
-      "imageUrl": "https://storage.googleapis.com/aifirebase/images/8e69f528-9562-4217-a068-8032d5a32973.jpg",
+      "imageUrl": "https://picsum.photos/seed/music/48/48",
       "imageHint": "abstract painting"
     }
   ]

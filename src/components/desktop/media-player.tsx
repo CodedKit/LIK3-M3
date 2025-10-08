@@ -19,47 +19,43 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const currentTrack = Playlist[currentTrackIndex];
-  console.log(`[MediaPlayer Render] Index: ${currentTrackIndex}, isPlaying: ${isPlaying}, Track: ${currentTrack?.title}`);
 
-
-  // Effect 1: Handles loading a new track
+  // Effect to handle track changes
   useEffect(() => {
-    console.log('[Effect 1: Load Track] Triggered. Current track:', currentTrack?.title);
     if (audioRef.current && currentTrack?.audioSrc) {
-        console.log('[Effect 1: Load Track] Loading new src:', currentTrack.audioSrc);
         audioRef.current.src = currentTrack.audioSrc;
-        if (isPlaying) {
-            console.log('[Effect 1: Load Track] Attempting to play new track.');
-            audioRef.current.play().catch(e => console.error("[Effect 1: Load Track] Audio play failed on new track load", e));
+        const playPromise = audioRef.current.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                // Automatic playback started!
+                setIsPlaying(true);
+            }).catch(error => {
+                // Auto-play was prevented
+                console.error("Audio play failed:", error);
+                setIsPlaying(false);
+            });
         }
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentTrack]); // This effect ONLY runs when the track changes.
+  }, [currentTrack]); // Only re-run when the track itself changes
 
-  // Effect 2: Handles toggling play/pause for the CURRENT track
-  useEffect(() => {
-    console.log(`[Effect 2: Play/Pause] Triggered. isPlaying: ${isPlaying}`);
-    if (audioRef.current) {
-        if (isPlaying) {
-            console.log('[Effect 2: Play/Pause] Calling play().');
-            audioRef.current.play().catch(e => console.error("[Effect 2: Play/Pause] Audio play failed on toggle", e));
-        } else {
-            console.log('[Effect 2: Play/Pause] Calling pause().');
-            audioRef.current.pause();
-        }
+  const handlePlayPause = () => {
+    if (!audioRef.current) return;
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
     }
-  }, [isPlaying]); // This effect ONLY runs when isPlaying state changes.
-
+    setIsPlaying(!isPlaying);
+  };
+  
   const handleNext = () => {
-    setCurrentTrackIndex((currentTrackIndex + 1) % Playlist.length);
+    const nextIndex = (currentTrackIndex + 1) % Playlist.length;
+    setCurrentTrackIndex(nextIndex);
   };
 
   const handlePrevious = () => {
-    setCurrentTrackIndex((currentTrackIndex - 1 + Playlist.length) % Playlist.length);
-  };
-
-  const handlePlayPause = () => {
-    setIsPlaying(!isPlaying);
+    const prevIndex = (currentTrackIndex - 1 + Playlist.length) % Playlist.length;
+    setCurrentTrackIndex(prevIndex);
   };
 
   if (!currentTrack) {
@@ -68,7 +64,12 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
-        <audio ref={audioRef} onEnded={handleNext} />
+        <audio 
+          ref={audioRef} 
+          onEnded={handleNext} 
+          onPlay={() => setIsPlaying(true)}
+          onPause={() => setIsPlaying(false)}
+        />
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
