@@ -102,7 +102,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       case 'likestagramProfile':
         return <LikestagramProfileApp user={props.user} />;
       case 'terminal':
-        return <TerminalApp setShowDebug={setShowDebug} updateProfile={updateProfile} activeProfile={activeProfile} />;
+        return <TerminalApp setShowDebug={setShowDebug} />;
       case 'music':
         return <MusicApp onPlayTrack={handlePlayTrack} />;
       case 'ehmazon':
