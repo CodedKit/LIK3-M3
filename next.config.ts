@@ -65,26 +65,12 @@ const nextConfig: NextConfig = {
       },
     });
 
-    // This rule handles all media within the src/lib/music directory
     config.module.rules.push({
-      test: /\.(mp3|jpg|jpeg|png|gif)$/,
-      include: /src\/lib\/music/, // Only apply this loader to the music directory
-      use: {
-        loader: 'file-loader',
-        options: {
-          publicPath: (url: string, resourcePath: string) => {
-            // Creates a path like /_next/static/music/moonracer/audio.mp3
-            const relativePath = resourcePath.split('src/lib/music/')[1];
-            return `/_next/static/music/${relativePath}`;
-          },
-          outputPath: (url: string, resourcePath: string) => {
-            // Outputs to static/music/{song-folder}/{filename}
-            const relativePath = resourcePath.split('src/lib/music/')[1];
-            return `static/music/${relativePath}`;
-          },
-          name: '[name].[ext]',
+        test: /\.(mp3|jpg|jpeg|png|gif)$/,
+        type: 'asset/resource',
+        generator: {
+            filename: 'static/media/[name].[hash][ext]',
         },
-      },
     });
 
     return config;
