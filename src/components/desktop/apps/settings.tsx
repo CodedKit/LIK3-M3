@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { ColorPopover } from '@/components/ui/color-popover';
 import { Paintbrush } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -126,13 +127,18 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                 <PopoverTrigger asChild>
                                     <button
                                         className={cn(
-                                            'relative aspect-video w-full rounded-md overflow-hidden border-2 flex items-center justify-center',
+                                            'relative aspect-video w-full rounded-md overflow-hidden border-2 flex items-center justify-center group',
                                             isColor ? 'border-primary' : 'border-border'
                                         )}
                                         style={isColor ? { background } : {}}
                                     >
                                         {!isColor && <div className="absolute inset-0 bg-background/50" />}
                                         <Paintbrush className={cn("h-8 w-8 z-10", isColor ? "text-white/50" : "text-foreground")} />
+                                        <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2">
+                                            <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
+                                                Custom
+                                            </Badge>
+                                        </div>
                                     </button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-72">
@@ -150,7 +156,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                 key={img.id}
                                 onClick={() => handleBackgroundChange(img.imageUrl)}
                                 className={cn(
-                                    'relative aspect-video w-full rounded-md overflow-hidden border-2',
+                                    'relative aspect-video w-full rounded-md overflow-hidden border-2 group',
                                     background === img.imageUrl ? 'border-primary' : 'border-transparent'
                                 )}
                                 >
@@ -160,6 +166,12 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                     fill
                                     className="object-cover"
                                 />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent transition-opacity opacity-0 group-hover:opacity-100"></div>
+                                <div className="absolute bottom-[-8px] left-1/2 -translate-x-1/2">
+                                    <Badge variant="secondary" className="bg-black/50 text-white/90 border-transparent text-xs capitalize">
+                                        {img.imageHint}
+                                    </Badge>
+                                </div>
                                 </button>
                             ))}
                         </div>
