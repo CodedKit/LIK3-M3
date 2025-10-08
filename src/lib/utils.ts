@@ -11,6 +11,7 @@ const ALLOWED_IMAGE_HOSTNAMES = [
   'picsum.photos',
   'i.imgur.com',
   'i.giphy.com',
+  'media2.giphy.com',
   // Add any other hostnames from next.config.js here
 ];
 
