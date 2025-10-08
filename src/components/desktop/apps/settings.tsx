@@ -16,7 +16,7 @@ import { ColorPopover } from '@/components/ui/color-popover';
 import { Paintbrush } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { Separator } from '@/components/ui/separator';
+import { Slider } from '@/components/ui/slider';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -31,6 +31,10 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   
   const [customUrl, setCustomUrl] = useState(background.startsWith('http') ? background : '');
 
+  const [masterVolume, setMasterVolume] = useState(80);
+  const [musicVolume, setMusicVolume] = useState(70);
+  const [uiVolume, setUiVolume] = useState(90);
+  const [effectsVolume, setEffectsVolume] = useState(100);
 
   const solids = [
     '#E2E2E2',
@@ -124,8 +128,35 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                     <CardTitle>Sound Settings</CardTitle>
                     <CardDescription>Manage audio settings.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                    <p>Sound options will be available here.</p>
+                <CardContent className="space-y-8 pt-6">
+                    <div className="space-y-4">
+                        <Label htmlFor="master-volume">Master</Label>
+                        <div className='flex items-center gap-4'>
+                          <Slider id="master-volume" value={[masterVolume]} onValueChange={(v) => setMasterVolume(v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{masterVolume}%</span>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <Label htmlFor="music-volume">Music</Label>
+                        <div className='flex items-center gap-4'>
+                          <Slider id="music-volume" value={[musicVolume]} onValueChange={(v) => setMusicVolume(v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{musicVolume}%</span>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <Label htmlFor="ui-volume">UI</Label>
+                        <div className='flex items-center gap-4'>
+                          <Slider id="ui-volume" value={[uiVolume]} onValueChange={(v) => setUiVolume(v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{uiVolume}%</span>
+                        </div>
+                    </div>
+                     <div className="space-y-4">
+                        <Label htmlFor="effects-volume">Effects</Label>
+                        <div className='flex items-center gap-4'>
+                          <Slider id="effects-volume" value={[effectsVolume]} onValueChange={(v) => setEffectsVolume(v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{effectsVolume}%</span>
+                        </div>
+                    </div>
                 </CardContent>
             </Card>
         </TabsContent>
