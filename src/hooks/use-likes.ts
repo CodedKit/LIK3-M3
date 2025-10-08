@@ -10,10 +10,9 @@ export const useLikes = () => {
     return activeProfile?.likes?.[postId];
   };
 
-  const likePost = (postId: string) => {
+  const likePost = (postId: string, newLikeCount: number) => {
     if (activeProfile) {
-      const currentLikes = activeProfile.likes?.[postId] || 0;
-      const newLikes = { ...activeProfile.likes, [postId]: currentLikes + 1 };
+      const newLikes = { ...activeProfile.likes, [postId]: newLikeCount };
       updateProfile(activeProfile.id, { likes: newLikes });
     }
   };

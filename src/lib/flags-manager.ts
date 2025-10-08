@@ -40,7 +40,10 @@ export class FlagManager {
       if (definition.trigger) {
         const { event, conditions } = definition.trigger;
         const unsubscribe = eventManager.on(event, (payload: any) => {
-          if (this.evaluateConditions(payload, conditions)) {
+          console.log(`[2/5] flags-manager: Received event '${event}'`, payload);
+          const conditionsMet = this.evaluateConditions(payload, conditions);
+          console.log(`[3/5] flags-manager: Conditions for '${key}' met: ${conditionsMet}`);
+          if (conditionsMet) {
             this.setFlag(key, definition.trigger?.targetValue ?? true, { isInitial: false });
           }
         });
@@ -62,15 +65,19 @@ export class FlagManager {
     if (!definition) return;
 
     if (definition.dependsOn && !dependenciesMet(definition.dependsOn, this.profile.flags || {})) {
+      console.log(`[4/5] flags-manager: Did not set flag '${key}' because dependencies were not met.`);
       return;
     }
 
     const profileFlags = { ...(this.profile.flags || {}) };
     const isNewFlag = !profileFlags[key] || profileFlags[key].value !== value;
 
-    if (!isNewFlag) return;
+    if (!isNewFlag) {
+      console.log(`[4/5] flags-manager: Did not set flag '${key}' because it already has the value '${value}'.`);
+      return;
+    };
 
-    console.log(`[FlagManager] Setting flag '${key}' to '${value}'.`);
+    console.log(`[4/5] flags-manager: Setting flag '${key}' to '${value}'.`);
     const expiresAt = definition.temporaryDuration ? Date.now() + definition.temporaryDuration : undefined;
     profileFlags[key] = { value, expiresAt };
     this.updateProfile({ flags: profileFlags });
@@ -86,7 +93,7 @@ export class FlagManager {
     if (!actions.length) return;
 
     actions.forEach(actionName => {
-      console.log(`[FlagManager] Running action '${actionName}' for flag '${key}'. Initial: ${isInitial}`);
+      console.log(`[5/5] flags-manager: Running action '${actionName}' for flag '${key}'.`);
       const action = flagActions[actionName as keyof typeof flagActions];
       if (action) {
         // @ts-ignore
@@ -107,7 +114,7 @@ export class FlagManager {
 
   public evaluateInitialFlags() {
     const profileFlags = this.profile.flags || {};
-    console.log(`[FlagManager] Evaluating ${Object.keys(profileFlags).length} initial flags...`);
+    // console.log(`[FlagManager] Evaluating ${Object.keys(profileFlags).length} initial flags...`);
 
     for (const key in profileFlags) {
       const flag = profileFlags[key];

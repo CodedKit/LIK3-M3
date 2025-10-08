@@ -49,21 +49,25 @@ export default function LikestagramPost({ post, onViewProfile }: LikestagramPost
         setFloatingHearts((currentHearts) => currentHearts.filter(h => h.id !== newHeartId));
     }, 1000);
 
-    likePost(post.id);
+    const currentLikes = getLikes(post.id) || post.initialLikes;
+    const newLikeCount = currentLikes + 1;
+    likePost(post.id, newLikeCount);
 
-    // Emit the event for the new architecture
-    eventManager.emit('postLiked', {
+    const eventPayload = {
       postId: post.id,
       author: post.user.username,
-      newLikeCount: (getLikes(post.id) || 0) + 1,
-    });
+      newLikeCount: newLikeCount,
+    };
+    
+    console.log('[1/5] likestagram-post: Emitting postLiked event', eventPayload);
+    eventManager.emit('postLiked', eventPayload);
 
     if (addXp) {
       addXp(10);
     }
-  }, [activeProfile, addXp, likePost, post.id, post.user.username, getLikes]);
+  }, [activeProfile, addXp, likePost, post.id, post.user.username, getLikes, post.initialLikes]);
 
-  const isLiked = getLikes(post.id) ? (getLikes(post.id) || 0) > post.initialLikes : false;
+  const isLiked = (getLikes(post.id) || 0) > post.initialLikes;
 
   return (
     <div className="relative">
