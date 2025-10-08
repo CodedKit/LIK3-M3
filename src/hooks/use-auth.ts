@@ -1,4 +1,5 @@
-
+// This file is deprecated and will be removed.
+// Please use `import { useAuth } from '@/hooks/use-user-profile';` instead.
 'use client';
 
 import { useContext } from 'react';
@@ -9,12 +10,5 @@ export const useAuth = () => {
   if (!context) {
     throw new Error('useAuth must be used within a UserProfileProvider');
   }
-
-  const { addProfile, updateProfile, ...rest } = context;
-
-  return {
-    ...rest,
-    addProfile,
-    updateProfile,
-  };
+  return context;
 };

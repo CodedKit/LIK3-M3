@@ -15,9 +15,11 @@ export default function BootScreen({ onSkip }: BootScreenProps) {
   const { playSound } = useAudio();
 
   useEffect(() => {
-    playSound('/sounds/reactos-boot-85864.mp3', 'effects');
+    if(playSound) {
+      playSound('/sounds/reactos-boot-85864.mp3', 'effects');
+    }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [playSound]);
 
   useEffect(() => {
     const interval = setInterval(() => {
