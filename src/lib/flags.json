@@ -31,7 +31,7 @@
     "temporaryDuration": 86400000
   },
   "pixel_pioneer_superfan": {
-    "description": "Awarded for liking a pixel_pioneer post exactly 200 times.",
+    "description": "Awarded for liking a pixel_pioneer post at least 200 times.",
     "type": "boolean",
     "defaultValue": false,
     "onSet": "superfan",
@@ -39,7 +39,7 @@
       "event": "postLiked",
       "conditions": [
         "author=pixel_pioneer",
-        "newLikeCount=200"
+        "newLikeCount>=200"
       ]
     }
   }
