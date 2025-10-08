@@ -27,7 +27,8 @@ export default function RootLayout({
           {children}
         </UserProfileProvider>
         <Toaster />
-        <Script src="https://cdn.jsdelivr.net/npm/gradient-picker@1.0.1/dist/gradient-picker.min.js" />
+        <Script src="https://cdn.jsdelivr.net/npm/@ja-support/cs-utils/cs-utils.min.js" />
+        <Script src="https://cdn.jsdelivr.net/npm/gradient-picker/dist/gradient-picker.min.js" />
       </body>
     </html>
   );

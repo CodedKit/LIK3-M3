@@ -28,7 +28,8 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
     if (!currentRef) return;
 
     const initPicker = () => {
-      const gp = new (window as any).GradientPicker({
+      // @ts-ignore
+      const gp = new GradientPicker({
         parent: currentRef,
       });
 
@@ -51,23 +52,21 @@ export function GradientPicker({ value, onValueChange, className }: GradientPick
       };
     };
 
-    if ((window as any).GradientPicker) {
+    // @ts-ignore
+    if (window.GradientPicker) {
       const cleanup = initPicker();
       return cleanup;
     } else {
       const intervalId = setInterval(() => {
-        if ((window as any).GradientPicker) {
+        // @ts-ignore
+        if (window.GradientPicker) {
           clearInterval(intervalId);
           initPicker();
         }
       }, 100);
 
-      // Add a timeout to stop checking after a few seconds to prevent an infinite loop
       const timeoutId = setTimeout(() => {
         clearInterval(intervalId);
-        if (!(window as any).GradientPicker) {
-          console.error("GradientPicker script did not load in time.");
-        }
       }, 5000);
 
       return () => {
