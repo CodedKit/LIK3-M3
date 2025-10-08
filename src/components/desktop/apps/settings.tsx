@@ -12,8 +12,6 @@ import { useUserProfileContext } from '@/context/user-profile-context';
 import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
-import { GradientPicker } from '@/components/ui/gradient-picker';
-import { Separator } from '@/components/ui/separator';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -111,15 +109,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                           </button>
                         ))}
                       </div>
-                    </div>
-                    <Separator />
-                    <div className="space-y-4">
-                      <Label>Custom Gradient</Label>
-                       <GradientPicker 
-                          className="w-full"
-                          value={activeProfile?.desktopBgUrl}
-                          onValueChange={handleBackgroundSelect}
-                       />
                     </div>
                 </CardContent>
             </Card>
