@@ -123,9 +123,13 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const canGoBack = openApps.length > 1;
 
+  const isColor = activeProfile.desktopBgUrl && activeProfile.desktopBgUrl.startsWith('#');
+
   return (
-    <div className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500">
-      {activeProfile.desktopBgUrl && (
+    <div className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
+         style={isColor ? { backgroundColor: activeProfile.desktopBgUrl } : {}}
+    >
+      {activeProfile.desktopBgUrl && !isColor && (
         <Image
           src={activeProfile.desktopBgUrl}
           alt="Desktop Background"

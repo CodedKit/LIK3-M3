@@ -12,6 +12,7 @@ import { useUserProfileContext } from '@/context/user-profile-context';
 import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
 import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
+import { ColorPicker } from '@/components/ui/color-picker';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -23,16 +24,34 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   
   const [selectedBg, setSelectedBg] = useState(activeProfile?.desktopBgUrl || '');
   const backgroundOptions = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
+  const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '#000000');
+
 
   const handleBackgroundSelect = (imageUrl: string) => {
     if (!activeProfile) return;
     try {
       setSelectedBg(imageUrl);
+      setBackground(imageUrl);
       updateProfile(activeProfile.id, { desktopBgUrl: imageUrl });
       toast({
         title: "Background Updated",
         description: "Your desktop background has been changed.",
       });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message || "Failed to save settings.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleColorChange = (color: string) => {
+    if (!activeProfile) return;
+    try {
+      setSelectedBg(color);
+      setBackground(color);
+      updateProfile(activeProfile.id, { desktopBgUrl: color });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -86,6 +105,13 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                     <CardDescription>Customize the look of the game.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-8">
+                    <div className="space-y-4">
+                      <Label>Solid Color</Label>
+                      <ColorPicker
+                        background={background}
+                        setBackground={handleColorChange}
+                      />
+                    </div>
                     <div className="space-y-4">
                       <Label>Desktop Background</Label>
                       <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
