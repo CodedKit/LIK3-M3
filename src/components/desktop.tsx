@@ -19,6 +19,7 @@ import { type LikestagramUser } from '@/lib/likestagram';
 import LikestagramProfileApp from '@/components/desktop/apps/likestagram/profile';
 import { WindowNavButtons } from '@/components/ui/window-nav-buttons';
 import ChatCordApp from './desktop/apps/chatcord';
+import { FlagManager } from '@/lib/flags-manager';
 
 
 interface DesktopProps {
@@ -40,6 +41,28 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
   
   const activeApp = openApps[openApps.length - 1];
+
+  useEffect(() => {
+    if (!activeProfile) return;
+
+    const flagManager = new FlagManager(activeProfile, (updatedData) => {
+        updateProfile(activeProfile.id, updatedData);
+    });
+
+    // Evaluate initial flags when the desktop mounts
+    flagManager.evaluateInitialFlags();
+
+    // Set up a periodic check for expired flags
+    const intervalId = setInterval(() => {
+        flagManager.processExpiredFlags();
+    }, 60000); // Check every minute
+
+    // Cleanup function
+    return () => {
+        flagManager.destroy(); // Unsubscribe from all event listeners
+        clearInterval(intervalId);
+    };
+  }, [activeProfile, updateProfile]);
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
