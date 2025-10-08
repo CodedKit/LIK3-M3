@@ -33,14 +33,20 @@ export type UserProfile = {
   terminalHistory?: TerminalHistoryItem[];
   money?: number;
   flags?: { [key: string]: ProfileFlag };
-  favoriteSongs?: string[]; // Added for song favorites
+  favoriteSongs?: string[];
+  volumeSettings?: {
+    master: number;
+    music: number;
+    ui: number;
+    effects: number;
+  };
 };
 
 interface UserProfileContextType {
   profiles: UserProfile[];
   activeProfile: UserProfile | null;
   isLoading: boolean;
-  addProfile: (newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory' | 'money' | 'flags' | 'favoriteSongs'>) => void;
+  addProfile: (newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory' | 'money' | 'flags' | 'favoriteSongs' | 'volumeSettings'>) => void;
   deleteProfile: (profileId: string) => void;
   updateProfile: (profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => void;
   setActive: (profile: UserProfile | null) => void;
@@ -152,7 +158,7 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     }
   }, []);
 
-  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory' | 'money' | 'flags' | 'favoriteSongs'>) => {
+  const addProfile = useCallback((newProfileData: Omit<UserProfile, 'id' | 'showDebug' | 'xp' | 'likes' | 'terminalHistory' | 'money' | 'flags' | 'favoriteSongs' | 'volumeSettings'>) => {
     if (profiles.some(p => p.username.toLowerCase() === newProfileData.username.toLowerCase())) {
         throw new Error('A profile with this username already exists.');
     }
@@ -179,6 +185,12 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
       money: 500,
       flags: defaultFlags,
       favoriteSongs: [],
+      volumeSettings: {
+        master: 80,
+        music: 70,
+        ui: 90,
+        effects: 100,
+      }
     };
     
     try {

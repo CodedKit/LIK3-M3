@@ -25,10 +25,9 @@ interface TaskbarProps {
   onOpenSettings: () => void;
   onOpenProfile: () => void;
   onToggleDebug: () => void;
-  audioRef: React.RefObject<HTMLAudioElement>;
 }
 
-export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug, audioRef }: TaskbarProps) {
+export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug }: TaskbarProps) {
     const { level, progress } = calculateLevel(userProfile.xp);
 
     return (
@@ -89,7 +88,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
             <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
                 <div className="flex items-center gap-2">
                     <Wifi className="h-5 w-5" />
-                    <VolumeControl audioRef={audioRef} />
+                    <VolumeControl />
                     <div className="flex items-center gap-1">
                       <Battery className="h-5 w-5" />
                       <span className="text-[10px] font-medium">98%</span>

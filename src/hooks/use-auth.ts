@@ -10,14 +10,11 @@ export const useAuth = () => {
     throw new Error('useAuth must be used within a UserProfileProvider');
   }
 
+  const { addProfile, updateProfile, ...rest } = context;
+
   return {
-    profiles: context.profiles,
-    activeProfile: context.activeProfile,
-    isLoading: context.isLoading,
-    addProfile: context.addProfile,
-    deleteProfile: context.deleteProfile,
-    setActive: context.setActive,
-    resetAllProfiles: context.resetAllProfiles,
-    updateProfile: context.updateProfile,
+    ...rest,
+    addProfile,
+    updateProfile,
   };
 };

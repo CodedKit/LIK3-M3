@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Volume2, Volume1, VolumeX } from 'lucide-react';
 import {
   Popover,
@@ -10,46 +10,30 @@ import {
 } from '@/components/ui/popover';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '../ui/button';
+import { useAuth } from '@/hooks/use-auth';
 
-interface VolumeControlProps {
-  audioRef: React.RefObject<HTMLAudioElement>;
-}
+export default function VolumeControl() {
+  const { activeProfile, updateProfile } = useAuth();
+  
+  const masterVolume = useMemo(() => activeProfile?.volumeSettings?.master ?? 80, [activeProfile]);
 
-export default function VolumeControl({ audioRef }: VolumeControlProps) {
-  const [volume, setVolume] = useState(50);
-
-  // Set initial volume and listen for external changes
-  useEffect(() => {
-    const audio = audioRef.current;
-    if (audio) {
-      const initialVolume = Math.round(audio.volume * 100);
-      setVolume(initialVolume);
-
-      const handleVolumeChange = () => {
-        setVolume(Math.round(audio.volume * 100));
+  const handleVolumeChange = useCallback((newVolume: number[]) => {
+    if (activeProfile) {
+      const volumeValue = newVolume[0];
+      const newSettings = {
+        ...activeProfile.volumeSettings,
+        master: volumeValue,
       };
-
-      audio.addEventListener('volumechange', handleVolumeChange);
-      return () => {
-        audio.removeEventListener('volumechange', handleVolumeChange);
-      };
+      // @ts-ignore
+      updateProfile(activeProfile.id, { volumeSettings: newSettings });
     }
-  }, [audioRef]);
-
-
-  const handleVolumeChange = (newVolume: number[]) => {
-    const volumeValue = newVolume[0];
-    setVolume(volumeValue);
-    if (audioRef.current) {
-      audioRef.current.volume = volumeValue / 100;
-    }
-  };
+  }, [activeProfile, updateProfile]);
 
   const getVolumeIcon = () => {
-    if (volume === 0) {
+    if (masterVolume === 0) {
       return <VolumeX className="h-5 w-5" />;
     }
-    if (volume < 50) {
+    if (masterVolume < 50) {
       return <Volume1 className="h-5 w-5" />;
     }
     return <Volume2 className="h-5 w-5" />;
@@ -65,7 +49,7 @@ export default function VolumeControl({ audioRef }: VolumeControlProps) {
       <PopoverContent side="top" className="w-auto p-2">
         <div className="h-32">
           <Slider
-            value={[volume]}
+            value={[masterVolume]}
             max={100}
             step={1}
             orientation="vertical"

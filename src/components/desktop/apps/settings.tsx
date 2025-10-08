@@ -1,7 +1,7 @@
 
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useCallback } from 'react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
@@ -31,10 +31,22 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   
   const [customUrl, setCustomUrl] = useState(background.startsWith('http') ? background : '');
 
-  const [masterVolume, setMasterVolume] = useState(80);
-  const [musicVolume, setMusicVolume] = useState(70);
-  const [uiVolume, setUiVolume] = useState(90);
-  const [effectsVolume, setEffectsVolume] = useState(100);
+  const volumeSettings = useMemo(() => ({
+    master: activeProfile?.volumeSettings?.master ?? 80,
+    music: activeProfile?.volumeSettings?.music ?? 70,
+    ui: activeProfile?.volumeSettings?.ui ?? 90,
+    effects: activeProfile?.volumeSettings?.effects ?? 100,
+  }), [activeProfile?.volumeSettings]);
+
+  const handleVolumeChange = useCallback((type: 'master' | 'music' | 'ui' | 'effects', value: number) => {
+    if (!activeProfile) return;
+    const newSettings = {
+        ...activeProfile.volumeSettings,
+        [type]: value,
+    };
+    // @ts-ignore
+    updateProfile(activeProfile.id, { volumeSettings: newSettings });
+  }, [activeProfile, updateProfile]);
 
   const solids = [
     '#E2E2E2',
@@ -132,29 +144,29 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                     <div className="space-y-4">
                         <Label htmlFor="master-volume">Master</Label>
                         <div className='flex items-center gap-4'>
-                          <Slider id="master-volume" value={[masterVolume]} onValueChange={(v) => setMasterVolume(v[0])} />
-                          <span className='text-sm text-muted-foreground w-8 text-center'>{masterVolume}%</span>
+                          <Slider id="master-volume" value={[volumeSettings.master]} onValueChange={(v) => handleVolumeChange('master', v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{volumeSettings.master}%</span>
                         </div>
                     </div>
                      <div className="space-y-4">
                         <Label htmlFor="music-volume">Music</Label>
                         <div className='flex items-center gap-4'>
-                          <Slider id="music-volume" value={[musicVolume]} onValueChange={(v) => setMusicVolume(v[0])} />
-                          <span className='text-sm text-muted-foreground w-8 text-center'>{musicVolume}%</span>
+                          <Slider id="music-volume" value={[volumeSettings.music]} onValueChange={(v) => handleVolumeChange('music', v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{volumeSettings.music}%</span>
                         </div>
                     </div>
                      <div className="space-y-4">
                         <Label htmlFor="ui-volume">UI</Label>
                         <div className='flex items-center gap-4'>
-                          <Slider id="ui-volume" value={[uiVolume]} onValueChange={(v) => setUiVolume(v[0])} />
-                          <span className='text-sm text-muted-foreground w-8 text-center'>{uiVolume}%</span>
+                          <Slider id="ui-volume" value={[volumeSettings.ui]} onValueChange={(v) => handleVolumeChange('ui', v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{volumeSettings.ui}%</span>
                         </div>
                     </div>
                      <div className="space-y-4">
                         <Label htmlFor="effects-volume">Effects</Label>
                         <div className='flex items-center gap-4'>
-                          <Slider id="effects-volume" value={[effectsVolume]} onValueChange={(v) => setEffectsVolume(v[0])} />
-                          <span className='text-sm text-muted-foreground w-8 text-center'>{effectsVolume}%</span>
+                          <Slider id="effects-volume" value={[volumeSettings.effects]} onValueChange={(v) => handleVolumeChange('effects', v[0])} />
+                          <span className='text-sm text-muted-foreground w-8 text-center'>{volumeSettings.effects}%</span>
                         </div>
                     </div>
                 </CardContent>

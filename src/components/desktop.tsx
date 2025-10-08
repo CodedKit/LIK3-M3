@@ -46,6 +46,30 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const activeApp = openApps[openApps.length - 1];
 
   useEffect(() => {
+    // This audio element is persistent and controlled by the Desktop.
+    // It's not created inside MediaPlayer to avoid re-creation.
+    audioRef.current = new Audio();
+    const audio = audioRef.current;
+
+    const handlePlay = () => setIsPlaying(true);
+    const handlePause = () => setIsPlaying(false);
+    const handleEnded = () => handleNextTrack();
+
+    audio.addEventListener('play', handlePlay);
+    audio.addEventListener('pause', handlePause);
+    audio.addEventListener('ended', handleEnded);
+
+    return () => {
+        audio.removeEventListener('play', handlePlay);
+        audio.removeEventListener('pause', handlePause);
+        audio.removeEventListener('ended', handleEnded);
+        audio.pause();
+        audio.src = '';
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (!activeProfile) return;
 
     const flagManager = new FlagManager(activeProfile, (updatedData) => {
@@ -66,7 +90,6 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const handlePlayTrack = (trackIndex: number) => {
     setCurrentTrackIndex(trackIndex);
-    setIsPlaying(true);
   };
 
   const handleClosePlayer = () => {
@@ -168,12 +191,6 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
       style={!isImage && !isVideo ? { background: activeProfile.desktopBgUrl } : {}}
     >
-      <audio
-        ref={audioRef}
-        onPlay={() => setIsPlaying(true)}
-        onPause={() => setIsPlaying(false)}
-        onEnded={handleNextTrack}
-      />
       
       {isImage && (
         <Image
@@ -224,7 +241,6 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
         onToggleDebug={() => setShowDebug(s => !s)}
-        audioRef={audioRef}
       />
 
       <Dialog open={!!activeApp} onOpenChange={(open) => !open && closeApp()}>

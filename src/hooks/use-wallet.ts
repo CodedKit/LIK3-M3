@@ -1,16 +1,10 @@
 
 'use client';
 
-import { useContext } from 'react';
-import { UserProfileContext } from '@/context/user-profile-context';
+import { useAuth } from './use-auth';
 
 export const useWallet = () => {
-  const context = useContext(UserProfileContext);
-  if (!context) {
-    throw new Error('useWallet must be used within a UserProfileProvider');
-  }
-
-  const { activeProfile, updateProfile } = context;
+  const { activeProfile, updateProfile } = useAuth();
 
   const addMoney = (amount: number) => {
     if (!activeProfile) return;
@@ -21,5 +15,18 @@ export const useWallet = () => {
     updateProfile(activeProfile.id, { money: newMoney });
   };
 
-  return { money: activeProfile?.money || 0, addMoney };
+  const spendMoney = (amount: number) => {
+    if (!activeProfile) return false;
+
+    const currentMoney = activeProfile.money || 0;
+    if (currentMoney < amount) {
+      return false;
+    }
+    
+    const newMoney = currentMoney - amount;
+    updateProfile(activeProfile.id, { money: newMoney });
+    return true;
+  }
+
+  return { money: activeProfile?.money || 0, addMoney, spendMoney };
 };
