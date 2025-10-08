@@ -2,6 +2,7 @@
 'use client';
 
 import { useState } from 'react';
+import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -10,6 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { useUserProfileContext } from '@/context/user-profile-context';
 import { useToast } from '@/hooks/use-toast';
 import { ColorPicker } from '@/components/ui/color-picker';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { cn } from '@/lib/utils';
+import { Separator } from '@/components/ui/separator';
 
 interface SettingsAppProps {
   onClose: () => void;
@@ -20,6 +24,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const { toast } = useToast();
   
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
+  const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
 
 
   const handleBackgroundChange = (newBackground: string) => {
@@ -80,11 +85,34 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                 </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">
-                      <Label>Background</Label>
+                      <Label>Custom Color</Label>
                       <ColorPicker
                         background={background}
                         setBackground={handleBackgroundChange}
                       />
+                    </div>
+                    <Separator />
+                     <div className="space-y-4">
+                        <Label>Background Images</Label>
+                        <div className="grid grid-cols-3 gap-2">
+                        {images.map((img) => (
+                            <button
+                            key={img.id}
+                            onClick={() => handleBackgroundChange(img.imageUrl)}
+                            className={cn(
+                                'relative aspect-video w-full rounded-md overflow-hidden border-2',
+                                background === img.imageUrl ? 'border-primary' : 'border-transparent'
+                            )}
+                            >
+                            <Image
+                                src={img.imageUrl}
+                                alt={img.description}
+                                fill
+                                className="object-cover"
+                            />
+                            </button>
+                        ))}
+                        </div>
                     </div>
                 </CardContent>
             </Card>
