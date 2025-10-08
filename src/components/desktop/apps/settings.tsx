@@ -2,15 +2,12 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useUserProfileContext } from '@/context/user-profile-context';
-import { PlaceHolderImages, type ImagePlaceholder } from '@/lib/placeholder-images';
-import { cn } from '@/lib/utils';
 import { useToast } from '@/hooks/use-toast';
 import { ColorPicker } from '@/components/ui/color-picker';
 
@@ -22,21 +19,14 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const { activeProfile, updateProfile } = useUserProfileContext();
   const { toast } = useToast();
   
-  const [selectedBg, setSelectedBg] = useState(activeProfile?.desktopBgUrl || '');
-  const backgroundOptions = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
-  const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '#000000');
+  const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
 
 
-  const handleBackgroundSelect = (imageUrl: string) => {
+  const handleBackgroundChange = (newBackground: string) => {
     if (!activeProfile) return;
     try {
-      setSelectedBg(imageUrl);
-      setBackground(imageUrl);
-      updateProfile(activeProfile.id, { desktopBgUrl: imageUrl });
-      toast({
-        title: "Background Updated",
-        description: "Your desktop background has been changed.",
-      });
+      setBackground(newBackground);
+      updateProfile(activeProfile.id, { desktopBgUrl: newBackground });
     } catch (error: any) {
       toast({
         title: "Error",
@@ -45,22 +35,6 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
       });
     }
   };
-
-  const handleColorChange = (color: string) => {
-    if (!activeProfile) return;
-    try {
-      setSelectedBg(color);
-      setBackground(color);
-      updateProfile(activeProfile.id, { desktopBgUrl: color });
-    } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message || "Failed to save settings.",
-        variant: "destructive",
-      });
-    }
-  };
-
 
   return (
     <div className="h-full w-full bg-background p-4">
@@ -106,35 +80,11 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                 </CardHeader>
                 <CardContent className="space-y-8">
                     <div className="space-y-4">
-                      <Label>Solid Color</Label>
+                      <Label>Background</Label>
                       <ColorPicker
                         background={background}
-                        setBackground={handleColorChange}
+                        setBackground={handleBackgroundChange}
                       />
-                    </div>
-                    <div className="space-y-4">
-                      <Label>Desktop Background</Label>
-                      <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                        {backgroundOptions.map((bg: ImagePlaceholder) => (
-                          <button
-                            key={bg.id}
-                            type="button"
-                            onClick={() => handleBackgroundSelect(bg.imageUrl)}
-                            className={cn(
-                              'relative aspect-video w-full rounded-lg overflow-hidden border-2',
-                              selectedBg === bg.imageUrl ? 'border-primary' : 'border-transparent'
-                            )}
-                          >
-                            <Image
-                              src={bg.imageUrl}
-                              alt={bg.description}
-                              fill
-                              className="object-cover"
-                              data-ai-hint={bg.imageHint}
-                            />
-                          </button>
-                        ))}
-                      </div>
                     </div>
                 </CardContent>
             </Card>

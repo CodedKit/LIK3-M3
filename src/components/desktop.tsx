@@ -123,15 +123,16 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
   const canGoBack = openApps.length > 1;
 
-  const isColor = activeProfile.desktopBgUrl && activeProfile.desktopBgUrl.startsWith('#');
+  const isImage = activeProfile.desktopBgUrl && (activeProfile.desktopBgUrl.startsWith('http') || activeProfile.desktopBgUrl.startsWith('/'));
 
   return (
-    <div className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
-         style={isColor ? { backgroundColor: activeProfile.desktopBgUrl } : {}}
+    <div 
+      className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
+      style={!isImage ? { background: activeProfile.desktopBgUrl } : {}}
     >
-      {activeProfile.desktopBgUrl && !isColor && (
+      {isImage && (
         <Image
-          src={activeProfile.desktopBgUrl}
+          src={activeProfile.desktopBgUrl!}
           alt="Desktop Background"
           fill
           className="object-cover z-0"
