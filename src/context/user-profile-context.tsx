@@ -112,6 +112,7 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const updateProfile = useCallback((profileId: string, updatedData: Partial<Omit<UserProfile, 'id'>>) => {
+    console.log(`[updateProfile] Called for profileId: ${profileId} with data:`, updatedData);
     try {
       const profileKey = getProfileKey(profileId);
       const profileItem = window.localStorage.getItem(profileKey);
@@ -243,3 +244,5 @@ export const UserProfileProvider = ({ children }: { children: ReactNode }) => {
     </UserProfileContext.Provider>
   );
 };
+
+    

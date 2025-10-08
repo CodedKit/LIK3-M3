@@ -38,15 +38,20 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     effects: activeProfile?.volumeSettings?.effects ?? 100,
   }), [activeProfile?.volumeSettings]);
 
+  console.log('[SettingsApp Render] Reading volumeSettings from profile:', volumeSettings);
+
+
   const handleVolumeChange = useCallback((type: 'master' | 'music' | 'ui' | 'effects', value: number) => {
     if (!activeProfile) return;
+
+    console.log(`[handleVolumeChange] Attempting to set ${type} to ${value}`);
+
     const newSettings = {
-        ...activeProfile.volumeSettings,
+        ...volumeSettings, // Start with current settings
         [type]: value,
     };
-    // @ts-ignore
     updateProfile(activeProfile.id, { volumeSettings: newSettings });
-  }, [activeProfile, updateProfile]);
+  }, [activeProfile, updateProfile, volumeSettings]);
 
   const solids = [
     '#E2E2E2',
@@ -266,3 +271,5 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     </div>
   );
 }
+
+    
