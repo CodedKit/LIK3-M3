@@ -56,26 +56,22 @@ export class FlagManager {
         '<=': (a, b) => a <= b,
         '>': (a, b) => a > b,
         '<': (a, b) => a < b,
-        '==': (a, b) => a == b, // Using '==' for loose equality
+        '==': (a, b) => a == b,
         '=': (a, b) => a == b,
     };
   
     return conditions.every(conditionStr => {
       const operator = Object.keys(operators).find(op => conditionStr.includes(op));
-      
       if (!operator) return false;
-
+      
       const parts = conditionStr.split(operator);
       const field = parts[0];
       const rawValue = parts[1];
-      const actualValue = payload[field];
       
-      // Convert expected value to number if possible, otherwise keep as string
-      const expectedValue = !isNaN(Number(rawValue)) ? Number(rawValue) : rawValue;
+      const actualValue = payload[field];
+      if (actualValue === undefined) return false;
 
-      if (actualValue === undefined) {
-        return false;
-      }
+      const expectedValue = !isNaN(Number(rawValue)) ? Number(rawValue) : rawValue;
       
       return operators[operator](actualValue, expectedValue);
     });
@@ -131,11 +127,38 @@ export class FlagManager {
 
   public evaluateInitialFlags() {
     const profileFlags = this.profile.flags || {};
-
+    
+    // Run onSet actions for flags that are already set
     for (const key in profileFlags) {
       const flag = profileFlags[key];
       if (flag.value) {
         this.runFlagActions(key, flag.value, true);
+      }
+    }
+    
+    // Check all trigger-based flags against the current profile state
+    for (const key in flagDefinitions) {
+      const definition = flagDefinitions[key];
+      if (definition.trigger) {
+        // This is a simplified check. A more robust system would map
+        // event types to the relevant profile data.
+        if (definition.trigger.event === 'postLiked') {
+          for (const postId in this.profile.likes) {
+            const likeCount = this.profile.likes[postId];
+            const postAuthor = "pixel_pioneer"; // Simplified assumption
+            
+            const payload = {
+              postId: postId,
+              author: postAuthor,
+              newLikeCount: likeCount,
+            };
+
+            const conditionsMet = this.evaluateConditions(payload, definition.trigger.conditions);
+            if (conditionsMet) {
+              this.setFlag(key, definition.trigger.targetValue ?? true, { isInitial: true });
+            }
+          }
+        }
       }
     }
   }
