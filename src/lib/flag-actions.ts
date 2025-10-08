@@ -1,7 +1,8 @@
 
 import { toast } from '@/hooks/use-toast';
 import { type UserProfile } from '@/context/user-profile-context';
-import { sceneManager } from './scene-manager';
+// Removed direct import to prevent circular dependencies
+// import { sceneManager } from './scene-manager'; 
 import { eventManager } from './event-manager';
 
 export type FlagActionArgs = {
@@ -32,7 +33,9 @@ export const flagActions: { [key: string]: FlagAction } = {
     console.log('Hide welcome message callback triggered.');
   },
   superfan: ({ isInitial }) => {
-    sceneManager.makeCharacterAvailable('pixel_pioneer');
+    // Import dynamically inside the function to avoid circular dependency issues
+    const { sceneManager } = require('./scene-manager');
+    sceneManager.makeSceneAvailable('pixel_pioneer_superfan_chat');
     if (!isInitial) {
       toast({
         title: 'Pixel Pioneer Superfan!',
