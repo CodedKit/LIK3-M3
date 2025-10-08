@@ -7,6 +7,7 @@ import { Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Playlist, type Song } from '@/lib/music';
 import { eventManager } from '@/lib/event-manager';
+import { cn } from '@/lib/utils';
 
 interface MusicAppProps {
   onPlayTrack: (trackIndex: number) => void;
@@ -53,7 +54,6 @@ export default function MusicApp({ onPlayTrack }: MusicAppProps) {
                 width={48}
                 height={48}
                 className="rounded-sm"
-                style={{ width: 'auto', height: 'auto' }}
                 data-ai-hint={song.albumArt.imageHint}
               />
             )}
@@ -63,8 +63,13 @@ export default function MusicApp({ onPlayTrack }: MusicAppProps) {
               </p>
               <p className="text-sm text-muted-foreground">{song.artist}</p>
             </div>
-            <Button variant="ghost" size="icon" onClick={() => onPlayTrack(index)}>
-              <Play className="h-5 w-5 fill-current" />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => onPlayTrack(index)}
+              disabled={!song.audioSrc}
+            >
+              <Play className={cn("h-5 w-5", song.audioSrc ? "fill-current" : "text-muted-foreground")} />
             </Button>
           </div>
         ))}

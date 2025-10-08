@@ -21,7 +21,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
   const currentTrack = Playlist[currentTrackIndex];
 
   useEffect(() => {
-    if (audioRef.current) {
+    if (audioRef.current && currentTrack?.audioSrc) {
         audioRef.current.src = currentTrack.audioSrc;
         if (isPlaying) {
             audioRef.current.play().catch(e => console.error("Audio play failed", e));
@@ -57,7 +57,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
-        <audio ref={audioRef} />
+        <audio ref={audioRef} onEnded={handleNext} />
         <Card className="flex items-center gap-3 p-2 backdrop-blur-sm">
             <div className="flex items-center gap-1 text-muted-foreground">
                 <Button variant="ghost" size="icon" className="h-6 w-6" onClick={onClose}>
@@ -86,7 +86,7 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
                 <Button variant="ghost" size="icon" onClick={handlePrevious}>
                     <SkipBack className="h-5 w-5 fill-current" />
                 </Button>
-                <Button variant="ghost" size="icon" onClick={handlePlayPause}>
+                <Button variant="ghost" size="icon" onClick={handlePlayPause} disabled={!currentTrack.audioSrc}>
                     {isPlaying ? <Pause className="h-6 w-6 fill-current" /> : <Play className="h-6 w-6 fill-current" />}
                 </Button>
                 <Button variant="ghost" size="icon" onClick={handleNext}>
