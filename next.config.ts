@@ -74,12 +74,17 @@ const nextConfig: NextConfig = {
           publicPath: (url: string, resourcePath: string, context: string) => {
             // This is a simplified logic. A real app might need more robust path handling.
             if (resourcePath.includes('src/lib/music')) {
-              return `/_next/static/music/${url}`;
+              // Extract the song folder name from the resource path
+              // e.g., src/lib/music/moonracer/audio.mp3 -> moonracer/audio.mp3
+              const relativePath = resourcePath.split('src/lib/music/')[1];
+              return `/_next/static/music/${relativePath}`;
             }
             return `/_next/static/assets/${url}`;
           },
           outputPath: 'static/music/',
-          name: '[name].[hash].[ext]',
+          // Keep the original folder structure within the output path
+          name: '[path][name].[ext]',
+          context: 'src/lib',
         },
       },
     });
