@@ -3,10 +3,12 @@
 
 import { useState, useEffect, useRef } from 'react';
 import Image from 'next/image';
-import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause } from 'lucide-react';
+import { Circle, GripVertical, Play, SkipBack, SkipForward, Pause, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Playlist } from '@/lib/music';
 import { Card } from '@/components/ui/card';
+import { useFavorites } from '@/hooks/use-favorites';
+import { cn } from '@/lib/utils';
 
 interface MediaPlayerProps {
     currentTrackIndex: number;
@@ -17,21 +19,21 @@ interface MediaPlayerProps {
 export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, onClose }: MediaPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(true);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   const currentTrack = Playlist[currentTrackIndex];
 
-  // Effect to handle track changes
+  // Effect to load and play a new track
   useEffect(() => {
-    if (audioRef.current && currentTrack?.audioSrc) {
+    if (currentTrack?.audioSrc && audioRef.current) {
         audioRef.current.src = currentTrack.audioSrc;
         const playPromise = audioRef.current.play();
         if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                // Automatic playback started!
+            playPromise.then(() => {
                 setIsPlaying(true);
             }).catch(error => {
-                // Auto-play was prevented
-                console.error("Audio play failed:", error);
+                // Autoplay was prevented.
+                console.error("Audio play failed on track change:", error);
                 setIsPlaying(false);
             });
         }
@@ -61,6 +63,8 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
   if (!currentTrack) {
     return null;
   }
+  
+  const isCurrentSongFavorite = isFavorite(currentTrack.id);
 
   return (
     <div className="fixed bottom-14 left-1/2 -translate-x-1/2 w-full max-w-sm px-4">
@@ -95,6 +99,13 @@ export default function MediaPlayer({ currentTrackIndex, setCurrentTrackIndex, o
             </div>
 
             <div className="flex items-center gap-1 text-primary-foreground">
+                <Button 
+                  variant="ghost" 
+                  size="icon" 
+                  onClick={() => toggleFavorite(currentTrack.id)}
+                >
+                    <Heart className={cn("h-5 w-5", isCurrentSongFavorite ? "fill-red-500 text-red-500" : "")} />
+                </Button>
                 <Button variant="ghost" size="icon" onClick={handlePrevious}>
                     <SkipBack className="h-5 w-5 fill-current" />
                 </Button>

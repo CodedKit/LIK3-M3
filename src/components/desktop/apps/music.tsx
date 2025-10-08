@@ -3,11 +3,12 @@
 
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
-import { Play } from 'lucide-react';
+import { Play, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Playlist, type Song } from '@/lib/music';
 import { eventManager } from '@/lib/event-manager';
 import { cn } from '@/lib/utils';
+import { useFavorites } from '@/hooks/use-favorites';
 
 interface MusicAppProps {
   onPlayTrack: (trackIndex: number) => void;
@@ -15,6 +16,7 @@ interface MusicAppProps {
 
 export default function MusicApp({ onPlayTrack }: MusicAppProps) {
   const [currentPlaylist, setCurrentPlaylist] = useState<Song[]>(Playlist);
+  const { isFavorite, toggleFavorite } = useFavorites();
 
   useEffect(() => {
     const handleMetadataChange = (payload: { songId: string; title?: string; artist?: string }) => {
@@ -63,6 +65,16 @@ export default function MusicApp({ onPlayTrack }: MusicAppProps) {
               </p>
               <p className="text-sm text-muted-foreground">{song.artist}</p>
             </div>
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={(e) => {
+                  e.stopPropagation();
+                  toggleFavorite(song.id);
+              }}
+            >
+              <Heart className={cn("h-5 w-5", isFavorite(song.id) ? "fill-red-500 text-red-500" : "text-primary-foreground")} />
+            </Button>
             <Button 
               variant="ghost" 
               size="icon" 
