@@ -26,6 +26,7 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
   const { toast } = useToast();
   
   const [background, setBackground] = useState(activeProfile?.desktopBgUrl || '');
+  const [customImageUrl, setCustomImageUrl] = useState('');
   const images = PlaceHolderImages.filter(img => img.id.startsWith('desktop-bg-'));
 
   const solids = [
@@ -73,8 +74,13 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
     }
   };
 
-  const isImage = background.startsWith('http') || background.startsWith('/');
-  const isColor = !isImage;
+  const handleCustomUrlSubmit = () => {
+    if (customImageUrl) {
+        handleBackgroundChange(customImageUrl);
+    }
+  }
+
+  const isColor = !background.startsWith('http') && !background.startsWith('/');
 
   return (
     <div className="h-full w-full bg-background p-4">
@@ -162,6 +168,19 @@ export default function SettingsApp({ onClose }: SettingsAppProps) {
                                 />
                                 </button>
                             ))}
+                        </div>
+                    </div>
+                    <Separator />
+                    <div className="space-y-4">
+                        <Label>Custom Image</Label>
+                        <div className="flex gap-2">
+                        <Input 
+                            id="custom-image-url" 
+                            placeholder="Paste image URL here..." 
+                            value={customImageUrl}
+                            onChange={(e) => setCustomImageUrl(e.target.value)}
+                        />
+                        <Button onClick={handleCustomUrlSubmit}>Set Image</Button>
                         </div>
                     </div>
                 </CardContent>
