@@ -9,7 +9,7 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart, MessageSquare } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart, MessageSquare, ChartBarDecreasing } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
@@ -21,6 +21,7 @@ import { WindowNavButtons } from '@/components/ui/window-nav-buttons';
 import ChatCordApp from './desktop/apps/chatcord';
 import { FlagManager } from '@/lib/flags-manager';
 import { Playlist } from '@/lib/music';
+import { TestChatApp } from './desktop/apps/testChatApp';
 
 
 interface DesktopProps {
@@ -40,25 +41,25 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const [openApps, setOpenApps] = useState<AppInstance[]>([]);
   const { activeProfile, updateProfile } = useAuth();
   const [currentTrackIndex, setCurrentTrackIndex] = useState<number | null>(null);
-  
+
   const activeApp = openApps[openApps.length - 1];
 
   useEffect(() => {
     if (!activeProfile) return;
 
     const flagManager = new FlagManager(activeProfile, (updatedData) => {
-        updateProfile(activeProfile.id, updatedData);
+      updateProfile(activeProfile.id, updatedData);
     });
 
     flagManager.evaluateInitialFlags();
 
     const intervalId = setInterval(() => {
-        flagManager.processExpiredFlags();
-    }, 60000); 
+      flagManager.processExpiredFlags();
+    }, 60000);
 
     return () => {
-        flagManager.destroy(); 
-        clearInterval(intervalId);
+      flagManager.destroy();
+      clearInterval(intervalId);
     };
   }, [activeProfile, updateProfile]);
 
@@ -89,6 +90,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'chatcord', name: 'ChatCord' },
     { id: 'settings', name: 'Settings' },
     { id: 'profile', name: 'Profile' },
+    { id: 'testChatApp', name: 'TestChatApp' },
   ];
 
   const desktopApps = [
@@ -97,6 +99,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'music', name: 'Music', icon: <Music className="h-12 w-12" /> },
     { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" /> },
     { id: 'chatcord', name: 'ChatCord', icon: <MessageSquare className="h-12 w-12" /> },
+    { id: 'testChatApp', name: 'TestChatApp', icon: <ChartBarDecreasing className="h-12 w-12" /> },
   ];
 
   const getAppComponent = (app: AppInstance, props: any = {}): React.ReactNode => {
@@ -113,6 +116,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         return <EhmazonApp />;
       case 'chatcord':
         return <ChatCordApp />;
+      case 'testChatApp':
+        return <TestChatApp />;
       case 'settings':
         return <SettingsApp onClose={closeApp} />;
       case 'profile':
@@ -121,7 +126,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         return null;
     }
   };
-  
+
   const openApp = (appId: string, props: any = {}) => {
     const appDef = apps.find(a => a.id === appId) || { id: appId, name: props.name || appId };
     const newAppInstance: AppInstance = {
@@ -143,7 +148,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
   const back = () => {
     setOpenApps(prev => prev.slice(0, -1));
   };
-  
+
   if (!activeProfile) {
     return null;
   }
@@ -156,11 +161,11 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
 
   return (
-    <div 
+    <div
       className="relative flex h-full w-full flex-col-reverse md:flex-col bg-background animate-in fade-in duration-500"
       style={!isImage && !isVideo ? { background: activeProfile.desktopBgUrl } : {}}
     >
-      
+
       {isImage && (
         <Image
           src={activeProfile.desktopBgUrl!}
@@ -171,11 +176,11 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
       )}
       {isVideo && (
         <video
-            src={activeProfile.desktopBgUrl}
-            autoPlay
-            loop
-            muted
-            className="absolute top-0 left-0 w-full h-full object-cover z-0"
+          src={activeProfile.desktopBgUrl}
+          autoPlay
+          loop
+          muted
+          className="absolute top-0 left-0 w-full h-full object-cover z-0"
         />
       )}
 
@@ -194,17 +199,17 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
 
       <div className='relative z-[60]'>
         {currentTrackIndex !== null && (
-          <MediaPlayer 
-              currentTrackIndex={currentTrackIndex}
-              setCurrentTrackIndex={setCurrentTrackIndex}
-              onClose={handleClosePlayer}
+          <MediaPlayer
+            currentTrackIndex={currentTrackIndex}
+            setCurrentTrackIndex={setCurrentTrackIndex}
+            onClose={handleClosePlayer}
           />
         )}
       </div>
 
-      <Taskbar 
-        userProfile={activeProfile} 
-        onLogout={onLogout} 
+      <Taskbar
+        userProfile={activeProfile}
+        onLogout={onLogout}
         onOpenSettings={() => openApp('settings')}
         onOpenProfile={() => openApp('profile')}
         onToggleDebug={() => setShowDebug(s => !s)}
