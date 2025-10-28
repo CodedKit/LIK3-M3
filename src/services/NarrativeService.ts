@@ -86,8 +86,15 @@ export class NarrativeService {
     }
 
     const currentText: string[] = [];
+    const allTags: string[] = [];
+
+    // Collect text and tags together while reading the story
     while (this.story.canContinue) {
       currentText.push(this.story.Continue() || "");
+      // Collect tags after each Continue() call
+      if (this.story.currentTags && this.story.currentTags.length > 0) {
+        allTags.push(...this.story.currentTags);
+      }
     }
 
     const choices = this.story.currentChoices.map((choice) => ({
@@ -95,12 +102,10 @@ export class NarrativeService {
       text: choice.text,
     }));
 
-    const tags = this.story.currentTags || [];
-
     this.currentState = {
       text: currentText,
       choices: choices,
-      tags: tags,
+      tags: allTags,
       isEnded:
         !this.story.canContinue && this.story.currentChoices.length === 0,
     };

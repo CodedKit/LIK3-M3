@@ -13,6 +13,36 @@ export const StoryPlayer = () => {
     return (
         <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: 'auto' }}>
 
+            {/* 
+        Advanced Usage: Tags
+        You can use tags in Ink like #image: "sea.jpg" or #audio: "storm.mp3" 
+        to dynamically change the UI.
+      */}
+            <div className="story-tags" style={{ marginTop: '20px' }}>
+                {state.tags.map((tag, index) => {
+                    // e.g., if tag is "image: https://example.com/cat.jpg"
+                    if (tag.startsWith("image:")) {
+                        const imageUrl = tag.substring(6).trim(); // Remove "image:" and trim
+                        console.log(imageUrl)
+                        return (
+                            <img
+                                src={imageUrl}
+                                alt="Scene illustration"
+                                key={`tag-${tag}-${index}`}
+                                style={{
+                                    maxWidth: '100%',
+                                    height: '25em',
+                                    borderRadius: '8px',
+                                    marginBottom: '10px'
+                                }}
+                            />
+                        );
+                    }
+                    return null;
+                })}
+            </div>
+
+
             {/* Story Text */}
             <div className="story-text">
                 {state.text.map((paragraph, index) => (
@@ -49,22 +79,6 @@ export const StoryPlayer = () => {
                 ))}
             </div>
 
-            {/* 
-        Advanced Usage: Tags
-        You can use tags in Ink like #image: "sea.jpg" or #audio: "storm.mp3" 
-        to dynamically change the UI.
-      */}
-            <div className="story-tags" style={{ display: 'none' }}>
-                {state.tags.map(tag => {
-                    // e.g., if tag is "image: sea.jpg"
-                    if (tag.startsWith("image:")) {
-                        console.log("img")
-                        // const imageUrl = tag.split(":")[1].trim();
-                        // return <img src={`/images/${imageUrl}`} alt="story image" />;
-                    }
-                    return null;
-                })}
-            </div>
 
         </div>
     );
