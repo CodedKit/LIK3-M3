@@ -41,6 +41,8 @@
 
 import React, { createContext, useContext, ReactNode, useState, useEffect, useMemo } from 'react';
 import { NarrativeService, IStoryState } from '@/services/NarrativeService';
+import { useAudio } from '@/context/audio-context';
+import { parseTag, TAG_PREFIX } from '@/lib/story-utils';
 
 // The API that the context will provide to the outside world
 interface IStoryContext {
@@ -55,9 +57,19 @@ const StoryContext = createContext<IStoryContext | undefined>(undefined);
 export const StoryProvider = ({ children, storyJsonPath }: { children: ReactNode; storyJsonPath: string }) => {
     // We create and store the NarrativeService instance once with useMemo to prevent re-creation on re-renders
     const narrativeService = useMemo(() => new NarrativeService(), []);
+    const { playMusic, stopMusic } = useAudio();
 
     const [state, setState] = useState<IStoryState>(narrativeService.getCurrentState());
     const [isLoading, setIsLoading] = useState(true);
+
+    // Parse tags and handle music playback when tags change
+    useEffect(() => {
+        // Find music tag in current tags
+        const musicUrl = parseTag(state.tags, TAG_PREFIX.MUSIC);
+        if (musicUrl) {
+            playMusic(musicUrl, true);
+        }
+    }, [state.tags, playMusic]);
 
     useEffect(() => {
         // We tell the service to "call this function when the state changes"
@@ -78,8 +90,9 @@ export const StoryProvider = ({ children, storyJsonPath }: { children: ReactNode
         // Cleanup function to run when the component unmounts
         return () => {
             narrativeService.setOnStateChange(() => { }); // Clear the listener to prevent memory leaks
+            stopMusic(); // Stop music when story unmounts
         };
-    }, [narrativeService, storyJsonPath]); // Reload only when the story (storyJsonPath) changes
+    }, [narrativeService, storyJsonPath, stopMusic]); // Reload only when the story (storyJsonPath) changes
 
     const makeChoice = (index: number) => {
         // makeChoice already calls continueStory internally

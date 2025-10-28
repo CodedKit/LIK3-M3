@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { useStory } from '@/context/StoryContext';
+import { parseTag, TAG_PREFIX } from '@/lib/story-utils';
 
 export const StoryPlayer = () => {
     const { state, makeChoice, isLoading } = useStory();
@@ -10,36 +11,46 @@ export const StoryPlayer = () => {
         return <div>Loading story...</div>;
     }
 
+    // Parse tags for UI elements
+    const imageUrl = parseTag(state.tags, TAG_PREFIX.IMAGE);
+    const musicUrl = parseTag(state.tags, TAG_PREFIX.MUSIC);
+
     return (
         <div style={{ fontFamily: 'Arial, sans-serif', maxWidth: '600px', margin: 'auto' }}>
-
+            {/* Music Tag Indicator (optional visual feedback) */}
+            {musicUrl && (
+                <div
+                    style={{
+                        padding: '8px',
+                        background: '#e3f2fd',
+                        borderRadius: '4px',
+                        marginBottom: '10px',
+                        fontSize: '0.9em',
+                        color: '#1976d2'
+                    }}
+                >
+                    DEBUG: 🎵 Playing: {musicUrl.split('/').pop()}
+                </div>
+            )}
             {/* 
         Advanced Usage: Tags
-        You can use tags in Ink like #image: "sea.jpg" or #audio: "storm.mp3" 
+        You can use tags in Ink like #image: "sea.jpg" or #music: "song.mp3" 
         to dynamically change the UI.
       */}
             <div className="story-tags" style={{ marginTop: '20px' }}>
-                {state.tags.map((tag, index) => {
-                    // e.g., if tag is "image: https://example.com/cat.jpg"
-                    if (tag.startsWith("image:")) {
-                        const imageUrl = tag.substring(6).trim(); // Remove "image:" and trim
-                        console.log(imageUrl)
-                        return (
-                            <img
-                                src={imageUrl}
-                                alt="Scene illustration"
-                                key={`tag-${tag}-${index}`}
-                                style={{
-                                    maxWidth: '100%',
-                                    height: '25em',
-                                    borderRadius: '8px',
-                                    marginBottom: '10px'
-                                }}
-                            />
-                        );
-                    }
-                    return null;
-                })}
+                {/* Image Tag */}
+                {imageUrl && (
+                    <img
+                        src={imageUrl}
+                        alt="Scene illustration"
+                        style={{
+                            maxWidth: '100%',
+                            height: '25em',
+                            borderRadius: '8px',
+                            marginBottom: '10px'
+                        }}
+                    />
+                )}
             </div>
 
 
