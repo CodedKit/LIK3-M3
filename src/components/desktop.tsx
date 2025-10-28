@@ -22,6 +22,7 @@ import ChatCordApp from './desktop/apps/chatcord';
 import { FlagManager } from '@/lib/flags-manager';
 import { Playlist } from '@/lib/music';
 import { TestChatApp } from './desktop/apps/testChatApp';
+import { RadixDemoApp } from './desktop/apps/radixDemo';
 
 
 interface DesktopProps {
@@ -91,6 +92,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'settings', name: 'Settings' },
     { id: 'profile', name: 'Profile' },
     { id: 'testChatApp', name: 'TestChatApp' },
+    { id: 'radixDemo', name: 'Radix Demo' },
   ];
 
   const desktopApps = [
@@ -100,6 +102,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'ehmazon', name: 'Ehmazon', icon: <ShoppingCart className="h-12 w-12" /> },
     { id: 'chatcord', name: 'ChatCord', icon: <MessageSquare className="h-12 w-12" /> },
     { id: 'testChatApp', name: 'TestChatApp', icon: <ChartBarDecreasing className="h-12 w-12" /> },
+    { id: 'radixDemo', name: 'Radix Demo', icon: <ChartBarDecreasing className="h-12 w-12" /> },
   ];
 
   const getAppComponent = (app: AppInstance, props: any = {}): React.ReactNode => {
@@ -118,6 +121,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         return <ChatCordApp />;
       case 'testChatApp':
         return <TestChatApp />;
+      case 'radixDemo':
+        return <RadixDemoApp />;
       case 'settings':
         return <SettingsApp onClose={closeApp} />;
       case 'profile':
