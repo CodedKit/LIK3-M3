@@ -17,6 +17,12 @@ export interface IStoryState {
 export class NarrativeService {
   private story: Story | null = null;
   private onStateChange: ((state: IStoryState) => void) | null = null;
+  private currentState: IStoryState = {
+    text: [],
+    choices: [],
+    tags: [],
+    isEnded: false,
+  };
 
   // Load the story
   public async loadStory(storyJsonPath: string): Promise<void> {
@@ -29,7 +35,7 @@ export class NarrativeService {
       const storyContent = await response.text();
 
       this.story = new Story(storyContent);
-      this.notifyStateChange();
+      // Story loaded successfully. The context will handle initialization.
     } catch (error) {
       console.error("NarrativeService Error:", error);
       // More advanced error handling can be implemented here.
@@ -41,17 +47,20 @@ export class NarrativeService {
     this.onStateChange = callback;
   }
 
+  // Initialize the story after loading (read the initial state without consuming it)
+  public initializeStory(): void {
+    if (!this.story) return;
+
+    // Read and cache the initial text
+    this.refreshState();
+  }
+
   // Continue the story to the next step
   public continueStory(): void {
     if (!this.story) return;
 
-    if (this.story.canContinue) {
-      this.story.Continue();
-      this.notifyStateChange();
-    } else if (this.story.currentChoices.length === 0) {
-      // If the story cannot continue and there are no choices, it has ended
-      this.notifyStateChange(); // Send the final state (isEnded will be true)
-    }
+    // Read and cache the next text block
+    this.refreshState();
   }
 
   // Make a choice
@@ -63,17 +72,17 @@ export class NarrativeService {
     this.continueStory();
   }
 
-  // Private method to notify the outside world of our state
-  private notifyStateChange(): void {
-    if (this.onStateChange) {
-      this.onStateChange(this.getCurrentState());
-    }
+  // Refresh the state: read from story and notify observers
+  private refreshState(): void {
+    this.updateCurrentState();
+    this.notifyStateChange();
   }
 
-  // Compile and return the current story state
-  public getCurrentState(): IStoryState {
+  // Update the cached current state by reading from the story
+  private updateCurrentState(): void {
     if (!this.story) {
-      return { text: [], choices: [], tags: [], isEnded: false };
+      this.currentState = { text: [], choices: [], tags: [], isEnded: false };
+      return;
     }
 
     const currentText: string[] = [];
@@ -88,13 +97,24 @@ export class NarrativeService {
 
     const tags = this.story.currentTags || [];
 
-    return {
+    this.currentState = {
       text: currentText,
       choices: choices,
       tags: tags,
       isEnded:
         !this.story.canContinue && this.story.currentChoices.length === 0,
     };
+  } // Private method to notify the outside world of our state
+  private notifyStateChange(): void {
+    if (this.onStateChange) {
+      console.log(this.currentState);
+      this.onStateChange(this.currentState);
+    }
+  }
+
+  // Return the current cached story state (non-destructive read)
+  public getCurrentState(): IStoryState {
+    return this.currentState;
   }
 
   // (Advanced) For Save/Load

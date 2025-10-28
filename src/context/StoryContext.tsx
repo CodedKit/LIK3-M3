@@ -67,14 +67,14 @@ export const StoryProvider = ({ children, storyJsonPath }: { children: ReactNode
         const load = async () => {
             setIsLoading(true);
             await narrativeService.loadStory(storyJsonPath);
-            // We manually update the state to get the initial state after loading
-            console.log(narrativeService.getCurrentState())
+            // After loading, initialize the story to read the first text block
+            narrativeService.initializeStory();
+            // Get the initial state
             setState(narrativeService.getCurrentState());
             setIsLoading(false);
         };
 
         load();
-
         // Cleanup function to run when the component unmounts
         return () => {
             narrativeService.setOnStateChange(() => { }); // Clear the listener to prevent memory leaks
@@ -82,9 +82,8 @@ export const StoryProvider = ({ children, storyJsonPath }: { children: ReactNode
     }, [narrativeService, storyJsonPath]); // Reload only when the story (storyJsonPath) changes
 
     const makeChoice = (index: number) => {
+        // makeChoice already calls continueStory internally
         narrativeService.makeChoice(index);
-        // Immediately try to continue the story to process the text after the choice.
-        narrativeService.continueStory();
     };
 
     const contextValue = useMemo(() => ({
