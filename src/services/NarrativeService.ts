@@ -4,7 +4,7 @@ import { Story } from "inkjs";
 export interface IStoryState {
   text: string[];
   choices: { index: number; text: string }[];
-  tags: string[];
+  tags: string[]; // All tags from Ink story (image:, music:, sound:, etc.)
   isEnded: boolean;
 }
 
@@ -81,7 +81,12 @@ export class NarrativeService {
   // Update the cached current state by reading from the story
   private updateCurrentState(): void {
     if (!this.story) {
-      this.currentState = { text: [], choices: [], tags: [], isEnded: false };
+      this.currentState = {
+        text: [],
+        choices: [],
+        tags: [],
+        isEnded: false,
+      };
       return;
     }
 
