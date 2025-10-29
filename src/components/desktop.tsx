@@ -9,7 +9,7 @@ import AppIcon from '@/components/desktop/app-icon';
 import Likestagram from '@/components/desktop/apps/likestagram';
 import TerminalApp from '@/components/desktop/apps/terminal';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, WindowCloseButton } from '@/components/ui/dialog';
-import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart, MessageSquare, ChartBarDecreasing } from 'lucide-react';
+import { Heart, Terminal as TerminalIcon, Music, Settings, User, ShoppingCart, MessageSquare, ChartBarDecreasing, MessageCircle } from 'lucide-react';
 import MusicApp from '@/components/desktop/apps/music';
 import MediaPlayer from '@/components/desktop/media-player';
 import SettingsApp from '@/components/desktop/apps/settings';
@@ -23,6 +23,7 @@ import { FlagManager } from '@/lib/flags-manager';
 import { Playlist } from '@/lib/music';
 import { TestChatApp } from './desktop/apps/testChatApp';
 import { RadixDemoApp } from './desktop/apps/radixDemo';
+import { BubbleChatApp } from './desktop/apps/bubbleChat';
 
 
 interface DesktopProps {
@@ -93,6 +94,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'profile', name: 'Profile' },
     { id: 'testChatApp', name: 'TestChatApp' },
     { id: 'radixDemo', name: 'Radix Demo' },
+    { id: 'bubbleChat', name: 'BubbleChat' },
   ];
 
   const desktopApps = [
@@ -103,6 +105,7 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
     { id: 'chatcord', name: 'ChatCord', icon: <MessageSquare className="h-12 w-12" /> },
     { id: 'testChatApp', name: 'TestChatApp', icon: <ChartBarDecreasing className="h-12 w-12" /> },
     { id: 'radixDemo', name: 'Radix Demo', icon: <ChartBarDecreasing className="h-12 w-12" /> },
+    { id: 'bubbleChat', name: 'BubbleChat', icon: <MessageCircle className="h-12 w-12" /> },
   ];
 
   const getAppComponent = (app: AppInstance, props: any = {}): React.ReactNode => {
@@ -123,6 +126,8 @@ export default function Desktop({ onLogout, showDebug, setShowDebug }: DesktopPr
         return <TestChatApp />;
       case 'radixDemo':
         return <RadixDemoApp />;
+      case 'bubbleChat':
+        return <BubbleChatApp />;
       case 'settings':
         return <SettingsApp onClose={closeApp} />;
       case 'profile':
