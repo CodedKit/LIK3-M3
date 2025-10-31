@@ -16,12 +16,12 @@ export const MainNav = () => {
     ];
 
     return (
-        <div className="hidden md:flex items-center justify-between w-full">
-            {/* Sol Grup - En solda */}
+        <div className="hidden md:flex items-center space-x-4">
+            {/* Navigasyon Linkleri */}
             <nav className="flex space-x-1">
                 {navItems.map((item) => (
                     <NavLink
-                        key={`left-${item.href}`}
+                        key={item.href}
                         href={item.href}
                         label={item.label}
                         isActive={pathname === item.href}
@@ -29,11 +29,10 @@ export const MainNav = () => {
                 ))}
             </nav>
 
-            {/* Orta Grup - Tam ortada */}
             <nav className="flex space-x-1">
                 {navItems.map((item) => (
                     <NavLink
-                        key={`center-${item.href}`}
+                        key={item.href}
                         href={item.href}
                         label={item.label}
                         isActive={pathname === item.href}
@@ -41,11 +40,10 @@ export const MainNav = () => {
                 ))}
             </nav>
 
-            {/* Sağ Grup - En sağda */}
             <nav className="flex space-x-1">
                 {navItems.map((item) => (
                     <NavLink
-                        key={`right-${item.href}`}
+                        key={item.href}
                         href={item.href}
                         label={item.label}
                         isActive={pathname === item.href}

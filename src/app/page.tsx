@@ -94,7 +94,7 @@ export default function Home() {
           onAccountCreate={handleAccountCreate}
           onLogin={handleLogin}
           onProfileDelete={deleteProfile}
-          showDebug={showDebug}
+          showDebug={showDebug || false}
           setShowDebug={setShowDebug}
         />
       )}

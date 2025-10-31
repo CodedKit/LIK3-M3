@@ -23,15 +23,15 @@ import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
 import { NavLink } from '../atoms/NavLink';
 
 interface TaskbarProps {
-    userProfile: UserProfile;
-    onLogout: () => void;
-    onOpenSettings: () => void;
-    onOpenProfile: () => void;
-    onToggleDebug: () => void;
+    userProfile?: UserProfile;
+    onLogout?: () => void;
+    onOpenSettings?: () => void;
+    onOpenProfile?: () => void;
+    onToggleDebug?: () => void;
 }
 
 export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug }: TaskbarProps) {
-    const { level, progress } = calculateLevel(userProfile.xp);
+    const { level, progress } = calculateLevel(userProfile?.xp || 40);
 
     return (
         <div className="relative z-50 w-full backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
@@ -59,7 +59,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                             </div>
                             <div className="flex flex-col items-start">
                                 <div className='flex items-center w-28 gap-1'>
-                                    <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
+                                    <p className="text-sm font-medium text-primary-foreground">{userProfile?.username || 'Guest'}</p>
                                     <div className='w-[34px] bg-blue-700 '>
                                         <p className="text-xs font-bold text-primary-foreground">Lvl. {level}</p>
                                     </div>
@@ -69,6 +69,7 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                                 </div>
                             </div>
                         </button>
+
                     </DropdownMenuTrigger>
                     <DropdownMenuContent side="bottom" sideOffset={20} align="start" className="w-56 md:side-top">
                         <DropdownMenuGroup>
