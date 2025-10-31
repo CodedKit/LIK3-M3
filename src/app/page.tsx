@@ -70,12 +70,12 @@ export default function Home() {
   const handleAccountCreate = (newProfileData: Omit<UserProfile, 'id' | 'showDebug'>) => {
     addProfile(newProfileData);
   };
-  
+
   const handleLogin = (profile: UserProfile) => {
     setActive(profile);
     setAppState('desktop');
   };
-  
+
   const handleLogout = () => {
     setActive(null);
     setAppState('login');
@@ -87,23 +87,23 @@ export default function Home() {
   return (
     <main className="h-screen w-screen overflow-hidden bg-background">
       {appState === 'booting' && <BootScreen onSkip={handleBootComplete} />}
-      
+
       {appState === 'login' && !isLoading && (
-        <LoginScreen 
+        <LoginScreen
           profiles={profiles}
-          onAccountCreate={handleAccountCreate} 
-          onLogin={handleLogin} 
+          onAccountCreate={handleAccountCreate}
+          onLogin={handleLogin}
           onProfileDelete={deleteProfile}
           showDebug={showDebug}
           setShowDebug={setShowDebug}
         />
       )}
-      
+
       {appState === 'desktop' && !isLoading && activeProfile && (
-        <Desktop 
-          onLogout={handleLogout} 
+        <Desktop
+          onLogout={handleLogout}
           showDebug={showDebug || false}
-          setShowDebug={setShowDebug} 
+          setShowDebug={setShowDebug}
         />
       )}
 
