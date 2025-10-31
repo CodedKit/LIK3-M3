@@ -7,57 +7,65 @@ import { type UserProfile } from '@/context/user-profile-context';
 import { calculateLevel } from '@/lib/leveling';
 import { Progress } from '@/components/ui/progress';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import TaskbarClock from './taskbar-clock';
 import VolumeControl from './volume-control';
 import React from 'react';
+import { MobileNav } from '../molecules/MobileNav';
+import { Avatar, AvatarFallback, AvatarImage } from '@radix-ui/react-avatar';
+import { NavLink } from '../atoms/NavLink';
 
 interface TaskbarProps {
-  userProfile: UserProfile;
-  onLogout: () => void;
-  onOpenSettings: () => void;
-  onOpenProfile: () => void;
-  onToggleDebug: () => void;
+    userProfile: UserProfile;
+    onLogout: () => void;
+    onOpenSettings: () => void;
+    onOpenProfile: () => void;
+    onToggleDebug: () => void;
 }
 
 export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenProfile, onToggleDebug }: TaskbarProps) {
     const { level, progress } = calculateLevel(userProfile.xp);
 
     return (
-        <div className="relative z-50 w-full bg-card/80 backdrop-blur-sm md:border-t border-b md:border-b-0 h-14 shrink-0 flex items-center justify-between px-4">
+        <div className="relative z-50 w-full backdrop-blur-sm md:border-t border-b md:border-b-0 h-10 shrink-0 flex items-center justify-between px-4">
             <div className="flex items-center gap-4">
+                <MobileNav />
+
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <button className="flex items-center gap-3 focus:outline-none">
                             <div className="relative">
-                                {userProfile.avatarUrl && (
+                                {/* {userProfile.avatarUrl && (
                                     <Image
                                         src={userProfile.avatarUrl}
                                         alt={userProfile.username}
                                         width={36}
                                         height={36}
-                                        className="h-9 w-9 rounded-sm object-cover"
+                                        className="h-6 w-6 rounded-full object-cover"
                                     />
-                                )}
+                                )} */}
+                                <Avatar className='flex w-6 h-6'>
+                                    <AvatarImage src="https://github.com/shadcn.png" className=' rounded-full' alt="@shadcn" />
+                                    <AvatarFallback>CN</AvatarFallback>
+                                </Avatar>
                                 <span className="absolute top-0 right-0 block h-2 w-2 rounded-full bg-green-500 ring-1 ring-background" />
                             </div>
                             <div className="flex flex-col items-start">
-                                <div className='flex items-center gap-2'>
+                                <div className='flex items-center w-28 gap-1'>
                                     <p className="text-sm font-medium text-primary-foreground">{userProfile.username}</p>
-                                    <p className="text-xs font-bold text-muted-foreground">Lvl. {level}</p>
+                                    <div className='w-[34px] bg-blue-700 '>
+                                        <p className="text-xs font-bold text-primary-foreground">Lvl. {level}</p>
+                                    </div>
                                 </div>
-                                <div className="relative w-24 mt-1">
-                                    <Progress value={progress} className="h-3" />
-                                    <p className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-white/75">
-                                        {Math.floor(progress)}%
-                                    </p>
+                                <div className="relative w-28 ">
+                                    <Progress value={40} className="h-1" />
                                 </div>
                             </div>
                         </button>
@@ -80,18 +88,23 @@ export default function Taskbar({ userProfile, onLogout, onOpenSettings, onOpenP
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                <div className="flex items-center gap-1 text-primary-foreground">
-                    <CircleDollarSign className="h-6 w-6 text-primary" />
-                    <span className="text-sm font-medium">{userProfile.money?.toLocaleString() || 0}</span>
+
+
+                <div className="flex items-center gap-1 text-primary-">
+                    <NavLink href="/" label='Label' isActive={false} />
+                    <NavLink href="/" label='Label' isActive={false} />
+                    <NavLink href="/" label='Label' isActive={false} />
+                    <NavLink href="/" label='Label' isActive={false} />
+
                 </div>
             </div>
-            <div className="flex items-center gap-4 text-sm font-medium text-primary-foreground">
-                <div className="flex items-center gap-2">
+            <div className="flex gap-1 w-22 h-8 text-sm font-medium text-foreground">
+                <div className="flex items-center gap-1">
                     <Wifi className="h-5 w-5" />
                     <VolumeControl />
                     <div className="flex items-center gap-1">
-                      <Battery className="h-5 w-5" />
-                      <span className="text-[10px] font-medium">98%</span>
+                        <Battery className="h-5 w-5" />
+                        <span className="text-[10px] font-medium">98%</span>
                     </div>
                 </div>
                 <TaskbarClock onClick={onToggleDebug} />
